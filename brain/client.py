@@ -8,11 +8,7 @@ cli = CommandLineInterface()
 
 
 @cli.command
-def upload(address, user, thought):
-    address = address.split(':')
-    if len(address) != 2:
-        raise Exception("Invalid address format given, expected ip_address:port")
-
+def upload_thought(address, user, thought):
     address = (address[0], int(address[1]))
     user = int(user)
     n = len(thought)

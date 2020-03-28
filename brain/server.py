@@ -38,10 +38,7 @@ class ThreadHandleClient(threading.Thread):
 
 
 @cli.command
-def run(address, data_dir):
-    address = address.split(':')
-    if len(address) != 2:
-        raise Exception("Invalid address format given, expected ip_address:port")
+def run_server(address, data_dir):
     address = (address[0], int(address[1]))
     with Listener(address[0], host=address[0]) as listener:
         while True:

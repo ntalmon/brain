@@ -10,6 +10,7 @@ class CommandLineInterface:
     def command(self, f):
         self.funcs[f.__name__] = f
         self.params[f.__name__] = inspect.getfullargspec(f)
+        return f
 
     def main(self):
         argv = sys.argv
