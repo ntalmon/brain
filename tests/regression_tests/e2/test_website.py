@@ -68,6 +68,7 @@ def test_invalid_path(website):
     assert response.text == ''
 
 
+@pytest.mark.skip()
 def test_web():
     process = multiprocessing.Process(target=run_webserver)
     process.start()

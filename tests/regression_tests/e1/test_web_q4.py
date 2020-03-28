@@ -28,6 +28,7 @@ def webserver():
         process.join()
 
 
+@pytest.mark.skip()
 def test_index(webserver):
     response = requests.get(_WEBSERVER_URL)
     for user_dir in _DATA_DIR.iterdir():
@@ -35,6 +36,7 @@ def test_index(webserver):
         assert f'users/{user_dir.name}' in response.text
 
 
+@pytest.mark.skip()
 def test_user(webserver):
     for user_dir in _DATA_DIR.iterdir():
         response = requests.get(f'{_WEBSERVER_URL}/users/{user_dir.name}')
@@ -46,6 +48,7 @@ def test_user(webserver):
             assert thought_file.read_text() in response.text
 
 
+@pytest.mark.skip()
 def test_dynamic(webserver):
     user_id = 0
     user_dir = _DATA_DIR / str(user_id)
