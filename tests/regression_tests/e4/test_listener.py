@@ -5,7 +5,6 @@ import pytest
 
 from brain.utils.listener import Listener
 
-
 _PORT = 1234
 _HOST = '127.0.0.1'
 _BACKLOG = 5000

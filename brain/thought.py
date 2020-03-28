@@ -9,15 +9,18 @@ class Thought:
         self.thought = thought
 
     def __repr__(self):
-        return f'Thought(user_id={self.user_id}, timestamp={self.timestamp!r}, thought={self.thought!r})'
+        return f'Thought(user_id={self.user_id}, timestamp=' \
+               f'{self.timestamp!r}, thought={self.thought!r})'
 
     def __str__(self):
-        return f'[{self.timestamp.strftime("%Y-%m-%d %H:%M:%S")}] user {self.user_id}: {self.thought}'
+        return f'[{self.timestamp.strftime("%Y-%m-%d %H:%M:%S")}] user' \
+               f' {self.user_id}: {self.thought}'
 
     def __eq__(self, other):
         if not isinstance(other, Thought):
             return False
-        return self.user_id == other.user_id and self.timestamp == other.timestamp and self.thought == other.thought
+        return self.user_id == other.user_id and self.timestamp == \
+            other.timestamp and self.thought == other.thought
 
     def serialize(self):
         ts = int(self.timestamp.timestamp())

@@ -62,10 +62,13 @@ def route_user(user_id):
     thoughts_html = []
     for fname in thoughts:
         with open(os.path.join(user_dir, fname), 'r') as file:
-            ts = datetime.datetime.strptime(fname, "%Y-%m-%d_%H-%M-%S.txt").strftime("%Y-%m-%d %H:%M:%S")
+            ts = datetime.datetime.strptime(fname,
+                                            "%Y-%m-%d_%H-%M-%S.txt").strftime(
+                "%Y-%m-%d %H:%M:%S")
             thought = _THOUGHT_HTML.format(timestamp=ts, thought=file.read())
             thoughts_html.append(thought)
-    data = _USER_HTML.format(user_id=user_id, thoughts='\n'.join(thoughts_html))
+    data = _USER_HTML.format(user_id=user_id,
+                             thoughts='\n'.join(thoughts_html))
     return 200, data
 
 
@@ -85,7 +88,8 @@ def main(argv):
         addr = argv[1]
         addr = addr.split(':')
         if len(addr) != 2:
-            raise Exception("Invalid address format given, expected ip_address:port")
+            raise Exception(
+                "Invalid address format given, expected ip_address:port")
         addr = (addr[0], int(addr[1]))
         data_dir = argv[2]
         run_webserver(addr, data_dir)

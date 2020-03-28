@@ -22,7 +22,8 @@ class ThreadHandleClient(threading.Thread):
         uid, ts, sz = struct.unpack('LLI', hdr)
         thought = self.connection.receive(sz)
         thought = thought.decode()
-        fname = '{}.txt'.format(datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d_%H-%M-%S'))
+        fname = '{}.txt'.format(
+            datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d_%H-%M-%S'))
         u_path = os.path.join(self.data_dir, str(uid))
         self.lock.acquire()
         if not os.path.isdir(u_path):

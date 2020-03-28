@@ -13,7 +13,8 @@ import pytest
 import brain.server as server
 
 _SERVER_ADDRESS = '127.0.0.1', 5000
-_SERVER_PATH = pathlib.Path(__file__).absolute().parent.parent.parent.parent / 'brain' / 'server.py'
+_SERVER_PATH = pathlib.Path(
+    __file__).absolute().parent.parent.parent.parent / 'brain' / 'server.py'
 
 _HEADER_FORMAT = 'LLI'
 
@@ -28,7 +29,8 @@ _THOUGHT_2 = "I'm sleepy"
 @pytest.fixture
 def data_dir(tmp_path):
     parent, child = multiprocessing.Pipe()
-    process = multiprocessing.Process(target=_run_server, args=(child, tmp_path))
+    process = multiprocessing.Process(target=_run_server,
+                                      args=(child, tmp_path))
     process.start()
     parent.recv()
     try:

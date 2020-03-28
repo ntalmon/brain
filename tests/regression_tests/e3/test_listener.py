@@ -5,7 +5,6 @@ import pytest
 
 from brain.utils.listener import Listener
 
-
 _PORT = 1234
 _HOST = '127.0.0.1'
 _BACKLOG = 5000
@@ -33,7 +32,9 @@ def test_defaults():
 
 
 def test_repr(listener):
-    assert repr(listener) == f'Listener(port={_PORT!r}, host={_HOST!r}, backlog={_BACKLOG!r}, reuseaddr={_REUSEADDR!r})'
+    assert repr(
+        listener) == f'Listener(port={_PORT!r}, host={_HOST!r}, backlog=' \
+                     f'{_BACKLOG!r}, reuseaddr={_REUSEADDR!r})'
 
 
 def test_close(listener):

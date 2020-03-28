@@ -15,7 +15,8 @@ class Listener:
         self.socket.bind((host, port))
 
     def __repr__(self):
-        return f'Listener(port={self.port}, host={self.host!r}, backlog={self.backlog}, reuseaddr={self.reuseaddr})'
+        return f'Listener(port={self.port}, host={self.host!r}, ' \
+               f'backlog={self.backlog}, reuseaddr={self.reuseaddr})'
 
     def __enter__(self):
         self.start()

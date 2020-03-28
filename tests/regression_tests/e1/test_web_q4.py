@@ -39,7 +39,8 @@ def test_user(webserver):
     for user_dir in _DATA_DIR.iterdir():
         response = requests.get(f'{_WEBSERVER_URL}/users/{user_dir.name}')
         for thought_file in user_dir.iterdir():
-            datetime = dt.datetime.strptime(thought_file.stem, '%Y-%m-%d_%H-%M-%S')
+            datetime = dt.datetime.strptime(thought_file.stem,
+                                            '%Y-%m-%d_%H-%M-%S')
             assert f'User {user_dir.name}' in response.text
             assert f'{datetime:%Y-%m-%d %H:%M:%S}' in response.text
             assert thought_file.read_text() in response.text

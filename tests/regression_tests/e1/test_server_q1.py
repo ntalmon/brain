@@ -14,7 +14,8 @@ import pytest
 import brain.server as server
 
 _SERVER_ADDRESS = '127.0.0.1', 5000
-_SERVER_PATH = pathlib.Path(__file__).absolute().parent.parent.parent.parent / 'brain' / 'server.py'
+_SERVER_PATH = pathlib.Path(
+    __file__).absolute().parent.parent.parent.parent / 'brain' / 'server.py'
 
 _HEADER_FORMAT = 'LLI'
 

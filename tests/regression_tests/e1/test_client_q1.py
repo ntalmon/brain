@@ -11,7 +11,8 @@ import brain.client as client
 
 _SERVER_ADDRESS = '127.0.0.1', 5000
 _SERVER_BACKLOG = 1000
-_CLIENT_PATH = pathlib.Path(__file__).absolute().parent.parent.parent.parent / 'brain' / 'client.py'
+_CLIENT_PATH = pathlib.Path(
+    __file__).absolute().parent.parent.parent.parent / 'brain' / 'client.py'
 
 _HEADER_FORMAT = 'LLI'
 _HEADER_SIZE = struct.calcsize(_HEADER_FORMAT)
@@ -81,7 +82,8 @@ def test_timestamp(get_message):
 def test_cli(get_message):
     host, port = _SERVER_ADDRESS
     process = subprocess.Popen(
-        ['python', _CLIENT_PATH, 'upload_thought',  f'{host}:{port}', str(_USER_1), _THOUGHT_1],
+        ['python', _CLIENT_PATH, 'upload_thought', f'{host}:{port}',
+         str(_USER_1), _THOUGHT_1],
         stdout=subprocess.PIPE,
     )
     stdout, _ = process.communicate()

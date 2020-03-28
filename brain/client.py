@@ -11,7 +11,6 @@ cli = CommandLineInterface()
 def upload_thought(address, user, thought):
     address = (address[0], int(address[1]))
     user = int(user)
-    n = len(thought)
     t = int(time.time())
     thought_obj = Thought(user, t, thought)
     data = thought_obj.serialize()

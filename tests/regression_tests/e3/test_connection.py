@@ -5,7 +5,6 @@ import pytest
 
 from brain.utils.connection import Connection
 
-
 _PORT = 1234
 _DATA = b'Hello, world!'
 
@@ -28,7 +27,9 @@ def test_repr(server):
     sock.connect(('127.0.0.1', _PORT))
     connection = Connection(sock)
     _, other_port = sock.getsockname()
-    assert repr(connection) == f'<Connection from 127.0.0.1:{other_port} to 127.0.0.1:{_PORT}>'
+    assert repr(
+        connection) == f'<Connection from 127.0.0.1:{other_port} to ' \
+                       f'127.0.0.1:{_PORT}>'
 
 
 def test_close(server):

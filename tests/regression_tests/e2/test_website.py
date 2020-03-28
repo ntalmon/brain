@@ -8,7 +8,6 @@ import requests
 import brain.web as web
 from brain.website import Website
 
-
 _ADDRESS = '127.0.0.1', 8000
 _URL = f'http://{_ADDRESS[0]}:{_ADDRESS[1]}'
 _ROOT = pathlib.Path(__file__).absolute().parent.parent.parent.parent
@@ -29,14 +28,17 @@ def website():
 
 def run_website():
     website = Website()
+
     @website.route('/')
     def index():
         return 200, 'users list'
+
     @website.route('/users/([0-9]+)')
     def user(user_id):
         if user_id not in ['1', '2']:
             return 404, ''
         return 200, f'user {user_id}'
+
     website.run(_ADDRESS)
 
 
