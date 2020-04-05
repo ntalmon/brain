@@ -1,13 +1,10 @@
 import time
 
-from brain.cli import CommandLineInterface
+from brain.cli.client import run_cli
 from brain.utils.connection import Connection
 from brain.thought import Thought
 
-cli = CommandLineInterface()
 
-
-@cli.command
 def upload_thought(address, user, thought):
     address = (address[0], int(address[1]))
     user = int(user)
@@ -20,6 +17,4 @@ def upload_thought(address, user, thought):
 
 
 if __name__ == '__main__':
-    import sys
-
-    sys.exit(cli.main())
+    run_cli()

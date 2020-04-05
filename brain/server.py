@@ -3,10 +3,8 @@ import os
 import datetime
 import threading
 
-from brain.cli import CommandLineInterface
+from brain.cli.server import run_cli
 from brain.utils.listener import Listener
-
-cli = CommandLineInterface()
 
 
 class ThreadHandleClient(threading.Thread):
@@ -38,7 +36,6 @@ class ThreadHandleClient(threading.Thread):
         self.lock.release()
 
 
-@cli.command
 def run_server(address, data_dir):
     address = (address[0], int(address[1]))
     with Listener(address[0], host=address[0]) as listener:
@@ -49,6 +46,4 @@ def run_server(address, data_dir):
 
 
 if __name__ == '__main__':
-    import sys
-
-    sys.exit(cli.main())
+    run_cli()
