@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'brain'
+project = 'Brain'
 copyright = '2020, Noam Talmon'
 author = 'Noam Talmon'
 

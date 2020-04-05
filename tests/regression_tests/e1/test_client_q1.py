@@ -43,37 +43,37 @@ def get_message():
 
 @pytest.mark.skip()
 def test_connection(get_message):
-    client.upload_thought(_SERVER_ADDRESS, _USER_1, _THOUGHT_1)
+    client.upload_sample(_SERVER_ADDRESS, _USER_1, _THOUGHT_1)
     message = get_message()
     assert message
 
 
 @pytest.mark.skip()
 def test_user_id(get_message):
-    client.upload_thought(_SERVER_ADDRESS, _USER_1, _THOUGHT_1)
+    client.upload_sample(_SERVER_ADDRESS, _USER_1, _THOUGHT_1)
     user_id, timestamp, thought = get_message()
     assert user_id == _USER_1
-    client.upload_thought(_SERVER_ADDRESS, _USER_2, _THOUGHT_1)
+    client.upload_sample(_SERVER_ADDRESS, _USER_2, _THOUGHT_1)
     user_id, timestamp, thought = get_message()
     assert user_id == _USER_2
 
 
 @pytest.mark.skip()
 def test_thought(get_message):
-    client.upload_thought(_SERVER_ADDRESS, _USER_1, _THOUGHT_1)
+    client.upload_sample(_SERVER_ADDRESS, _USER_1, _THOUGHT_1)
     user_id, timestamp, thought = get_message()
     assert thought == _THOUGHT_1
-    client.upload_thought(_SERVER_ADDRESS, _USER_1, _THOUGHT_2)
+    client.upload_sample(_SERVER_ADDRESS, _USER_1, _THOUGHT_2)
     user_id, timestamp, thought = get_message()
     assert thought == _THOUGHT_2
 
 
 @pytest.mark.skip()
 def test_timestamp(get_message):
-    client.upload_thought(_SERVER_ADDRESS, _USER_1, _THOUGHT_1)
+    client.upload_sample(_SERVER_ADDRESS, _USER_1, _THOUGHT_1)
     user_id, timestamp, thought = get_message()
     _assert_now(timestamp)
-    client.upload_thought(_SERVER_ADDRESS, _USER_2, _THOUGHT_2)
+    client.upload_sample(_SERVER_ADDRESS, _USER_2, _THOUGHT_2)
     user_id, timestamp, thought = get_message()
     _assert_now(timestamp)
 

@@ -1,9 +1,9 @@
-.. brain documentation master file, created by
-   sphinx-quickstart on Sat Mar 28 21:54:24 2020.
+.. Brain documentation master file, created by
+   sphinx-quickstart on Sun Apr  5 23:18:31 2020.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to brain's documentation!
+Welcome to Brain's documentation!
 =================================
 
 .. toctree::

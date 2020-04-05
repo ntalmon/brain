@@ -1,5 +1,7 @@
 import click
 
+import brain.server
+
 
 @click.group()
 def cli():
@@ -7,11 +9,13 @@ def cli():
 
 
 @cli.command('run-server')
-@click.argument('host')
-@click.argument('port')
-@click.argument('publish')
+@click.option('-h', '--host', type=click.STRING, default='127.0.0.1')
+@click.option('-p', '--port', type=click.INT, default=8000)
+@click.argument('publish', type=click.STRING)
 def cli_run_server(host, port, publish):
-    import brain.server
+    """
+    TODO: handle publish argument
+    """
     brain.server.run_server(host, port, publish)
 
 

@@ -1,5 +1,7 @@
 import click
 
+import brain.client
+
 
 @click.group()
 def cli():
@@ -7,12 +9,11 @@ def cli():
 
 
 @cli.command('upload-sample')
-@click.argument('host')
-@click.argument('port')
-@click.argument('path')
+@click.option('-h', '--host', type=click.STRING, default='127.0.0.1')
+@click.option('-p', '--port', type=click.INT, default=8000)
+@click.argument('path', type=click.STRING)
 def cli_upload_sample(host, port, path):
-    import brain.client
-    brain.client.upload_thought(host, port, path)
+    brain.client.upload_sample(host, port, path)
 
 
 def run_cli():
