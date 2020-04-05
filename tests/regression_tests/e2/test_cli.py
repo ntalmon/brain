@@ -10,7 +10,7 @@ import time
 
 import pytest
 
-from brain.cli import CommandLineInterface
+# from brain.cli import CommandLineInterface
 
 _SERVER_ADDRESS = '127.0.0.1', 5000
 _SERVER_BACKLOG = 1000
@@ -21,7 +21,7 @@ _CLIENT_PATH = _ROOT / 'brain' / 'client.py'
 
 @pytest.fixture
 def cli():
-    cli = CommandLineInterface()
+    cli = None
 
     @cli.command
     def inc(x):
