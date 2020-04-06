@@ -7,12 +7,16 @@ def cli():
 
 
 @cli.command('parse')
-def cli_parse():
+@click.argument('parser', type=click.STRING)
+@click.argument('path', type=click.STRING)
+def cli_parse(parser, path):
     pass
 
 
 @cli.command('run-parser')
-def cli_run_parser():
+@click.argument('parser', type=click.STRING)
+@click.argument('url', type=click.STRING)
+def cli_run_parser(parser, url):
     pass
 
 
