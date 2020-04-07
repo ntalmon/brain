@@ -1,2 +1,1 @@
-def run_parser(parser, data):
-    pass
+from .parser import parse

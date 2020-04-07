@@ -4,3 +4,5 @@
 __pycache__/
 .coverage
 docs/build/
+
+*_pb2.py
