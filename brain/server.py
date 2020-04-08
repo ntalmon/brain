@@ -1,15 +1,15 @@
-from flask import Flask
+from brain.protocol import HTTPAgent
 
-app = Flask(__name__)
+agent = HTTPAgent()  # TODO: auto find the right agent according to configuration
 
 
-@app.route('/config')
-def config():
+@agent.config_handler
+def handle_config():
     pass
 
 
-@app.route('/snapshot')
-def snapshot():
+@agent.snapshot_handler
+def handle_snapshot(snapshot):
     pass
 
 
@@ -17,7 +17,7 @@ def run_server(host, port, publish):
     """
     TODO: handle publish
     """
-    app.run(host=host, port=port)
+    agent.run(host, port)
 
 
 if __name__ == '__main__':

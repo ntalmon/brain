@@ -4,7 +4,7 @@ TODO: handle readers design
 import gzip
 import struct
 
-from . import brain_pb2
+from brain.autogen import brain_pb2
 
 
 class MessageReader:
@@ -46,8 +46,17 @@ class MindReader:
         snapshot.ParseFromString(msg_snapshot)
         return snapshot
 
-    def read_snapshots(self):
-        """
-        TODO: implement
-        """
-        pass
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if not self._loaded:
+            return  # TODO: handle this case by message/exception
+
+        msg_snapshot = self.msg_reader.read_message()
+        if not msg_snapshot:  # TODO: check how we make sure we ended read the file
+            raise StopIteration
+
+        snapshot = brain_pb2.Snapshot()
+        snapshot.ParseFromString(msg_snapshot)
+        return snapshot

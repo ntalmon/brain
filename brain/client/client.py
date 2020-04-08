@@ -1,4 +1,8 @@
+"""
+TODO: implement protocol separately
+"""
 from brain.client.reader import MindReader
+from brain.protocol import ClientAgent
 
 
 def upload_sample(host, port, path):
@@ -7,5 +11,7 @@ def upload_sample(host, port, path):
     """
     reader = MindReader(path)
     reader.load()
-    for snapshot in reader.read_snapshots():
-        pass
+    agent = ClientAgent(host, port)
+    config = agent.get_config()  # TODO: process snapshots according to config
+    for snapshot in reader:
+        agent.send_snapshot(snapshot)
