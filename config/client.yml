@@ -1,2 +1,3 @@
 # TODO: check whether this configuration is needed, and whether to move it to
 reader: mind
+server_protocol: http

@@ -15,14 +15,14 @@ def cli_parse(parser, path):
     """
     TODO: handle path
     """
-    brain.parsers.parse(parser, path)
+    brain.parsers.run_parser(parser, path)
 
 
 @cli.command('run-parser')
 @click.argument('parser', type=click.STRING)
 @click.argument('url', type=click.STRING)
 def cli_run_parser(parser, url):
-    pass
+    brain.parsers.invoke_parser(parser, url)
 
 
 def run_cli():

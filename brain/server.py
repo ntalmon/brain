@@ -10,13 +10,18 @@ def handle_config():
 
 @agent.snapshot_handler
 def handle_snapshot(snapshot):
-    pass
+    """
+    TODO: move to protocol format
+    """
+    snapshot_msg = snapshot.SerializeToString()
+    agent.publish(snapshot_msg)
 
 
 def run_server(host, port, publish):
     """
     TODO: handle publish
     """
+    agent.publish = publish
     agent.run(host, port)
 
 

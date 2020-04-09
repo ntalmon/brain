@@ -1,3 +1,8 @@
+"""
+TODO: separate between base agent and http agent
+TODO: choose right agent according to url
+TODO: remove config usage
+"""
 import flask
 
 from brain.autogen import protocol_pb2
@@ -8,7 +13,7 @@ class BaseAgent:
     snapshot_handlers = []
 
     def __init__(self):
-        pass
+        self.publish = None
 
     @classmethod
     def config_handler(cls, f):
