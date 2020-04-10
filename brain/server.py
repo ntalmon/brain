@@ -8,6 +8,10 @@ def handle_config():
     pass
 
 
+def construct_snapshot(snapshot):
+    pass
+
+
 @agent.snapshot_handler
 def handle_snapshot(snapshot):
     """

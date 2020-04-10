@@ -2,6 +2,7 @@
 TODO: separate between base agent and http agent
 TODO: choose right agent according to url
 TODO: remove config usage
+TODO: make sure server is asynchronous and multithreaded
 """
 import flask
 

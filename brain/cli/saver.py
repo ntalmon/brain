@@ -1,5 +1,7 @@
 import click
 
+from brain.saver import Saver, run_saver
+
 
 @click.group()
 def cli():
@@ -11,14 +13,17 @@ def cli():
 @click.argument('topic', type=click.STRING)
 @click.argument('path', type=click.STRING)
 def cli_save(database, topic, path):
-    pass
+    saver = Saver(database)
+    with open(path, 'r') as file:  # TODO: handle errors
+        data = file.read()
+        saver.save(topic, data)
 
 
 @cli.command('run-saver')
-@click.argument('saver', type=click.STRING)
-@click.argument('mq', type=click.STRING)
-def cli_run_saver(saver, mq):
-    pass
+@click.argument('db_url', type=click.STRING)
+@click.argument('mq_url', type=click.STRING)
+def cli_run_saver(db_url, mq_url):
+    run_saver(db_url, mq_url)
 
 
 def run_cli():
