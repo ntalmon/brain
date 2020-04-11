@@ -1,4 +1,5 @@
 syntax = "proto3";
+package parsers;
 
 message User {
     enum Gender {
