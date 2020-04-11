@@ -1,5 +1,6 @@
 from brain.mq import MQAgent
 from brain.server.client_agent import HTTPAgent
+from brain.server.parsers_agent import construct_parsers_message
 
 client_agents = {
     'http': HTTPAgent
@@ -27,11 +28,8 @@ def construct_publish(mq_url):
 
 @client_agent.snapshot_handler
 def handle_snapshot(snapshot):
-    """
-    TODO: move to protocol format
-    """
-    json_snapshot = construct_json(snapshot)
-    client_agent.publish(json_snapshot)
+    parsers_msg = construct_parsers_message(snapshot)
+    client_agent.publish(parsers_msg)
 
 
 def run_server(host, port, publish):

@@ -2,7 +2,7 @@
 TODO: (optionally) move server agent(s) to a sub-package
 """
 from brain.client.reader import MindReader
-from brain.client.server_agent import HTTPServerAgent, construct_agent_snapshot
+from brain.client.server_agent import HTTPServerAgent, construct_server_snapshot
 from brain.utils.config import client_config
 
 agents = {
@@ -22,5 +22,5 @@ def upload_sample(host, port, path):
     user = reader.load()
     agent = get_server_agent(host, port)
     for snapshot in reader:
-        agent_snapshot = construct_agent_snapshot(user, snapshot)
+        agent_snapshot = construct_server_snapshot(user, snapshot)
         agent.send_snapshot(agent_snapshot)

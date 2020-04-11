@@ -5,7 +5,10 @@ import importlib
 import json
 import sys
 
-from brain import brain_path, data_path
+from google.protobuf import json_format
+
+from brain import brain_path
+from brain.autogen import parsers_pb2
 from brain.mq import MQAgent
 
 parsers = {}
@@ -62,7 +65,9 @@ def invoke_parser(tag, url):
     mq_agent = MQAgent(url)
 
     def callback(body):
-        body = json.loads(body)  # TODO: should we handle json format anywhere else?
+        snapshot = parsers_pb2.Snapshot()
+        snapshot.ParseFromString(body)
+        body = json_format.MessageToDict(snapshot)  # TODO: get rid of the json if possible (parsers will get protobuf)
         res = _parser(body)  # TODO: change res format if needed
         res = json.dumps(res)
         mq_agent.publish(res)  # TODO: find right exchange and queue
