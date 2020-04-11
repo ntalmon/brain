@@ -4,11 +4,11 @@ import brain.client
 
 from brain.client import upload_sample
 
-records_in_sample = 10
+records_in_sample = 5
 
 
 class MockAgent:
-    instance = None  # implementing "weak" singleton
+    instance = None  # "weak" singleton
 
     def __init__(self, host, port):
         MockAgent.instance = self
@@ -32,3 +32,7 @@ def test_upload_sample(mock_agent, sample_path):
     upload_sample('127.0.0.1', 1234, str(sample_path))
     assert MockAgent.instance is not None, 'Missing usage in agent'
     assert MockAgent.instance.num_snapshots == records_in_sample, 'Unexpected number of calls to send_snapshot'
+
+
+def test_reader():
+    assert False

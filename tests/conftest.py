@@ -1,8 +1,7 @@
-import pathlib
-
 import pytest
 
-_tests_path = pathlib.Path(__file__).parent.absolute()
+from brain import tests_path as _tests_path
+
 _resources_path = _tests_path / 'resources'
 
 

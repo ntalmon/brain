@@ -3,17 +3,13 @@ TODO: send context to parsers if needed
 """
 import importlib
 import json
-import pathlib
 import sys
 
+from brain import brain_path, data_path
 from brain.mq import MQAgent
 
 parsers = {}
-parsers_path = pathlib.Path(__file__).parent.absolute()
-
-
-def get_parsers():
-    return parsers.keys()
+parsers_path = brain_path / 'parsers'
 
 
 def load_parsers():
@@ -29,7 +25,9 @@ def load_parsers():
 
 load_parsers()
 
-data_path = pathlib.Path(__file__).parent.parent.absolute() / '/data'
+
+def get_parsers():
+    return parsers.keys()
 
 
 class Context:

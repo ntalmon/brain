@@ -43,14 +43,6 @@ class MindReader:
         self._loaded = True
         return user
 
-    def read_snapshot(self):
-        if not self._loaded:
-            return  # TODO: handle this case by message/exception
-        msg_snapshot = self.msg_reader.read_message()
-        snapshot = reader_pb2.Snapshot()
-        snapshot.ParseFromString(msg_snapshot)
-        return snapshot
-
     def __iter__(self):
         return self
 

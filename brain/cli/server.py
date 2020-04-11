@@ -1,7 +1,6 @@
 import click
 
 import brain.server
-from brain.mq import MQAgent
 
 
 @click.group()
@@ -18,11 +17,7 @@ def cli_run_server(host, port, url):
     """
     TODO: handle publish argument
     """
-    agent = MQAgent(url)
-
-    def publish(snapshot):
-        agent.publish(snapshot, exchange='snapshot')
-
+    publish = brain.server.server.construct_publish(url)
     brain.server.run_server(host, port, publish)
 
 
