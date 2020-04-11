@@ -13,8 +13,13 @@ class MessageReader:
 
     def read_message(self):
         size_raw = self.reader.read(4)
+        if not size_raw:
+            return b''
         size, = struct.unpack('I', size_raw)
         msg = self.reader.read(size)
+        if len(msg) != size:
+            self.reader.close()
+            raise Exception('Invalid file format')
         return msg
 
 
@@ -55,6 +60,7 @@ class MindReader:
 
         msg_snapshot = self.msg_reader.read_message()
         if not msg_snapshot:  # TODO: check how we make sure we ended read the file
+            self.file_obj.close()
             raise StopIteration
 
         snapshot = reader_pb2.Snapshot()

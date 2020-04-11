@@ -9,6 +9,7 @@ def cli():
     pass
 
 
+# TODO: update defaults
 @cli.command('run-server')
 @click.option('-h', '--host', type=click.STRING, default='127.0.0.1')
 @click.option('-p', '--port', type=click.INT, default=8000)

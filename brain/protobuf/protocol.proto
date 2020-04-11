@@ -13,16 +13,13 @@ message User {
     Gender gender = 4;
 }
 
-message Config {
-    repeated string fields = 1; // TODO: optimize fields to be enum instead
-}
-
 message Snapshot {
     uint64 datetime = 1;
-    Pose pose = 2;
-    ColorImage color_image = 3;
-    DepthImage depth_image = 4;
-    Feelings feelings = 5;
+    User user = 2;
+    Pose pose = 3;
+    ColorImage color_image = 4;
+    DepthImage depth_image = 5;
+    Feelings feelings = 6;
 }
 
 message Pose {

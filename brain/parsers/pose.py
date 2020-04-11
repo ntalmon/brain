@@ -1,5 +1,8 @@
 def parse_pose(data):
-    pass
+    if 'pose' not in data:
+        return None  # TODO: handle this case
+    pose = data['pose']
+    return pose
 
 
 parse_pose.field = 'pose'

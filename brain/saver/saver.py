@@ -3,8 +3,9 @@ TODO: design decision, consume single queue and infer topic from data, or consum
 """
 from brain.db import DBAgent
 from brain.mq import MQAgent
+from brain.parsers import get_parsers
 
-topics = ['pose']  # TODO: handle way of finding all topics
+topics = get_parsers()
 
 
 class Saver:
@@ -12,7 +13,7 @@ class Saver:
         self.agent = DBAgent(url)
 
     def save(self, topic, data):
-        pass
+        self.agent.save(topic, data)
 
 
 def run_saver(db_url, mq_url):

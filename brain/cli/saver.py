@@ -8,8 +8,9 @@ def cli():
     pass
 
 
+# TODO: update defaults
 @cli.command('save')
-@click.option('-d', '--database', type=click.STRING, default='postgresql://127.0.0.1:5432')  # TODO: update default
+@click.option('-d', '--database', type=click.STRING, default='postgresql://127.0.0.1:5432')
 @click.argument('topic', type=click.STRING)
 @click.argument('path', type=click.STRING)
 def cli_save(database, topic, path):
