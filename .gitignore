@@ -4,5 +4,6 @@
 __pycache__/
 .coverage
 docs/build/
+brain/data/
 
 *_pb2.py

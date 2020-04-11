@@ -29,6 +29,19 @@ def load_parsers():
 
 load_parsers()
 
+data_path = pathlib.Path(__file__).parent.parent.absolute() / '/data'
+
+
+class Context:
+    def __init__(self):
+        pass
+
+    def save(self, file, data):
+        pass
+
+    def path(self, file):
+        pass
+
 
 def parser(tag):
     def decorator(f):
