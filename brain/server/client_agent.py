@@ -9,7 +9,7 @@ import flask
 from brain.autogen import protocol_pb2
 
 
-class BaseAgent:
+class ClientAgent:
     config_handlers = []
     snapshot_handlers = []
 
@@ -28,11 +28,11 @@ class BaseAgent:
         raise NotImplemented
 
 
-class HTTPAgent(BaseAgent):
+class HTTPAgent(ClientAgent):
     app = flask.Flask(__name__)
 
     def __init__(self):
-        BaseAgent.__init__(self)
+        ClientAgent.__init__(self)
 
     @app.route('/config')
     def send_config(self):

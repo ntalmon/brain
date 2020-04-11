@@ -4,7 +4,7 @@ TODO: handle readers design
 import gzip
 import struct
 
-from brain.autogen import brain_pb2
+from brain.autogen import reader_pb2
 
 
 class MessageReader:
@@ -32,7 +32,7 @@ class MindReader:
         self.file_obj = gzip.open(self.path, 'rb')
         self.msg_reader = MessageReader(self.file_obj)
         msg_user = self.msg_reader.read_message()
-        user = brain_pb2.User()
+        user = reader_pb2.User()
         user.ParseFromString(msg_user)
         self.user = user
         self._loaded = True
@@ -42,7 +42,7 @@ class MindReader:
         if not self._loaded:
             return  # TODO: handle this case by message/exception
         msg_snapshot = self.msg_reader.read_message()
-        snapshot = brain_pb2.Snapshot()
+        snapshot = reader_pb2.Snapshot()
         snapshot.ParseFromString(msg_snapshot)
         return snapshot
 
@@ -57,6 +57,6 @@ class MindReader:
         if not msg_snapshot:  # TODO: check how we make sure we ended read the file
             raise StopIteration
 
-        snapshot = brain_pb2.Snapshot()
+        snapshot = reader_pb2.Snapshot()
         snapshot.ParseFromString(msg_snapshot)
         return snapshot

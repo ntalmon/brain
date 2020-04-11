@@ -1,6 +1,5 @@
-from brain.parsers import parser
-
-
-@parser('post')
-def parse_pose(context, data):
+def parse_pose(data):
     pass
+
+
+parse_pose.field = 'pose'

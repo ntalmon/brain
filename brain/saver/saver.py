@@ -19,9 +19,3 @@ def run_saver(db_url, mq_url):
     saver = Saver(db_url)
     mq_agent = MQAgent(mq_url)
     mq_agent.multi_consume(saver.save, exchange='saver', queues=topics)  # TODO: should give saver.save directly?
-
-
-if __name__ == '__main__':
-    from brain.cli.saver import run_cli
-
-    run_cli()

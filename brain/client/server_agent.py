@@ -7,7 +7,7 @@ from furl import furl
 from brain.autogen import protocol_pb2
 
 
-class ClientAgent:
+class HTTPServerAgent:
     def __init__(self, host, port):
         self.host = host
         self.port = port

@@ -1,19 +1,20 @@
 """
 TODO: implement protocol separately
+TODO: (optionally) move server agent(s) to a sub-package
 """
 from brain.client.reader import MindReader
-from brain.protocol import ClientAgent
+from brain.client.server_agent import HTTPServerAgent
+
+agents = {
+    'http': HTTPServerAgent
+}
 
 
-def construct_agent_snapshot(sample_snapshot, config):
-    """
-    Given a snapshot in sample format, and a configuration
-    given by the server, construct a new snapshot in the
-    agent's format, while tasking into consideration the
-    configuration fields.
-    TODO: implement
-    """
-    pass
+def get_server_agent(host, port):
+    protocol = 'http'  # TODO: extract from config
+    if protocol not in agents:
+        return None  # TODO: handle this case
+    return agents[protocol](host, port)
 
 
 def upload_sample(host, port, path):
@@ -22,8 +23,7 @@ def upload_sample(host, port, path):
     """
     reader = MindReader(path)
     reader.load()
-    agent = ClientAgent(host, port)
-    config = agent.get_config()  # TODO: process snapshots according to config
+    agent = get_server_agent(host, port)
     for snapshot in reader:
-        agent_snapshot = construct_agent_snapshot(snapshot, config)
+        agent_snapshot = snapshot  # TODO: manipulate agent snapshot if needed
         agent.send_snapshot(agent_snapshot)
