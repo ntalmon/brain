@@ -30,7 +30,7 @@ class RabbitMQAgent:
         def wrapper(channel, method, properties, body):
             return callback(body)
 
-        self.channel.basic_consume(queue=queue, auto_ack=True, on_message_callback=wrapper)
+        self.channel.basic_consume(queue=queue, auto_ack=True, on_message_callback=wrapper)  # TODO: handle auto_ack
         self.channel.start_consuming()
 
     def multi_consume(self, callback, exchange='', queues=None):
@@ -57,8 +57,8 @@ class RabbitMQAgent:
             def wrapper(channel, method, properties, body):
                 return callback(queue, body)
 
-            self.channel.basic_consume(queue=queue, exchange=exchange, on_message_callback=wrapper)
-            
+            self.channel.basic_consume(queue=queue, on_message_callback=wrapper)
+
         self.channel.start_consuming()
 
     def publish(self, data, exchange='', queue=''):

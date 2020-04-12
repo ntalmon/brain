@@ -15,24 +15,6 @@ parsers = {}
 parsers_path = brain_path / 'parsers'
 
 
-def load_parsers():
-    sys.path.insert(0, str(parsers_path.parent))
-    for path in parsers_path.iterdir():
-        if path.name.startswith('_') or path.suffix != '.py' or path.name == 'parsers.py':
-            continue
-        module = importlib.import_module(f'{parsers_path.name}.{path.stem}')
-        for name, obj in module.__dict__.items():
-            if callable(obj) and name.startswith('parse_') and hasattr(obj, 'field'):
-                parsers[obj.field] = _wrap_parser(obj)
-
-
-load_parsers()
-
-
-def get_parsers():
-    return parsers.keys()
-
-
 def _wrap_parser(parse_fn):
     def _wrapper(data):
         # TODO: currently assume snapshot is protobuf, maybe change it
@@ -49,6 +31,24 @@ def _wrap_parser(parse_fn):
         return res
 
     return _wrapper
+
+
+def load_parsers():
+    sys.path.insert(0, str(parsers_path.parent))
+    for path in parsers_path.iterdir():
+        if path.name.startswith('_') or path.suffix != '.py' or path.name == 'parsers.py':
+            continue
+        module = importlib.import_module(f'{parsers_path.name}.{path.stem}')
+        for name, obj in module.__dict__.items():
+            if callable(obj) and name.startswith('parse_') and hasattr(obj, 'field'):
+                parsers[obj.field] = _wrap_parser(obj)
+
+
+load_parsers()
+
+
+def get_parsers():
+    return parsers.keys()
 
 
 class Context:
