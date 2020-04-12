@@ -7,6 +7,7 @@ chardet==3.0.4
 click==7.1.1
 codecov==2.0.22
 coverage==5.0.4
+cycler==0.10.0
 docutils==0.16
 entrypoints==0.3
 flake8==3.7.9
@@ -19,13 +20,17 @@ imagesize==1.2.0
 isort==4.3.21
 itsdangerous==1.1.0
 Jinja2==2.11.1
+kiwisolver==1.2.0
 lazy-object-proxy==1.4.3
 MarkupSafe==1.1.1
+matplotlib==3.2.1
 mccabe==0.6.1
 more-itertools==8.2.0
+numpy==1.18.2
 orderedmultidict==1.0.1
 packaging==20.3
 pika==1.1.0
+Pillow==7.1.1
 pluggy==0.13.1
 protobuf==3.11.3
 py==1.8.1
@@ -37,7 +42,9 @@ pymongo==3.10.1
 pyparsing==2.4.6
 pytest==5.4.1
 pytest-cov==2.8.1
+python-dateutil==2.8.1
 pytz==2019.3
+PyYAML==5.3.1
 requests==2.23.0
 rstcheck==3.3.1
 six==1.14.0
