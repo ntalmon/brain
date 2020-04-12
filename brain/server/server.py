@@ -1,3 +1,5 @@
+import threading
+
 from brain.mq import MQAgent
 from brain.server.client_agent import HTTPAgent
 from brain.server.parsers_agent import construct_parsers_message
@@ -26,9 +28,22 @@ def construct_publish(mq_url):
     return publish
 
 
+snapshot_lock = threading.Lock()
+snapshot_counter = 0
+
+
+def generate_snapshot_uuid():  # TODO: is this the right way to generate uuid?
+    global snapshot_counter
+    with snapshot_lock:
+        uuid = snapshot_counter
+        snapshot_counter += 1
+    return uuid
+
+
 @client_agent.snapshot_handler
 def handle_snapshot(snapshot):
-    parsers_msg = construct_parsers_message(snapshot)
+    snapshot_uuid = generate_snapshot_uuid()
+    parsers_msg = construct_parsers_message(snapshot, snapshot_uuid)
     client_agent.publish(parsers_msg)
 
 

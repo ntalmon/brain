@@ -24,8 +24,9 @@ def handle_depth_image(snapshot, data, snapshot_dir):
     snapshot.depth_image.path = str(image_file)
 
 
-def construct_parsers_message(snapshot):
+def construct_parsers_message(snapshot, snapshot_uuid):
     parsers_snapshot = parsers_pb2.Snapshot()
+    parsers_snapshot.uuid = snapshot_uuid
     copy_protobuf(parsers_snapshot, snapshot, ['datetime'])
     copy_protobuf(parsers_snapshot.user, snapshot.user, ['user_id', 'username', 'birthday', 'gender'])
     copy_protobuf(parsers_snapshot.pose.translation, snapshot.pose.translation, ['x', 'y', 'z'])

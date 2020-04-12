@@ -23,7 +23,7 @@ def load_parsers():
         module = importlib.import_module(f'{parsers_path.name}.{path.stem}')
         for name, obj in module.__dict__.items():
             if callable(obj) and name.startswith('parse_') and hasattr(obj, 'field'):
-                parsers[obj.field] = obj
+                parsers[obj.field] = _wrap_parser(obj)
 
 
 load_parsers()
@@ -31,6 +31,24 @@ load_parsers()
 
 def get_parsers():
     return parsers.keys()
+
+
+def _wrap_parser(parse_fn):
+    def _wrapper(data):
+        # TODO: currently assume snapshot is protobuf, maybe change it
+        snapshot = parsers_pb2.Snapshot()
+        snapshot.ParseFromString(data)
+        json_snapshot = json_format.MessageToDict(snapshot)
+        res = parse_fn(json_snapshot)
+        res = {
+            'uuid': json_snapshot['uuid'],
+            'datetime': json_snapshot['datetime'],
+            'user': json_snapshot['user'],
+            'result': res
+        }
+        return res
+
+    return _wrapper
 
 
 class Context:
@@ -70,6 +88,6 @@ def invoke_parser(tag, url):
         body = json_format.MessageToDict(snapshot)  # TODO: get rid of the json if possible (parsers will get protobuf)
         res = _parser(body)  # TODO: change res format if needed
         res = json.dumps(res)
-        mq_agent.publish(res)  # TODO: find right exchange and queue
+        mq_agent.publish(res, queue=f'saver_{tag}')  # TODO: find right exchange and queue
 
-    mq_agent.consume(callback, exchange='snapshot')
+    mq_agent.consume(callback, exchange='snapshot', queue=tag)

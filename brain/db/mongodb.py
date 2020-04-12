@@ -11,5 +11,3 @@ class MongoDBAgent:
     def save(self, topic, data):
         collection = self.db[topic]  # TODO: handle case where topic does not exist
         collection.insert_one()  # TODO: find what to insert
-
-

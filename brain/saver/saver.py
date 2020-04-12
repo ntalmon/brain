@@ -1,6 +1,8 @@
 """
 TODO: design decision, consume single queue and infer topic from data, or consume multiple dedicated queues
 """
+import json
+
 from brain.db import DBAgent
 from brain.mq import MQAgent
 from brain.parsers import get_parsers
@@ -13,6 +15,9 @@ class Saver:
         self.agent = DBAgent(url)
 
     def save(self, topic, data):
+        data = json.loads(data)  # TODO: parsers-saver protocol should be separated
+        # TODO: continue implementation
+        uuid, timestamp, user, res = data['uuid'], data['datetime'], data['user'], data['res']
         self.agent.save(topic, data)
 
 
