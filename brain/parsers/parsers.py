@@ -20,16 +20,16 @@ def _wrap_parser(parse_fn):
         # TODO: currently assume snapshot is protobuf, maybe change it
         snapshot = parsers_pb2.Snapshot()
         snapshot.ParseFromString(data)
-        json_snapshot = json_format.MessageToDict(snapshot, including_default_value_fields=True,
-                                                  preserving_proto_field_name=True)
-        res = parse_fn(json_snapshot)
+        json_snapshot = json_format.MessageToDict(
+            snapshot, including_default_value_fields=True, preserving_proto_field_name=True)
+        parse_res = parse_fn(json_snapshot)
         res = {
             'uuid': json_snapshot['uuid'],
             'datetime': json_snapshot['datetime'],
             'user': json_snapshot['user'],
-            'result': res
+            'result': parse_res
         }
-        return res
+        return res  # TODO: json.dumps?
 
     return _wrapper
 
@@ -86,9 +86,19 @@ def invoke_parser(tag, url):
     def callback(body):
         snapshot = parsers_pb2.Snapshot()
         snapshot.ParseFromString(body)
-        # body = json_format.MessageToDict(snapshot)  # TODO: get rid of the json if possible (parsers will get protobuf)
         res = _parser(body)  # TODO: change res format if needed
-        res = json.dumps(res)
-        mq_agent.publish(res, queue=f'saver_{tag}')  # TODO: find right exchange and queue
+        user_msg = {
+            'uuid': res['uuid'],
+            'datetime': res['datetime'],
+            'user': res['user']
+        }
+        user_msg = json.dumps(user_msg)
+        mq_agent.publish(user_msg, queue=f'saver_metadata')  # TODO: find right exchange and queue
+        parse_res = {
+            'uuid': res['uuid'],
+            'result': res['result']
+        }
+        parse_res_msg = json.dumps(parse_res)
+        mq_agent.publish(parse_res_msg, queue=f'saver_{tag}')  # TODO: find right exchange and queue
 
     mq_agent.consume(callback, exchange='snapshot', queue=tag)
