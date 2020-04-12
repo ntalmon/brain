@@ -20,7 +20,8 @@ def _wrap_parser(parse_fn):
         # TODO: currently assume snapshot is protobuf, maybe change it
         snapshot = parsers_pb2.Snapshot()
         snapshot.ParseFromString(data)
-        json_snapshot = json_format.MessageToDict(snapshot)
+        json_snapshot = json_format.MessageToDict(snapshot, including_default_value_fields=True,
+                                                  preserving_proto_field_name=True)
         res = parse_fn(json_snapshot)
         res = {
             'uuid': json_snapshot['uuid'],
@@ -85,7 +86,7 @@ def invoke_parser(tag, url):
     def callback(body):
         snapshot = parsers_pb2.Snapshot()
         snapshot.ParseFromString(body)
-        body = json_format.MessageToDict(snapshot)  # TODO: get rid of the json if possible (parsers will get protobuf)
+        # body = json_format.MessageToDict(snapshot)  # TODO: get rid of the json if possible (parsers will get protobuf)
         res = _parser(body)  # TODO: change res format if needed
         res = json.dumps(res)
         mq_agent.publish(res, queue=f'saver_{tag}')  # TODO: find right exchange and queue

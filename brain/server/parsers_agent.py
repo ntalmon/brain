@@ -11,8 +11,8 @@ def copy_protobuf(item_a, item_b, attrs):
 
 def handle_color_image(snapshot, data, snapshot_dir):
     image_file = snapshot_dir / 'color_image.raw'
-    with open(str(image_file), 'wb') as write:
-        write.write(data)
+    with open(str(image_file), 'wb') as writer:
+        writer.write(data)
 
     snapshot.color_image.path = str(image_file)
 
@@ -21,7 +21,7 @@ def handle_depth_image(snapshot, data, snapshot_dir):
     image_file = snapshot_dir / 'depth_image.raw'
     array = np.array(data).astype(np.float)
     np.save(str(image_file), array)
-    snapshot.depth_image.path = str(image_file)
+    snapshot.depth_image.path = str(image_file) + '.npy'
 
 
 def construct_parsers_message(snapshot, snapshot_uuid):

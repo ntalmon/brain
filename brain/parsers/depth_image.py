@@ -17,4 +17,4 @@ def parse_depth_image(data):  # TODO: after writing parsed file, delete raw file
     return new_path
 
 
-parse_depth_image.field = 'depth_image'
+parse_depth_image.field = 'depth-image'

@@ -11,7 +11,7 @@ drivers = {
 def find_driver(url):
     scheme = furl(url).scheme
     if scheme not in drivers:
-        return None  # TODO: handle this case
+        raise Exception(f'Invalid url: DB scheme {scheme} is unsupported')
     return drivers[scheme]
 
 

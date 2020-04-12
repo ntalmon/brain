@@ -1,4 +1,10 @@
+import sys
+
 if __name__ == '__main__':
     from brain.cli.server import run_cli
 
-    run_cli()
+    try:
+        run_cli()
+    except Exception as error:
+        print(f'ERROR: {error}')
+        sys.exit(1)

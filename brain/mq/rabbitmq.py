@@ -3,10 +3,6 @@ from furl import furl
 
 
 class RabbitMQAgent:
-    """
-    TODO: handle exchanges if needed
-    """
-
     def __init__(self, url):
         self.url = url
         _url = furl(url)
@@ -16,27 +12,28 @@ class RabbitMQAgent:
 
     def consume(self, callback, exchange='', queue=''):
         if not exchange and not queue:
-            return  # TODO: handle this case
+            raise Exception(f'Invalid parameters: expecting at least exchange or queue to be provided')
 
         if exchange:
             self.channel.exchange_declare(exchange=exchange, exchange_type='fanout')
-            # TODO: check the case of predefined queue name
-            result = self.channel.queue_declare(queue=queue, exclusive=True)
-            queue = result.method.queue
+            result = self.channel.queue_declare(queue=queue)
+            queue = queue or result.method.queue  # in case that queue was not given
             self.channel.queue_bind(exchange=exchange, queue=queue)
         else:
             self.channel.queue_declare(queue=queue)
 
         def wrapper(channel, method, properties, body):
-            return callback(body)
+            res = callback(body)
+            channel.basic_ack(delivery_tag=method.delivery_tag)
+            return res
 
-        self.channel.basic_consume(queue=queue, auto_ack=True, on_message_callback=wrapper)  # TODO: handle auto_ack
+        self.channel.basic_consume(queue=queue, auto_ack=False, on_message_callback=wrapper)  # TODO: handle auto_ack
         self.channel.start_consuming()
 
     def multi_consume(self, callback, exchange='', queues=None):
         if not queues:
             if not exchange:
-                return  # TODO: handle this case
+                raise Exception(f'Invalid parameters: expecting at least exchange or queue to be provided')
             queues = ['']
 
         if exchange:
@@ -44,7 +41,7 @@ class RabbitMQAgent:
             self.channel.exchange_declare(exchange=exchange, exchange_type='fanout')
             for queue in queues:
                 # TODO: check the case of predefined queue name
-                result = self.channel.queue_declare(queue=queue, exclusive=True)
+                result = self.channel.queue_declare(queue=queue)
                 queue = result.method.queue
                 queue_names.append(queue)
                 self.channel.queue_bind(exchange=exchange, queue=queue)
@@ -55,7 +52,9 @@ class RabbitMQAgent:
 
         for queue in queue_names:
             def wrapper(channel, method, properties, body):
-                return callback(queue, body)
+                res = callback(queue, body)
+                channel.basic_ack(delivery_tag=method.delivery_tag)
+                return res
 
             self.channel.basic_consume(queue=queue, on_message_callback=wrapper)
 

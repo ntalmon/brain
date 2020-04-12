@@ -18,4 +18,4 @@ def parse_color_image(data):  # TODO: after writing parsed file, delete raw file
     return new_path
 
 
-parse_color_image.field = 'color_image'
+parse_color_image.field = 'color-image'
