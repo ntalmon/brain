@@ -10,7 +10,6 @@ def copy_protobuf(item_a, item_b, attrs):
 
 
 def handle_color_image(snapshot, data, snapshot_dir):
-    data = snapshot.color_image.data
     image_file = snapshot_dir / 'color_image.raw'
     with open(str(image_file), 'wb') as write:
         write.write(data)
@@ -41,9 +40,10 @@ def construct_parsers_message(snapshot):
         user_dir.mkdir()
     timestamp = parsers_snapshot.datetime
     snapshot_dir = user_dir / str(timestamp)
-    snapshot_dir.mkdir()
-    if snapshot.color_image.data:
+    if not snapshot_dir.exists():
+        snapshot_dir.mkdir()
+    if snapshot.color_image:
         handle_color_image(parsers_snapshot, snapshot.color_image.data, snapshot_dir)
-    if parsers_snapshot.depth_image.data:
+    if parsers_snapshot.depth_image:
         handle_depth_image(parsers_snapshot, snapshot.depth_image.data, snapshot_dir)
     return parsers_snapshot.SerializeToString()

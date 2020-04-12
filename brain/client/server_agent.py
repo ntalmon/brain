@@ -36,4 +36,4 @@ class HTTPServerAgent:
         snapshot_msg = snapshot.SerializeToString()
         response = requests.post(request, snapshot_msg)
         if response.status_code != 200:
-            return None  # TODO: handle this case
+            raise Exception()  # TODO: handle this case

@@ -3,6 +3,7 @@ TODO: separate between base agent and http agent
 TODO: choose right agent according to url
 TODO: remove config usage
 TODO: make sure server is asynchronous and multithreaded
+TODO: resolve flask-class issue
 """
 import flask
 
@@ -30,24 +31,35 @@ class ClientAgent:
 
 class HTTPAgent(ClientAgent):
     app = flask.Flask(__name__)
+    instance = None  # TODO: this about better design for it
 
     def __init__(self):
         ClientAgent.__init__(self)
+        HTTPAgent.instance = self
 
-    @app.route('/config')
     def send_config(self):
         for config_handler in self.config_handlers:
             config_handler()
 
-    @app.route('/snapshot', methods=['GET', 'PORT'])
+    @staticmethod
+    @app.route('/config')
+    def _send_config():
+        return HTTPAgent.instance.send_config()
+
     def get_snapshot(self):
         if flask.request.method == 'GET':
             return  # TODO: handle this case
-        snapshot_msg = flask.request.form  # TODO: get exact post data
+        snapshot_msg = flask.request.data  # TODO: get exact post data
         snapshot = protocol_pb2.Snapshot()
         snapshot.ParseFromString(snapshot_msg)
         for snapshot_handler in self.snapshot_handlers:
             snapshot_handler(snapshot)
+        return ''  # TODO: handle this
+
+    @staticmethod
+    @app.route('/snapshot', methods=['GET', 'POST'])
+    def _get_snapshot():
+        return HTTPAgent.instance.get_snapshot()
 
     def run(self, host, port):
         self.app.run(host, port)

@@ -1,5 +1,5 @@
-FROM ubuntu:18.04
-ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get install -y python3.8 python3-pip
-ADD ../../requirements.txt /requirements.txt
-CMD ["python", "-m", "brain.server", "-h", "127.0.0.1", "-p", "8000", "rabbitmq://127.0.0.1:5672"]
+FROM python:3.8
+ADD brain /brain
+ADD requirements.txt /requirements.txt
+RUN pip install -r requirements.txt
+CMD ["python", "-m", "brain.server", "run-server", "rabbitmq://localhost:5672"]
