@@ -10,6 +10,22 @@ class DBAgent:
 
     def save_metadata(self, user_id, user_data, timestamp, snapshot_id):
         users = self.db['users']
+        # users.update_one(
+        #     {'_id': user_id},
+        #     {
+        #         '$setOnInsert': {
+        #             **user_data,
+        #             'snapshots': []
+        #         }
+        #     },
+        #     upsert=True
+        # )
+        # users.update_one(
+        #     {'_id': user_id},
+        #     {
+        #
+        #     }
+        # )
         if not users.find_one({'_id': user_id}):
             _dict = {'_id': user_id, 'snapshots': [{'_id': snapshot_id, 'timestamp': timestamp}]}
             _dict.update(user_data)
@@ -21,3 +37,6 @@ class DBAgent:
                     'datetime': timestamp
                 }}
             })
+
+    def save_data(self, topic, snapshot_id):
+        pass

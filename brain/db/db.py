@@ -3,7 +3,6 @@ from furl import furl
 from brain.db.mongodb import MongoDBAgent
 
 drivers = {
-
     'mongodb': MongoDBAgent
 }
 

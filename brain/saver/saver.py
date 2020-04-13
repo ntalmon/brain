@@ -14,21 +14,16 @@ class Saver:
     def __init__(self, url):
         self.agent = DBAgent(url)
 
-    def _save_metadata(self, data):
-        uuid, timestamp, user_data = data['uuid'], data['datetime'], data['user']
-        user_id = user_data.pop('user_id')
-        self.agent.save_metadata(user_id, user_data, timestamp, uuid)
-
-    def _save_result(self, topic, data):
-        uuid, timestamp, user, res = data['uuid'], data['datetime'], data['user'], data['res']
-        self.agent.save(topic, data)
-
     def save(self, topic, data):
         data = json.loads(data)  # TODO: parsers-saver protocol should be separated
         if topic == 'saver_metadata':
-            self._save_metadata(data)
+            uuid, timestamp, user_data = data['uuid'], data['datetime'], data['user']
+            user_id = user_data.pop('user_id')
+            self.agent.save_metadata(user_id, user_data, timestamp, uuid)
         else:
-            self._save_result(topic, data)
+            uuid, timestamp, user, res = data['uuid'], data['datetime'], data['user'], data['res']
+            user_id = user['user_id']
+            self.agent.save_data(topic, data)
 
 
 def run_saver(db_url, mq_url):

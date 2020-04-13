@@ -3,6 +3,7 @@ TODO: is it a good practice?
 TODO: handle network faults and exceptions
 TODO: create data dir
 TODO: mq to not auto ack
+TODO: client registration (optional)
 """
 import pathlib
 
