@@ -3,7 +3,7 @@ TODO: design decision, consume single queue and infer topic from data, or consum
 """
 import json
 
-from brain.db import DBAgent
+from .db_agent import DBAgent
 from brain.mq import MQAgent
 from brain.parsers import get_parsers
 
@@ -14,16 +14,11 @@ class Saver:
     def __init__(self, url):
         self.agent = DBAgent(url)
 
-    def save(self, topic, data):
+    def save(self, data):
         data = json.loads(data)  # TODO: parsers-saver protocol should be separated
-        if topic == 'saver_metadata':
-            uuid, timestamp, user_data = data['uuid'], data['datetime'], data['user']
-            user_id = user_data.pop('user_id')
-            self.agent.save_metadata(user_id, user_data, timestamp, uuid)
-        else:
-            uuid, timestamp, user, res = data['uuid'], data['datetime'], data['user'], data['res']
-            user_id = user['user_id']
-            self.agent.save_data(topic, data)
+        snapshot_id, timestamp, user_data, result = data['uuid'], data['datetime'], data['user'], data['result']
+        user_id = user_data.pop('user_id')
+        self.agent.save_result(user_id, user_data, snapshot_id, timestamp, result)
 
 
 def run_saver(db_url, mq_url):

@@ -1,7 +1,7 @@
 """
 TODO: (optionally) move server agent(s) to a sub-package
 """
-from brain.client.reader import MindReader
+from brain.client.mind import MindReader
 from brain.client.server_agent import HTTPServerAgent, construct_server_snapshot
 from brain.utils.config import client_config
 
