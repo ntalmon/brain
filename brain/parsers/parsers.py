@@ -9,7 +9,7 @@ from google.protobuf import json_format
 
 from brain import brain_path
 from brain.autogen import parsers_pb2
-from brain.mq import MQAgent
+from brain.parsers.mq_agent import get_mq_agent
 
 parsers = {}
 parsers_path = brain_path / 'parsers'
@@ -81,7 +81,7 @@ def invoke_parser(tag, url):
     if tag not in parsers:
         return  # TODO: handle this case
     _parser = parsers[tag]
-    mq_agent = MQAgent(url)
+    mq_agent = get_mq_agent(url)
 
     def callback(body):
         snapshot = parsers_pb2.Snapshot()

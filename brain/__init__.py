@@ -4,6 +4,7 @@ TODO: handle network faults and exceptions
 TODO: create data dir
 TODO: mq to not auto ack
 TODO: client registration (optional)
+TODO: add framework for agents drivers
 """
 import pathlib
 

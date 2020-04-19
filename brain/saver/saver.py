@@ -4,7 +4,7 @@ TODO: design decision, consume single queue and infer topic from data, or consum
 import json
 
 from .db_agent import DBAgent
-from brain.mq import MQAgent
+from .mq_agent import get_mq_agent
 from brain.parsers import get_parsers
 
 topics = get_parsers()
@@ -23,5 +23,5 @@ class Saver:
 
 def run_saver(db_url, mq_url):
     saver = Saver(db_url)
-    mq_agent = MQAgent(mq_url)
+    mq_agent = get_mq_agent(mq_url)
     mq_agent.multi_consume(saver.save, exchange='saver', queues=topics)  # TODO: should give saver.save directly?

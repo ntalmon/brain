@@ -8,7 +8,7 @@ class MongoDBAgent:
         self.users = self.db['users']
 
     def find_users(self):
-        users_list = self.users.find({}, {'username': 1})
+        users_list = self.users.find({}, {'_id': 1})
         return users_list  # TODO: handle case of empty result
 
     def find_user(self, user_id):
@@ -20,10 +20,14 @@ class MongoDBAgent:
         snapshots = self.users.find({'_id': user_id}, {'_id': 0, 'snapshots': 1})
         return snapshots  # TODO: handle case of empty result
 
-    def find_snapshot(self, user_id, snapshot_id):
-        # TODO: get result names only
+    def _find_snapshot(self, user_id, snapshot_id):
         snapshot = self.users.find({'_id': user_id}, {'snapshots': {'$elemMatch': {'_id': snapshot_id}}})
         return snapshot  # TODO: handle case of empty result
 
+    def find_snapshot(self, user_id, snapshot_id):
+        snapshot = self._find_snapshot(user_id, snapshot_id)
+        return snapshot['results'].keys()
+
     def find_snapshot_result(self, user_id, snapshot_id, result_name):
-        pass
+        snapshot = self._find_snapshot(user_id, snapshot_id)
+        return snapshot['results'][result_name]  # TODO: handle this case
