@@ -87,13 +87,6 @@ def invoke_parser(tag, url):
         snapshot = parsers_pb2.Snapshot()
         snapshot.ParseFromString(body)
         res = _parser(body)  # TODO: change res format if needed
-        # user_msg = {
-        #     'uuid': res['uuid'],
-        #     'datetime': res['datetime'],
-        #     'user': res['user']
-        # }
-        # user_msg = json.dumps(user_msg)
-        # mq_agent.publish(user_msg, queue=f'saver_metadata')  # TODO: find right exchange and queue
         parse_res = {
             'uuid': res['uuid'],
             'result': res['result']

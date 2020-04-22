@@ -1,10 +1,20 @@
 """
 TODO: use design pattern for client agents
 """
-import requests
-from furl import furl
-
 from brain.autogen import protocol_pb2
+from brain.client.server_agent.http_server_agent import HTTPServerAgent
+from brain.utils.config import client_config
+
+agents = {
+    'http': HTTPServerAgent
+}
+
+
+def get_server_agent(host, port):
+    protocol = client_config['server_protocol']
+    if protocol not in agents:
+        raise Exception(f'Invalid clint-server protocol given: {protocol}')
+    return agents[protocol](host, port)
 
 
 def copy_protobuf(item_a, item_b, attrs):
@@ -13,6 +23,7 @@ def copy_protobuf(item_a, item_b, attrs):
 
 
 def construct_server_snapshot(user, snapshot):
+    # TODO: should this method be in specific agent context?
     server_snapshot = protocol_pb2.Snapshot()
     copy_protobuf(server_snapshot, snapshot, ['datetime'])
     copy_protobuf(server_snapshot.user, user, ['user_id', 'username', 'birthday', 'gender'])
@@ -23,17 +34,3 @@ def construct_server_snapshot(user, snapshot):
     server_snapshot.depth_image.data.extend(snapshot.depth_image.data)
     copy_protobuf(server_snapshot.feelings, snapshot.feelings, ['hunger', 'thirst', 'exhaustion', 'happiness'])
     return server_snapshot
-
-
-class HTTPServerAgent:
-    def __init__(self, host, port):
-        self.host = host
-        self.port = port
-        self.url = furl(scheme='http', host=host, port=port)
-
-    def send_snapshot(self, snapshot):
-        request = self.url / 'snapshot'
-        snapshot_msg = snapshot.SerializeToString()
-        response = requests.post(request, snapshot_msg)
-        if response.status_code != 200:
-            raise Exception()  # TODO: handle this case

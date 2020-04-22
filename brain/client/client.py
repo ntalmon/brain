@@ -1,20 +1,5 @@
-"""
-TODO: (optionally) move server agent(s) to a sub-package
-"""
 from brain.client.mind import MindReader
-from brain.client.server_agent import HTTPServerAgent, construct_server_snapshot
-from brain.utils.config import client_config
-
-agents = {
-    'http': HTTPServerAgent
-}
-
-
-def get_server_agent(host, port):
-    protocol = client_config['server_protocol']
-    if protocol not in agents:
-        raise Exception(f'Invalid clint-server protocol given: {protocol}')
-    return agents[protocol](host, port)
+from brain.client.server_agent import get_server_agent, construct_server_snapshot
 
 
 def upload_sample(host, port, path):
