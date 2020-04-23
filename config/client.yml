@@ -1,2 +1,3 @@
+debug: false
 reader: mind
 server_protocol: http

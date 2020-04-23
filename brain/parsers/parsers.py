@@ -92,6 +92,6 @@ def invoke_parser(tag, url):
             'result': res['result']
         }
         parse_res_msg = json.dumps(parse_res)
-        mq_agent.publish(parse_res_msg, queue=f'saver_{tag}')  # TODO: find right exchange and queue
+        mq_agent.publish_result(parse_res_msg, tag)
 
-    mq_agent.consume(callback, exchange='snapshot', queue=tag)
+    mq_agent.consume_snapshots(callback, tag)

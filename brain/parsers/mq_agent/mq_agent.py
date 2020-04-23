@@ -9,4 +9,6 @@ agents = {
 
 def get_mq_agent(url):
     scheme = furl(url).scheme
-    return agents[scheme]  # TODO: handle this case
+    if scheme not in agents:
+        return  # TODO: handle this case
+    return agents[scheme](url)

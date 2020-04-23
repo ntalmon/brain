@@ -1,3 +1,5 @@
+import gzip
+
 import pytest
 
 import brain.client
@@ -19,6 +21,14 @@ class MockAgent:
 
 
 @pytest.fixture
+def mind_file(tmp_path):
+    path = tmp_path / 'sample.mind.gz'
+    with gzip.open(str(path), 'w') as file:
+        pass  # TODO: complete it
+    return tmp_path
+
+
+@pytest.fixture
 def mock_agent(monkeypatch):
     monkeypatch.setattr(brain.client.client, 'get_server_agent', MockAgent)
 
@@ -34,5 +44,5 @@ def test_upload_sample(mock_agent, sample_path):
     assert MockAgent.instance.num_snapshots == records_in_sample, 'Unexpected number of calls to send_snapshot'
 
 
-def test_reader():
+def test_reader(mind_file):
     assert False
