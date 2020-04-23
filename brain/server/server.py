@@ -23,7 +23,7 @@ def construct_publish(mq_url):
     mq_agent = get_mq_agent(mq_url)
 
     def publish(snapshot):
-        mq_agent.publish(snapshot, exchange='snapshot')
+        mq_agent.publish_snapshot(snapshot)
 
     return publish
 
