@@ -5,5 +5,6 @@ __pycache__/
 .coverage
 docs/build/
 data/
+tmp_script/
 
 *_pb2.py

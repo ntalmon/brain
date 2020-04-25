@@ -1,7 +1,7 @@
 from brain.utils.mq.rabbitmq import RabbitMQ
 
 
-class RabbitMQAgent:
+class MQAgent:
     def __init__(self, url):
         self.utils = RabbitMQ(url)
 

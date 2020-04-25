@@ -9,7 +9,7 @@ from google.protobuf import json_format
 
 from brain import brain_path
 from brain.autogen import parsers_pb2
-from brain.parsers.mq_agent import get_mq_agent
+from .mq_agent import MQAgent
 
 parsers = {}
 parsers_path = brain_path / 'parsers'
@@ -63,25 +63,25 @@ class Context:
         pass
 
 
-def parser(tag):
+def parser(topic):
     def decorator(f):
-        parsers[tag] = f
+        parsers[topic] = f
         return f
 
     return decorator
 
 
-def run_parser(tag, data):  # TODO: rename tag variable
-    if tag not in parsers:
+def run_parser(topic, data):  # TODO: rename tag variable
+    if topic not in parsers:
         return None  # TODO: handle this case
-    return parsers[tag](data)
+    return parsers[topic](data)
 
 
-def invoke_parser(tag, url):
-    if tag not in parsers:
+def invoke_parser(topic, url):
+    if topic not in parsers:
         return  # TODO: handle this case
-    _parser = parsers[tag]
-    mq_agent = get_mq_agent(url)
+    _parser = parsers[topic]
+    mq_agent = MQAgent(url)
 
     def callback(body):
         snapshot = parsers_pb2.Snapshot()
@@ -92,6 +92,6 @@ def invoke_parser(tag, url):
             'result': res['result']
         }
         parse_res_msg = json.dumps(parse_res)
-        mq_agent.publish_result(parse_res_msg, tag)
+        mq_agent.publish_result(parse_res_msg, topic)
 
-    mq_agent.consume_snapshots(callback, tag)
+    mq_agent.consume_snapshots(callback, topic)

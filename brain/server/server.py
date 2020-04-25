@@ -1,7 +1,7 @@
 import threading
 
-from .mq_agent import get_mq_agent
 from brain.server.client_agent import HTTPAgent
+from brain.server.mq_agent import MQAgent
 from brain.server.parsers_agent import construct_parsers_message
 
 client_agents = {
@@ -20,7 +20,7 @@ client_agent = get_client_agent()
 
 
 def construct_publish(mq_url):
-    mq_agent = get_mq_agent(mq_url)
+    mq_agent = MQAgent(mq_url)
 
     def publish(snapshot):
         mq_agent.publish_snapshot(snapshot)

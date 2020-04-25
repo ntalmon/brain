@@ -7,11 +7,17 @@ HOST = 'localhost'
 PORT = 8000
 
 
-def publish(message):
-    print(message)
+def test_run_server():
+    assert False
 
 
-def test_run_server(capsys):
-    _run_server = partial(server.run_server, HOST, PORT, publish)
-    thread = threading.Thread(target=_run_server)
-    thread.start()
+def test_client_agent():
+    assert False
+
+
+def test_mq_agent():
+    assert False
+
+
+def test_parsers_agent():
+    assert False
