@@ -87,11 +87,7 @@ def invoke_parser(topic, url):
         snapshot = parsers_pb2.Snapshot()
         snapshot.ParseFromString(body)
         res = _parser(body)  # TODO: change res format if needed
-        parse_res = {
-            'uuid': res['uuid'],
-            'result': res['result']
-        }
-        parse_res_msg = json.dumps(parse_res)
+        parse_res_msg = json.dumps(res)
         mq_agent.publish_result(parse_res_msg, topic)
 
     mq_agent.consume_snapshots(callback, topic)

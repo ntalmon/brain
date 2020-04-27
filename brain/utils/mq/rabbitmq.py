@@ -52,7 +52,7 @@ class RabbitMQ:
 
         for queue in queue_names:
             def wrapper(channel, method, properties, body):
-                res = callback(queue, body)
+                res = callback(body)
                 channel.basic_ack(delivery_tag=method.delivery_tag)
                 return res
 
