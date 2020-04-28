@@ -6,7 +6,7 @@ import shutil
 import pytest
 import requests
 
-import brain.web as web
+# import brain.web as web
 
 _WEBSERVER_ADDRESS = '127.0.0.1', 8000
 _WEBSERVER_URL = 'http://localhost:8000'

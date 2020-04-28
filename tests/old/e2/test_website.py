@@ -5,8 +5,8 @@ import time
 import pytest
 import requests
 
-import brain.web as web
-from brain.website import Website
+# import brain.web as web
+# from brain.website import Website
 
 _ADDRESS = '127.0.0.1', 8000
 _URL = f'http://{_ADDRESS[0]}:{_ADDRESS[1]}'

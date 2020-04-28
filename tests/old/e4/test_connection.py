@@ -3,7 +3,7 @@ import time
 
 import pytest
 
-from brain.utils.connection import Connection
+# from brain.utils.connection import Connection
 
 _PORT = 1234
 
