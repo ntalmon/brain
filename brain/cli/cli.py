@@ -6,11 +6,6 @@ def cli():
     pass
 
 
-@cli.command('get-users')
-def cli_get_users():
-    pass
-
-
 @cli.command('get-user')
 @click.argument('user_id', type=click.INT)
 def cli_get_users(user_id):
