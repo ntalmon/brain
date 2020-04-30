@@ -1,6 +1,7 @@
 alabaster==0.7.12
 astroid==2.3.3
 attrs==19.3.0
+autopep8==1.5.2
 Babel==2.8.0
 certifi==2019.11.28
 chardet==3.0.4
@@ -12,6 +13,7 @@ docutils==0.16
 entrypoints==0.3
 flake8==3.7.9
 Flask==1.1.2
+Flask-Cors==3.0.8
 furl==2.1.0
 grpcio==1.28.1
 grpcio-tools==1.28.1

@@ -1,3 +1,5 @@
+import json
+
 import pymongo
 
 
@@ -8,8 +10,11 @@ class MongoDBAgent:
         self.users = self.db['users']
 
     def find_users(self):
-        users_list = self.users.find({}, {'_id': 1})
-        return users_list  # TODO: handle case of empty result
+        users_list = self.users.find({}, {'_id': 1, 'username': 1})
+        users_list = list(users_list)  # TODO: handle case of empty result
+        for user in users_list:
+            user['user_id'] = user.pop('_id')
+        return users_list
 
     def find_user(self, user_id):
         self.users.distinct()
