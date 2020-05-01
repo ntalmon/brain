@@ -17,8 +17,10 @@ class MongoDBAgent:
         return users_list
 
     def find_user(self, user_id):
-        self.users.distinct()
-        user = self.users.find_one({'_id': user_id})
+        # TODO: fix this bug, user_id shouldn't be str!
+        user = self.users.find_one({'_id': str(user_id)}, {'_id': 1, 'username': 1, 'birthday': 1, 'gender': 1})
+        if user:
+            user['user_id'] = user.pop('_id')
         return user  # TODO: handle case of empty result
 
     def find_snapshots(self, user_id):

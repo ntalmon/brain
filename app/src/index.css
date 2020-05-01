@@ -1,0 +1,56 @@
+/* .userImage {
+  display: inline;
+  background-color: aqua;
+  padding: 8px;
+  margin-right: 2px; */
+/* } */
+
+.userImage {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: #512da8;
+  font-size: 35px;
+  color: #fff;
+  text-align: center;
+  line-height: 150px;
+  margin: 20px 0;
+  display: inline-block;
+}
+
+body {
+  background: #eee;
+}
+
+.profile {
+  height: 100%; /* Full-height: remove this if you want "auto" height */
+  width: 20%; /* Set the width of the sidebar */
+  position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+  z-index: 1; /* Stay on top */
+  top: 0; /* Stay at the top */
+  left: 0;
+  background-color: #f8f9fa; /* Black */
+  overflow-x: hidden; /* Disable horizontal scroll */
+  padding-top: 20px;
+  text-align: center;
+}
+
+.userDetail {
+  display: block;
+}
+
+.posts {
+  height: 100%;
+  width: 80%;
+  z-index: 1;
+  position: fixed;
+  top: 0;
+  right: 0;
+  overflow-x: hidden;
+  /* left: 20%; */
+  /* height:  */
+}
+
+/* .userNameText { */
+  /* display: block; */
+/* } */
