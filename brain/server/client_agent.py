@@ -11,15 +11,10 @@ from brain.autogen import protocol_pb2
 
 
 class ClientAgent:
-    config_handlers = []
     snapshot_handlers = []
 
     def __init__(self):
         self.publish = None
-
-    @classmethod
-    def config_handler(cls, f):
-        cls.config_handlers.append(f)
 
     @classmethod
     def snapshot_handler(cls, f):
@@ -36,15 +31,6 @@ class HTTPAgent(ClientAgent):
     def __init__(self):
         ClientAgent.__init__(self)
         HTTPAgent.instance = self
-
-    def send_config(self):
-        for config_handler in self.config_handlers:
-            config_handler()
-
-    @staticmethod
-    @app.route('/config')
-    def _send_config():
-        return HTTPAgent.instance.send_config()
 
     def get_snapshot(self):
         if flask.request.method == 'GET':

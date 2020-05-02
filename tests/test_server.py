@@ -1,23 +1,31 @@
+import multiprocessing
 import threading
 from functools import partial
 
-from brain import server
+import pytest
+
+from brain.server import run_server
 
 HOST = 'localhost'
 PORT = 8000
 
 
-def test_run_server():
-    assert False
+@pytest.fixture
+def run_server_in_background():
+    parent, child = multiprocessing.Pipe()
+
+    def _run_server():
+        run_server(HOST, PORT, None)
+
+    process = multiprocessing.Process(target=_run_server)
+    process.start()
+    parent.recv()
+    try:
+        yield lambda: parent.recv()
+    finally:
+        process.terminate()
+        process.join()
 
 
-def test_client_agent():
-    assert False
-
-
-def test_mq_agent():
-    assert False
-
-
-def test_parsers_agent():
+def test_server():
     assert False

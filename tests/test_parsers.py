@@ -1,3 +1,4 @@
+import json
 import os
 
 import pytest
@@ -7,7 +8,7 @@ from brain.parsers import run_parser, invoke_parser
 from tests.data_generators import gen_server_snapshot
 from tests.utils import protobuf2dict
 
-mq_url = 'rabbitmq://127.0.0.1:5672'
+MQ_URL = 'rabbitmq://127.0.0.1:5672'
 
 
 @pytest.fixture
@@ -23,51 +24,70 @@ def verify_result_header(result, snapshot):
     assert result['user'] == protobuf2dict(snapshot.user)
 
 
+def verify_pose(result, snapshot):
+    assert result == protobuf2dict(snapshot.pose)
+
+
+def verify_color_image(result, snapshot):
+    # TODO: read image from file and compare
+    assert os.path.isfile(result)
+
+
+def verify_depth_image(result, snapshot):
+    # TODO: read image from file and compare
+    assert os.path.isfile(result)
+
+
+def verify_feelings(result, snapshot):
+    assert result == protobuf2dict(snapshot.feelings)
+
+
 def test_pose(parsers_snapshot):
     snapshot, data = parsers_snapshot
     result = run_parser('pose', data)
     verify_result_header(result, snapshot)
-    res = result['result']
-    assert res == protobuf2dict(snapshot.pose)
+    verify_pose(result['result'], snapshot)
 
 
 def test_color_image(parsers_snapshot):
+    # TODO: read image from file and compare
     snapshot, data = parsers_snapshot
     result = run_parser('color-image', data)
     verify_result_header(result, snapshot)
-    res = result['result']
-    assert os.path.isfile(res)
+    verify_color_image(result['result'], snapshot)
 
 
 def test_depth_image(parsers_snapshot):
+    # TODO: read image from file and compare
     snapshot, data = parsers_snapshot
     result = run_parser('depth-image', data)
     verify_result_header(result, snapshot)
-    res = result['result']
-    assert os.path.isfile(res)
+    verify_color_image(result['result'], snapshot)
 
 
 def test_feelings(parsers_snapshot):
     snapshot, data = parsers_snapshot
     result = run_parser('feelings', data)
     verify_result_header(result, snapshot)
-    res = result['result']
-    assert res == protobuf2dict(snapshot.feelings)
+    verify_feelings(result['result'], snapshot)
 
 
 class MockMQAgent:
+    snapshot = None
+    result = None
+
     def __init__(self, url):
         pass
 
     def consume_snapshots(self, callback, topic):
-        pass
+        callback(self.__class__.snapshot)
 
     def publish_result(self, result, topic):
-        pass
+        self.__class__.result = result
 
     @classmethod
     def clear(cls):
-        pass
+        cls.snapshot = cls.result = None
 
 
 @pytest.fixture
@@ -76,9 +96,23 @@ def mock_mq_agent(monkeypatch):
     MockMQAgent.clear()
 
 
-def test_invoke_parser(mock_mq_agent):
-    invoke_parser('pose', 'rabbitmq://127.0.0.1:5672')
-    assert False
+@pytest.mark.parametrize('parser', ['pose', 'color-image', 'depth-image', 'feelings'])
+def test_invoke_parser(parser, mock_mq_agent, parsers_snapshot):
+    snapshot, data = parsers_snapshot
+    MockMQAgent.snapshot = data
+    invoke_parser(parser, MQ_URL)
+    result = MockMQAgent.result
+    result = json.loads(result)
+    verify_result_header(result, snapshot)
+    result = result['result']
+    if parser == 'pose':
+        verify_pose(result, snapshot)
+    elif parser == 'color-image':
+        verify_color_image(result, snapshot)
+    elif parser == 'depth-image':
+        verify_depth_image(result, snapshot)
+    else:
+        verify_feelings(result, snapshot)
 
 
 def test_mq_agent():
