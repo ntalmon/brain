@@ -33,8 +33,8 @@ class DBAgent:
 
     def save_result(self, topic, user_id, user_data, snapshot_id, timestamp, result):
         # TODO: handle return value
-        snapshot_entry = {'_id': snapshot_id, 'timestamp': timestamp, 'results': {topic: result}}
-        user_entry = {'_id': user_id, **user_data, 'snapshots': [snapshot_entry]}
+        snapshot_entry = {'_id': snapshot_id, 'uuid': snapshot_id, 'datetime': timestamp, 'results': {topic: result}}
+        user_entry = {'_id': user_id, 'user_id': user_id, **user_data, 'snapshots': [snapshot_entry]}
         if self._create_user_if_not_exist(user_id, user_entry):
             return
         if self._create_snapshot_if_not_exist(user_id, snapshot_id, snapshot_entry):

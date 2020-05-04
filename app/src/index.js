@@ -6,9 +6,32 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 var API_ROOT = "http://127.0.0.1:5000";
 
-
 class Post extends React.Component {
-
+  constructor(props) {
+    super(props);
+    this.state = {
+      userId: props.userId,
+      snapshotId: props.snapshotId,
+      datetime: props.datetime,
+      results: null,
+    };
+  }
+  render() {
+    return <span>{this.state.results}</span>;
+  }
+  componentDidMount() {
+    fetch(
+      API_ROOT + "/users/" + this.state.userId + "/snapshots/" + this.state.snapshotId
+    ).then(
+      function (response) {
+        response.json().then(
+          function (data) {
+            this.setState(data);
+          }.bind(this)
+        );
+      }.bind(this)
+    );
+  }
 }
 
 class Posts extends React.Component {
@@ -17,13 +40,21 @@ class Posts extends React.Component {
     this.state = { userId: props.userId, snapshots: [] };
   }
   render() {
-    // var posts = [];
-    // this.state.snapshots.forEach(function(snapshot) {
-      // posts.push(<Post snapshotId={snapshot.})
-    // });
-    return (
-      <span></span>
+    var posts = [];
+    this.state.snapshots.forEach(
+      function (snapshot) {
+        posts.push(
+          <div className="post">
+            <Post
+              userId={this.state.userId}
+              snapshotId={snapshot.uuid}
+              datetime={snapshot.datetime}
+            />
+          </div>
+        );
+      }.bind(this)
     );
+    return <div>{posts}</div>;
   }
   componentDidMount() {
     fetch(API_ROOT + "/users/" + this.state.userId + "/snapshots").then(
