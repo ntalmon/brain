@@ -14,22 +14,26 @@ def get_users():
 
 @app.route('/users/<int:user_id>')
 def get_user(user_id):
-    return app.agent.find_user(user_id)
+    res = app.agent.find_user(user_id)
+    return flask.jsonify(res)
 
 
 @app.route('/users/<int:user_id>/snapshots')
 def get_snapshots(user_id):
-    return app.agent.find_snapshots(user_id)
+    res = app.agent.find_snapshots(user_id)
+    return flask.jsonify(res)
 
 
 @app.route('/users/<int:user_id>/snapshots/<int:snapshot_id>')
 def get_snapshot(user_id, snapshot_id):
-    return app.agent.find_snapshot(user_id, snapshot_id)
+    res = app.agent.find_snapshot(user_id, snapshot_id)
+    return flask.jsonify(res)
 
 
 @app.route('/users/<int:user_id>/snapshots/<int:snapshot_id>/<result_name>')
 def get_snapshot_result(user_id, snapshot_id, result_name):
-    return app.agent.find_snapshot_result(user_id, snapshot_id, result_name)
+    res = app.agent.find_snapshot_result(user_id, snapshot_id, result_name)
+    return flask.jsonify(res)
 
 
 @app.route('/users/<int:user_id>/snapshots/<int:snapshot_id>/<result_name>/data')

@@ -6,6 +6,38 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 var API_ROOT = "http://127.0.0.1:5000";
 
+
+class Post extends React.Component {
+
+}
+
+class Posts extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { userId: props.userId, snapshots: [] };
+  }
+  render() {
+    // var posts = [];
+    // this.state.snapshots.forEach(function(snapshot) {
+      // posts.push(<Post snapshotId={snapshot.})
+    // });
+    return (
+      <span></span>
+    );
+  }
+  componentDidMount() {
+    fetch(API_ROOT + "/users/" + this.state.userId + "/snapshots").then(
+      function (response) {
+        response.json().then(
+          function (data) {
+            this.setState({ snapshots: data });
+          }.bind(this)
+        );
+      }.bind(this)
+    );
+  }
+}
+
 class User extends React.Component {
   constructor(props) {
     super(props);
@@ -26,6 +58,7 @@ class User extends React.Component {
           </div>
         </div>
         <div className="posts">
+          <Posts userId={this.state.userId} />
         </div>
       </div>
     );

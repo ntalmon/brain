@@ -24,10 +24,13 @@ class MongoDBAgent:
         return user  # TODO: handle case of empty result
 
     def find_snapshots(self, user_id):
-        snapshots = self.users.find({'_id': user_id}, {'_id': 0, 'snapshots': 1})
-        return snapshots  # TODO: handle case of empty result
+        # TODO: return input in correct format (maybe change the _id)
+        user_id = str(user_id)  # TODO: temporary workaround!!! should solve it
+        snapshots = self.users.find_one({'_id': user_id}, {'_id': 0, 'snapshots._id': 1, 'snapshots.timestamp': 1})
+        return snapshots['snapshots']  # TODO: handle case of empty result
 
     def _find_snapshot(self, user_id, snapshot_id):
+        # TODO: return input in correct format (maybe change the _id)
         snapshot = self.users.find({'_id': user_id}, {'snapshots': {'$elemMatch': {'_id': snapshot_id}}})
         return snapshot  # TODO: handle case of empty result
 
