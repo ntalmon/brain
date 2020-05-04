@@ -1,8 +1,12 @@
 language: python
 python:
   - "3.8"
+before_install:
+  - sudo apt-get -y protobuf-compiler
 install:
   - pip install -r requirements.txt
+before_script:
+  - make
 script:
   - pytest --cov-report term --cov=brain
 after_success:
