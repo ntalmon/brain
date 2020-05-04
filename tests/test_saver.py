@@ -10,7 +10,6 @@ def saver():
 
 
 def test_save(saver):
-    saver.save()
     assert False
 
 

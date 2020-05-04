@@ -98,8 +98,8 @@ def mock_mq_agent(monkeypatch):
 
 
 @pytest.mark.parametrize('parser', ['pose', 'color-image', 'depth-image', 'feelings'])
-def test_invoke_parser(parser, mock_mq_agent, parsers_snapshot):
-    snapshot, data = parsers_snapshot
+def test_invoke_parser(parser, mock_mq_agent, random_snapshot):
+    snapshot, data = random_snapshot
     MockMQAgent.snapshot = data
     invoke_parser(parser, MQ_URL)
     result = MockMQAgent.result
