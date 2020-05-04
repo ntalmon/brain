@@ -3,7 +3,7 @@ import random
 
 import numpy as np
 
-from brain.autogen import reader_pb2, parsers_pb2
+from brain.autogen import reader_pb2
 
 first_names = ('John', 'Andy', 'Joe')
 last_names = ('Johnson', 'Smith', 'Williams')
@@ -32,7 +32,7 @@ def gen_color_image(color_image, fmt, tmp_path=None):
     color_image.width = random.randint(5, 10)
     color_image.height = random.randint(5, 10)
     data = os.urandom(color_image.width * color_image.height * 3)
-    if fmt == 'file':
+    if fmt in ['reader', 'protocol']:
         color_image.data = data
     else:
         file_path = str(tmp_path / 'color_image.raw')
@@ -46,7 +46,7 @@ def gen_depth_image(depth_image, fmt, tmp_path=None):
     depth_image.width = random.randint(5, 10)
     depth_image.height = random.randint(5, 10)
     data = [float(random.uniform(-100, 100)) for i in range(depth_image.width * depth_image.height)]
-    if fmt == 'file':
+    if fmt in ['reader', 'protocol']:
         depth_image.data[:] = data
     else:
         array = np.array(data).astype(np.float)
@@ -64,9 +64,12 @@ def gen_feelings(feelings):
 
 
 def gen_snapshot(snapshot, fmt, tmp_path=None):
+    if fmt == 'parser':
+        gen_user(snapshot.user)
     snapshot.datetime = random.getrandbits(64)
     gen_pose(snapshot.pose)
     gen_color_image(snapshot.color_image, fmt, tmp_path=tmp_path)
     gen_depth_image(snapshot.depth_image, fmt, tmp_path=tmp_path)
     gen_feelings(snapshot.feelings)
+    snapshot.ParseFromString(snapshot.SerializeToString())  # "align" to protobuf formats
     return snapshot

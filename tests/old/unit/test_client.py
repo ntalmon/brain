@@ -4,11 +4,11 @@ import struct
 import pytest
 
 import brain.client.client
-from brain.autogen import protocol_pb2
+from brain.autogen import protocol_pb2, reader_pb2
 from brain.client import upload_sample
 from brain.client.reader import Reader
 from brain.client.server_agent import ServerAgent
-from tests.data_generators import gen_client_user, gen_client_snapshot
+from tests.data_generators import gen_user, gen_snapshot
 from tests.utils import cmp_protobuf
 
 HOST = '127.0.0.1'
@@ -24,7 +24,7 @@ class MockReader:
         self._count = 0
 
     def load(self):
-        user = gen_client_user()
+        user = gen_user(reader_pb2.User())
         self.__class__._user = user
         return user
 
@@ -35,7 +35,7 @@ class MockReader:
         self._count += 1
         if self._count > 5:
             raise StopIteration()
-        snapshot = gen_client_snapshot()
+        snapshot = gen_snapshot(reader_pb2.Snapshot(), 'reader')
         self.__class__._snapshots.append(snapshot)
         return snapshot
 
@@ -89,8 +89,8 @@ def test_upload_sample(mock_reader, mock_server_agent, tmp_path):
 
 @pytest.fixture
 def reader_sample(tmp_path):
-    user = gen_client_user()
-    snapshots = [gen_client_snapshot() for _ in range(5)]
+    user = gen_user(reader_pb2.User())
+    snapshots = [gen_snapshot(reader_pb2.Snapshot(), 'reader') for _ in range(5)]
     file_path = tmp_path / 'sample.mind.gz'
     with gzip.open(str(file_path), 'wb') as writer:
         user_msg = user.SerializeToString()
@@ -132,8 +132,8 @@ def mock_post(monkeypatch):
 
 @pytest.fixture
 def server_agent_sample():
-    user = gen_client_user()
-    snapshot = gen_client_snapshot()
+    user = gen_user(reader_pb2.User())
+    snapshot = gen_snapshot(reader_pb2.Snapshot(), 'reader')
     return user, snapshot
 
 
