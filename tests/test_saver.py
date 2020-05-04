@@ -1,4 +1,16 @@
-def test_save():
+import pytest
+from brain.saver import Saver
+
+DB_URL = 'mongodb://127.0.0.1:27017'
+
+
+@pytest.fixture
+def saver():
+    return Saver(DB_URL)
+
+
+def test_save(saver):
+    saver.save()
     assert False
 
 

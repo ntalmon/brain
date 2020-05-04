@@ -24,19 +24,19 @@ class DBAgent:
         )
         return bool(res.matched_count)
 
-    def _add_result_to_snapshot(self, user_id, snapshot_id, result_entry):
+    def _add_result_to_snapshot(self, topic, user_id, snapshot_id, result_entry):
         # TODO: handle update_one return value
         self.users.update_one(
             {'_id': user_id, 'snapshots._id': snapshot_id},
-            {'$push': {'snapshots.$.results': result_entry}}
+            {'$set': {f'snapshots.$.results.{topic}': result_entry}}
         )
 
-    def save_result(self, user_id, user_data, snapshot_id, timestamp, result):
+    def save_result(self, topic, user_id, user_data, snapshot_id, timestamp, result):
         # TODO: handle return value
-        snapshot_entry = {'_id': snapshot_id, 'timestamp': timestamp, 'results': [result]}
+        snapshot_entry = {'_id': snapshot_id, 'timestamp': timestamp, 'results': {topic: result}}
         user_entry = {'_id': user_id, **user_data, 'snapshots': [snapshot_entry]}
         if self._create_user_if_not_exist(user_id, user_entry):
             return
         if self._create_snapshot_if_not_exist(user_id, snapshot_id, snapshot_entry):
             return
-        self._add_result_to_snapshot(user_id, snapshot_id, result)
+        self._add_result_to_snapshot(topic, user_id, snapshot_id, result)

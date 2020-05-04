@@ -19,3 +19,21 @@ def cmp_protobuf(x, y):
     dict_x = protobuf2dict(x)
     dict_y = protobuf2dict(y)
     return dict_x == dict_y
+
+
+def json2pb(js_dict, pb_obj, serialize=False):
+    def recursion(_js_dict, _pb_obj):
+        for key, value in _js_dict.items():
+            if isinstance(value, dict):
+                recursion(value, getattr(_pb_obj, key))
+            elif isinstance(value, list):
+                getattr(_pb_obj, key)[:] = value
+            else:
+                setattr(_pb_obj, key, value)
+
+    recursion(js_dict, pb_obj)
+    pb_str = pb_obj.SerializeToString()
+    if serialize:
+        return pb_str
+    pb_obj.ParseFromString(pb_str)
+    return pb_obj

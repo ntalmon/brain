@@ -1,12 +1,15 @@
 import json
 import os
 
+import numpy as np
 import pytest
 
 import brain.parsers
+from brain.autogen import parsers_pb2
 from brain.parsers import run_parser, invoke_parser
 from tests.data_generators import gen_server_snapshot
-from tests.utils import protobuf2dict
+from tests.sample_generator import gen_random_user, gen_random_snapshot
+from tests.utils import protobuf2dict, json2pb
 
 MQ_URL = 'rabbitmq://127.0.0.1:5672'
 
@@ -121,3 +124,25 @@ def test_mq_agent():
 
 def test_cli():
     assert False
+
+
+@pytest.fixture
+def random_snapshot(tmp_path):
+    user = gen_random_user()
+    snapshot = gen_random_snapshot()
+    snapshot['user'] = user
+    data = snapshot['color_image'].pop('data')
+    with open(str(tmp_path / 'color_image.raw'), 'wb') as file:
+        file.write(data)
+    snapshot['color_image']['path'] = str(tmp_path / 'color_image.raw')
+    data = snapshot['depth_image'].pop('data')
+    array = np.array(data).astype(np.float)
+    np.save(str(tmp_path / 'depth_image'), array)
+    snapshot['depth_image']['path'] = str(tmp_path / 'depth_image.npy')
+    snapshot_obj = parsers_pb2.Snapshot()
+    data = json2pb(snapshot, snapshot_obj, serialize=True)
+    return snapshot, data
+
+
+def test_all_parsers(random_snapshot):
+    pass
