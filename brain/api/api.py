@@ -40,7 +40,7 @@ def get_snapshot_result(user_id, snapshot_id, result_name):
 def get_snapshot_result_data(user_id, snapshot_id, result_name):
     # TODO: handle case where result is text only
     res = app.agent.find_snapshot_result(user_id, snapshot_id, result_name)
-    file_path = res  # TODO: check file indeed exists
+    file_path = res['path']  # TODO: check file indeed exists
     return flask.send_file(file_path, mimetype='image/jpeg', attachment_filename=f'{result_name}.jpg')
 
 

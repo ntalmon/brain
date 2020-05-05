@@ -11,10 +11,10 @@ def parse_depth_image(data):  # TODO: after writing parsed file, delete raw file
         return  # TODO: handle this case
     width, height, path = depth_image['width'], depth_image['height'], depth_image['path']
     new_path = str(pathlib.Path(path).parent / 'depth_image.jpg')  # TODO: is it OK to save in the saver directory?
-    array = np.load(path).reshape((width, height))
+    array = np.load(path).reshape((height, width))
     plt.imshow(array)
     plt.savefig(new_path)
-    return new_path
+    return {'path': new_path}
 
 
 parse_depth_image.field = 'depth-image'

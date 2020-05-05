@@ -6,6 +6,42 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 var API_ROOT = "http://127.0.0.1:5000";
 
+class Result extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { resultValue: null };
+  }
+  render() {
+    switch (this.props.result) {
+      case "pose":
+        return <div>{JSON.stringify(this.state.resultValue)}</div>;
+      case "color-image":
+      case "depth-image":
+        return (
+          <img
+            src={this.props.url + "/" + this.props.result + "/data"}
+            width="500"
+            height="500"
+          />
+        );
+      case "feelings":
+        return <div>{JSON.stringify(this.state.resultValue)}</div>;
+    }
+    return <div></div>;
+  }
+  componentDidMount() {
+    fetch(this.props.url + "/" + this.props.result).then(
+      function (response) {
+        response.json().then(
+          function (data) {
+            this.setState({ resultValue: data });
+          }.bind(this)
+        );
+      }.bind(this)
+    );
+  }
+}
+
 class Post extends React.Component {
   constructor(props) {
     super(props);
@@ -13,20 +49,45 @@ class Post extends React.Component {
       userId: props.userId,
       snapshotId: props.snapshotId,
       datetime: props.datetime,
-      results: null,
+      results: [],
     };
   }
   render() {
-    return <span>{this.state.results}</span>;
+    let results = [];
+    this.state.results.forEach(
+      function (result) {
+        let url =
+          API_ROOT +
+          "/users/" +
+          this.props.userId +
+          "/snapshots/" +
+          this.props.snapshotId;
+        let collapse = <Result url={url} result={result} />;
+        results.push(collapse);
+      }.bind(this)
+    );
+    let date = new Date(1000 * this.props.datetime);
+    return (
+      <div>
+        <h1>#{this.props.snapshotId}</h1>
+        <h2>{this.props.datetime}</h2>
+        {results}
+      </div>
+    );
   }
+
   componentDidMount() {
     fetch(
-      API_ROOT + "/users/" + this.state.userId + "/snapshots/" + this.state.snapshotId
+      API_ROOT +
+        "/users/" +
+        this.state.userId +
+        "/snapshots/" +
+        this.state.snapshotId
     ).then(
       function (response) {
         response.json().then(
           function (data) {
-            this.setState(data);
+            this.setState({ results: data.results });
           }.bind(this)
         );
       }.bind(this)
@@ -46,7 +107,7 @@ class Posts extends React.Component {
         posts.push(
           <div className="post">
             <Post
-              userId={this.state.userId}
+              userId={this.props.userId}
               snapshotId={snapshot.uuid}
               datetime={snapshot.datetime}
             />
@@ -72,7 +133,7 @@ class Posts extends React.Component {
 class User extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { userId: props.userId, initialis: "" };
+    this.state = { initialis: "" };
   }
 
   render() {
@@ -83,27 +144,26 @@ class User extends React.Component {
           {userImage}
           <h2 className="userNameText">{this.state.userName}</h2>
           <div>
-            <span className="userDetail">User ID: {this.state.userId}</span>
+            <span className="userDetail">User ID: {this.props.userId}</span>
             <span className="userDetail">Birthday: {this.state.birthday}</span>
             <span className="userDetail">Gender: {this.state.gender}</span>
           </div>
         </div>
         <div className="posts">
-          <Posts userId={this.state.userId} />
+          <Posts userId={this.props.userId} />
         </div>
       </div>
     );
   }
 
   componentDidMount() {
-    fetch(API_ROOT + "/users/" + this.state.userId).then(
+    fetch(API_ROOT + "/users/" + this.props.userId).then(
       function (response) {
         response.json().then(
           function (data) {
             let firstLastName = data.username.split(" ");
             let initials = firstLastName[0][0] + firstLastName[1][0];
             this.setState({
-              userId: data.user_id,
               userName: data.username,
               birthday: data.birthday,
               gender: data.gender,
