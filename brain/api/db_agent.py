@@ -36,5 +36,9 @@ class MongoDBAgent:
         return snapshot
 
     def find_snapshot_result(self, user_id, snapshot_id, result_name):
-        snapshot = self._find_snapshot(user_id, snapshot_id)
-        return snapshot['results'][result_name]  # TODO: handle this case
+        user_id = str(user_id)  # TODO: temporary workaround!!! should solve it
+        snapshot_id = str(snapshot_id)  # TODO: temporary workaround!!! should solve it
+        result = self.users.find_one({'_id': user_id}, {'snapshots': {'$elemMatch': {'_id': snapshot_id}}, '_id': 0,
+                                                        f'snapshots.results.{result_name}': 1})
+        result = result['snapshots'][0]['results'][result_name]
+        return result

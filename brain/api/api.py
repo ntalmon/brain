@@ -38,7 +38,10 @@ def get_snapshot_result(user_id, snapshot_id, result_name):
 
 @app.route('/users/<int:user_id>/snapshots/<int:snapshot_id>/<result_name>/data')
 def get_snapshot_result_data(user_id, snapshot_id, result_name):
-    pass  # TODO: find a way to return the data
+    # TODO: handle case where result is text only
+    res = app.agent.find_snapshot_result(user_id, snapshot_id, result_name)
+    file_path = res  # TODO: check file indeed exists
+    return flask.send_file(file_path, mimetype='image/jpeg', attachment_filename=f'{result_name}.jpg')
 
 
 def run_api_server(host, port, database_url):
