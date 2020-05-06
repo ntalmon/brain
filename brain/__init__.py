@@ -11,5 +11,5 @@ import pathlib
 project_path = pathlib.Path(__file__).parent.parent  # TODO: is it a good practice?
 brain_path = project_path / 'brain'
 config_path = project_path / 'config'
-data_path = project_path / 'data'
+data_path = project_path / 'brain-data'
 tests_path = project_path / 'tests'
