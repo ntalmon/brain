@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import "./users-list.css";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import Users from "./users-page";
 
-var API_ROOT = window.api_url;
+var isDebug = true;
+var API_ROOT = isDebug ? "http://127.0.0.1:5000" : window.api_url;
 
 class Result extends React.Component {
   constructor(props) {
@@ -25,7 +26,20 @@ class Result extends React.Component {
           />
         );
       case "feelings":
-        return <div>{JSON.stringify(this.state.resultValue)}</div>;
+        let feelings = this.state.resultValue;
+        let hunger = feelings ? feelings.hunger : 0;
+        return (
+          <div>
+            <label for="meter_hunger">
+              <img src="/hunger.png" width="30" height="30" />
+            </label>
+            &nbsp; &nbsp;
+            <meter id="meter_hunger" value={hunger} min="-1" max="1">
+              0
+            </meter>
+          </div>
+        );
+      // return <div>{JSON.stringify(this.state.resultValue)}</div>;
     }
     return <div></div>;
   }
@@ -139,7 +153,7 @@ class User extends React.Component {
   render() {
     var userImage = <div className="userImage">{this.state.initials}</div>;
     return (
-      <div>
+      <div className="usersPage">
         <div className="profile">
           {userImage}
           <h2 className="userNameText">{this.state.userName}</h2>
@@ -181,85 +195,13 @@ function UserPage({ match }) {
   return <User userId={userId} />;
 }
 
-class UserInList extends React.Component {
-  render() {
-    var firstLastName = this.props.userName.split(" ");
-    var initials = firstLastName[0][0] + firstLastName[1][0];
-    var userId = this.props.userId;
-    return (
-      <tr>
-        <td>
-          <div className="userImage">{initials}</div>
-          <Link to={"/users/" + userId} class="user-link">
-            {this.props.userName}
-          </Link>
-        </td>
-        <td>
-          <span>{this.props.userId}</span>
-        </td>
-      </tr>
-    );
-  }
+function Index() {
+  return <Users />;
 }
 
-class Users extends React.Component {
-  constructor() {
-    super();
-    this.state = { users: [] };
-  }
-  render() {
-    var users = [];
-    this.state.users.forEach((user) => {
-      users.push(<UserInList userId={user.user_id} userName={user.username} />);
-    });
-    return (
-      <div className="OldApp">
-        <div class="container bootstrap snippet">
-          <div class="row">
-            <div class="col-lg-12">
-              <div class="main-box no-header clearfix">
-                <div class="main-box-body clearfix">
-                  <div class="table-responsive">
-                    <table class="table user-list">
-                      <thead>
-                        <tr>
-                          <th>
-                            <span>User</span>
-                          </th>
-                          <th>
-                            <span>User ID</span>
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>{users}</tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-  componentDidMount() {
-    fetch(API_ROOT + "/users").then(
-      function (response) {
-        response.json().then(
-          function (data) {
-            this.setState({ users: data });
-          }.bind(this)
-        );
-      }.bind(this)
-    );
-  }
-}
-
-class Index extends React.Component {
-  render() {
-    return <Users key="Hi" />;
-  }
-}
+const Home = () => {
+  return <span></span>;
+};
 
 function App() {
   return (
@@ -267,7 +209,7 @@ function App() {
       <div className="App">
         <Switch>
           <Route path="/" exact component={Index} />
-          <Route path="/users" exact component={Index} />
+          <Route path="/users" exact component={Users} />
           <Route path="/users/:id" component={UserPage} />
         </Switch>
       </div>

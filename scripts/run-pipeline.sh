@@ -15,8 +15,8 @@ wait
 
 echo "Stop running containers"
 set +e
-docker container stop brain-rabbitmq
-docker container stop brain-mongo
+docker container stop brain-server brain-saver brain-color-image brain-depth-image brain-feelings brain-pose brain-gui \
+  brain-api brain-rabbitmq brain-mongo
 set -e
 
 echo "Starting rabbitmq container"
@@ -25,7 +25,7 @@ echo "Starting mongodb container"
 docker run -d -p 27017:27017 --rm --name brain-mongo mongo
 sleep 5
 
-rm -rf /tmp/brain-data
+sudo rm -rf /tmp/brain-data
 mkdir /tmp/brain-data
 
 echo "Starting project containers"
