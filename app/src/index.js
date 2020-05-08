@@ -4,7 +4,7 @@ import "./index.css";
 import "./users-list.css";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
-var API_ROOT = "http://127.0.0.1:5000";
+var API_ROOT = window.api_url;
 
 class Result extends React.Component {
   constructor(props) {
