@@ -7,6 +7,13 @@ import Users from "./users-page";
 var isDebug = true;
 var API_ROOT = isDebug ? "http://127.0.0.1:5000" : window.api_url;
 
+var feeling2src = {
+  hunger: "/hunger.png",
+  thirst: "/thirst.png",
+  exhaustion: "/exhaustion.png",
+  happiness: "/happiness.png",
+};
+
 class Result extends React.Component {
   constructor(props) {
     super(props);
@@ -15,6 +22,37 @@ class Result extends React.Component {
   render() {
     switch (this.props.result) {
       case "pose":
+        let pose = this.state.resultValue
+          ? this.state.resultValue
+          : {
+              translation: { x: 0, y: 0, z: 0 },
+              rotation: { x: 0, y: 0, z: 0, w: 0 },
+            };
+        console.log(this.state.resultValue);
+        return (
+          <ul>
+            <li>
+              Pose
+              <br />
+              Translation: (
+              {[
+                pose.translation.x,
+                pose.translation.y,
+                pose.translation.z,
+              ].join(", ")}
+              )
+              <br />
+              Rotation: (
+              {[
+                pose.rotation.x,
+                pose.rotation.y,
+                pose.rotation.z,
+                pose.rotation.w,
+              ].join(", ")}
+              )
+            </li>
+          </ul>
+        );
         return <div>{JSON.stringify(this.state.resultValue)}</div>;
       case "color-image":
       case "depth-image":
@@ -26,17 +64,54 @@ class Result extends React.Component {
           />
         );
       case "feelings":
-        let feelings = this.state.resultValue;
-        let hunger = feelings ? feelings.hunger : 0;
+        let feelings = this.state.resultValue
+          ? this.state.resultValue
+          : { hunger: 0, thirst: 0, exhaustion: 0, happiness: 0 };
         return (
           <div>
             <label for="meter_hunger">
               <img src="/hunger.png" width="30" height="30" />
             </label>
             &nbsp; &nbsp;
-            <meter id="meter_hunger" value={hunger} min="-1" max="1">
-              0
-            </meter>
+            <meter
+              id="meter_hunger"
+              value={feelings["hunger"]}
+              min="-1"
+              max="1"
+            ></meter>
+            <br />
+            <label for="meter_thirst">
+              <img src="/thirst.png" width="30" height="30" />
+            </label>
+            &nbsp; &nbsp;
+            <meter
+              id="meter_thirst"
+              value={feelings["thirst"]}
+              min="-1"
+              max="1"
+            ></meter>
+            <br />
+            <label for="meter_exhaustion">
+              <img src="/exhaustion.png" width="30" height="30" />
+            </label>
+            &nbsp; &nbsp;
+            <meter
+              id="meter_exhaustion"
+              value={feelings["exhaustion"]}
+              min="-1"
+              max="1"
+            ></meter>
+            <br />
+            <label for="meter_happiness">
+              <img src="/happiness.png" width="30" height="30" />
+            </label>
+            &nbsp; &nbsp;
+            <meter
+              id="meter_happiness"
+              value={feelings["happiness"]}
+              min="-1"
+              max="1"
+            ></meter>
           </div>
         );
       // return <div>{JSON.stringify(this.state.resultValue)}</div>;
@@ -80,11 +155,12 @@ class Post extends React.Component {
         results.push(collapse);
       }.bind(this)
     );
-    let date = new Date(1000 * this.props.datetime);
+
+    let date = new Date(parseInt(this.props.datetime));
     return (
       <div>
         <h1>#{this.props.snapshotId}</h1>
-        <h2>{this.props.datetime}</h2>
+        <h3>{date.toLocaleString()}</h3>
         {results}
       </div>
     );
