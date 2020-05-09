@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./users-page.css";
-import fetchAPI from "./utils";
+import {fetchAPI} from "./utils";
 
 function UserInList(props) {
   var firstLastName = props.userName.split(" ");
