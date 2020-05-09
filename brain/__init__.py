@@ -5,6 +5,7 @@ TODO: mq to not auto ack
 TODO: client registration (optional)
 TODO: add framework for agents drivers
 TODO: parsers framework to support classes
+TODO: run make in docker images
 """
 import pathlib
 
