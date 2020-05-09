@@ -31,12 +31,12 @@ def verify_pose(result, snapshot):
 
 def verify_color_image(result, snapshot):
     # TODO: read image from file and compare
-    assert os.path.isfile(result)
+    assert os.path.isfile(result['path'])
 
 
 def verify_depth_image(result, snapshot):
     # TODO: read image from file and compare
-    assert os.path.isfile(result)
+    assert os.path.isfile(result['path'])
 
 
 def verify_feelings(result, snapshot):

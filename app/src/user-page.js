@@ -44,7 +44,6 @@ const handleImage = (result) => {
 };
 
 const handleFeelings = (result) => {
-  let color = calcColor(result.hunger);
   return (
     <div>
       <br />

@@ -1,5 +1,6 @@
 import os
 import random
+import threading
 
 import numpy as np
 
@@ -63,9 +64,16 @@ def gen_feelings(feelings):
     return feelings
 
 
+uuid_counter = 0
+
+
 def gen_snapshot(snapshot, fmt, tmp_path=None):
     if fmt == 'parser':
         gen_user(snapshot.user)
+    if fmt not in ['reader']:
+        global uuid_counter
+        uuid_counter += 1
+        snapshot.uuid = uuid_counter
     snapshot.datetime = random.getrandbits(64)
     gen_pose(snapshot.pose)
     gen_color_image(snapshot.color_image, fmt, tmp_path=tmp_path)

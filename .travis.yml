@@ -5,6 +5,8 @@ install:
   - pip install -r requirements.txt
 before_script:
   - make
+  - docker run -d -p 5672:5672 --rm --name brain-rabbitmq rabbitmq
+  - docker run -d -p 27017:27017 --rm --name brain-mongo mongo
 script:
   - pytest --cov-report term --cov=brain --ignore=tests/old
 after_success:
