@@ -71,10 +71,13 @@ def parser(topic):
     return decorator
 
 
-def run_parser(topic, data):  # TODO: rename tag variable
-    if topic not in parsers:
-        return None  # TODO: handle this case
-    return parsers[topic](data)
+def run_parser(parser_name, data, is_path=False):
+    if parser_name not in parsers:
+        raise Exception(f'Could not find given parser name \'{parser_name}\'')
+    if is_path:
+        with open(data, 'rb') as file:
+            data = file.read()
+    return parsers[parser_name](data)
 
 
 def invoke_parser(topic, url):

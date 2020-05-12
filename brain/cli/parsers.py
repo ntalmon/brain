@@ -20,9 +20,9 @@ def cli_parse(parser, path):
 
 @cli.command('run-parser')
 @click.argument('parser', type=click.STRING)
-@click.argument('url', type=click.STRING)
-def cli_run_parser(parser, url):
-    brain.parsers.invoke_parser(parser, url)
+@click.argument('mq', type=click.STRING)
+def cli_run_parser(parser, mq):
+    brain.parsers.invoke_parser(parser, mq)
 
 
 def run_cli():

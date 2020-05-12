@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./users-page.css";
-import {fetchAPI} from "./utils";
+import { fetchAPI } from "./utils";
 
 function UserInList(props) {
   var firstLastName = props.userName.split(" ");
@@ -10,7 +10,7 @@ function UserInList(props) {
   return (
     <tr>
       <td>
-        <div className="userImage">{initials}</div>
+        <div className="user-image">{initials}</div>
         <Link to={"/users/" + userId} class="user-link">
           {props.userName}
         </Link>

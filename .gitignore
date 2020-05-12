@@ -5,6 +5,7 @@ __pycache__/
 .coverage
 docs/build/
 data/
+brain-data/
 tmp_script/
 
 *_pb2.py

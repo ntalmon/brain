@@ -1,0 +1,25 @@
+.user-detail {
+  display: block;
+}
+
+.profile {
+  height: 100%;
+  width: 20%;
+  position: fixed;
+  left: 0;
+  background-color: #f8f9fa;
+  text-align: center;
+  top: 71px;
+}
+
+.posts {
+  height: 100%;
+  width: 80%;
+  position: relative;
+  left: 20%;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}

@@ -27,12 +27,13 @@ class Reader:
 
     def load(self):
         if self._loaded:
-            return
+            return self.user
         self.file_reader = gzip.open(self.path, 'rb')  # TODO: should this be configuration dependent?
         msg_user = self._read_message()
         user = reader_pb2.User()
         user.ParseFromString(msg_user)
         self._loaded = True
+        self.user = user
         return user
 
     def __iter__(self):
@@ -40,7 +41,7 @@ class Reader:
 
     def __next__(self):
         if not self._loaded:
-            return  # TODO: handle this case by message/exception
+            raise Exception('Reader is unloaded, can\'t read snapshots. Use reader.load() before')
 
         msg_snapshot = self._read_message()
         if not msg_snapshot:  # TODO: check how we make sure we ended read the file

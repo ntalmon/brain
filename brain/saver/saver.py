@@ -15,7 +15,6 @@ class Saver:
         self.agent = DBAgent(url)
 
     def save(self, topic, data):
-        # return
         data = json.loads(data)  # TODO: parsers-saver protocol should be separated
         snapshot_id, timestamp, user_data, result = data['uuid'], data['datetime'], data['user'], data['result']
         user_id = user_data.pop('user_id')

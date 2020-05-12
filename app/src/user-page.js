@@ -173,14 +173,14 @@ function UserPage(props) {
   let birthday = showTimestamp(user.birthday);
 
   return (
-    <div className="usersPage">
+    <div className="users-page">
       <div className="profile">
-        <div className="userImage">{user.initials}</div>
-        <h2 className="userNameText">{user.userName}</h2>
+        <div className="user-image">{user.initials}</div>
+        <h2 className="user-name-text">{user.userName}</h2>
         <div>
-          <span className="userDetail">User ID: {userId}</span>
-          <span className="userDetail">Birthday: {birthday}</span>
-          <span className="userDetail">Gender: {user.gender}</span>
+          <span className="user-detail">User ID: {userId}</span>
+          <span className="user-detail">Birthday: {birthday}</span>
+          <span className="user-detail">Gender: {user.gender}</span>
         </div>
       </div>
       <div className="posts">

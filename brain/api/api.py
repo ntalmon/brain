@@ -1,3 +1,5 @@
+import os
+
 import flask
 import flask_cors
 from brain.api.db_agent import MongoDBAgent
@@ -41,6 +43,8 @@ def get_snapshot_result_data(user_id, snapshot_id, result_name):
     # TODO: handle case where result is text only
     res = app.agent.find_snapshot_result(user_id, snapshot_id, result_name)
     file_path = res['path']  # TODO: check file indeed exists
+    if not os.path.isfile(file_path):
+        flask.abort(404)
     return flask.send_file(file_path, mimetype='image/jpeg', attachment_filename=f'{result_name}.jpg')
 
 

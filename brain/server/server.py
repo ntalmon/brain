@@ -1,31 +1,19 @@
 import threading
 
-from brain.server.client_agent import HTTPAgent
+from brain.server.client_agent import snapshot_handler, run
 from brain.server.mq_agent import MQAgent
 from brain.server.parsers_agent import construct_parsers_message
 
-client_agents = {
-    'http': HTTPAgent
-}
-
-
-def get_client_agent():
-    protocol = 'http'  # TODO: extract from config
-    if protocol not in client_agents:
-        return None  # TODO: handle this case
-    return client_agents[protocol]()
-
-
-client_agent = get_client_agent()
+publish_fn = None
 
 
 def construct_publish(mq_url):
     mq_agent = MQAgent(mq_url)
 
-    def publish(snapshot):
+    def _publish(snapshot):
         mq_agent.publish_snapshot(snapshot)
 
-    return publish
+    return _publish
 
 
 snapshot_lock = threading.Lock()
@@ -40,16 +28,17 @@ def generate_snapshot_uuid():  # TODO: is this the right way to generate uuid?
     return uuid
 
 
-@client_agent.snapshot_handler
+@snapshot_handler
 def handle_snapshot(snapshot):
     snapshot_uuid = generate_snapshot_uuid()
     parsers_msg = construct_parsers_message(snapshot, snapshot_uuid)
-    client_agent.publish(parsers_msg)
+    publish_fn(parsers_msg)
 
 
 def run_server(host, port, publish):
     """
     TODO: handle publish
     """
-    client_agent.publish = publish
-    client_agent.run(host, port)
+    global publish_fn
+    publish_fn = publish
+    run(host, port)

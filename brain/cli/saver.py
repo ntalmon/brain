@@ -21,10 +21,10 @@ def cli_save(database, topic, path):
 
 
 @cli.command('run-saver')
-@click.argument('db_url', type=click.STRING)
-@click.argument('mq_url', type=click.STRING)
-def cli_run_saver(db_url, mq_url):
-    run_saver(db_url, mq_url)
+@click.argument('database', type=click.STRING)
+@click.argument('mq', type=click.STRING)
+def cli_run_saver(database, mq):
+    run_saver(database, mq)
 
 
 def run_cli():
