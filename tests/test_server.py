@@ -1,68 +1,47 @@
-import multiprocessing
-
 import pytest
-import brain.server.client_agent
 
-from brain.server import run_server
+import brain.server.mq_agent
+from brain.autogen import protocol_pb2, parsers_pb2
+from brain.server.client_agent import app
+from brain.server.server import init_publish, construct_publish
+from tests.data_generators import gen_snapshot
 
 HOST = 'localhost'
 PORT = 8000
+MQ_URL = 'rabbitmq://127.0.0.1:5672'
 
 
 @pytest.fixture
-def run_server_in_background():
-    parent, child = multiprocessing.Pipe()
-
-    def _run_server():
-        run_server(HOST, PORT, None)
-
-    process = multiprocessing.Process(target=_run_server)
-    process.start()
-    parent.recv()
-    try:
-        yield lambda: parent.recv()
-    finally:
-        process.terminate()
-        process.join()
+def client_message():
+    snapshot = gen_snapshot(protocol_pb2.Snapshot(), 'protocol', should_gen_user=True)
+    return snapshot, snapshot.SerializeToString()
 
 
-class MockFlask:
-    class Request:
-        method = None
-        data = None
+class MockRabbitMQ:
+    publish_params = None
 
-    request = Request
-    app = None
-
-    class Flask:
-        def __init__(self, name):
-            MockFlask.app = self
-            self.routes = {}
-
-        def route(self, route, methods=None):
-            if not methods:
-                methods = ['GET']
-
-            def decorator(f):
-                def wrapper(*args, **kwargs):
-                    return f(*args, **kwargs)
-
-                return wrapper
-
-            return decorator
-
-        def run(self):
-            pass
-
-    @classmethod
-    def send_request(cls):
+    def __init__(self, mq_url):
         pass
 
+    def publish(self, data, exchange='', queue=''):
+        MockRabbitMQ.publish_params = data, exchange, queue
+
 
 @pytest.fixture
-def mock_flask(monkeypatch):
-    monkeypatch.setattr(brain.server.client_agent, 'flask', MockFlask)
+def mock_rabbitmq(monkeypatch):
+    monkeypatch.setattr(brain.server.mq_agent, 'RabbitMQ', MockRabbitMQ)
 
 
-def test_server():
-    assert False
+def test_server(client_message, mock_rabbitmq):
+    snapshot, msg = client_message
+    publish = construct_publish(MQ_URL)
+    init_publish(publish)
+
+    with app.test_client() as client:
+        res = client.post('/snapshot', data=msg)
+        assert res.status_code == 200
+
+    data, exchange, queue = MockRabbitMQ.publish_params
+    assert exchange == 'snapshot'
+    assert queue == ''
+    # TODO: add data validation

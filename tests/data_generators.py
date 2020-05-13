@@ -72,9 +72,9 @@ uuid_counter = 0
 
 
 def gen_snapshot(snapshot, fmt, tmp_path=None, should_gen_user=False):
-    if fmt == 'parser' and should_gen_user:
+    if should_gen_user:
         gen_user(snapshot.user)
-    if fmt not in ['reader']:
+    if fmt not in ['reader', 'protocol']:
         global uuid_counter
         uuid_counter += 1
         snapshot.uuid = uuid_counter

@@ -35,10 +35,11 @@ def handle_snapshot(snapshot):
     publish_fn(parsers_msg)
 
 
-def run_server(host, port, publish):
-    """
-    TODO: handle publish
-    """
+def init_publish(publish):
     global publish_fn
     publish_fn = publish
+
+
+def run_server(host, port, publish):
+    init_publish(publish)
     run(host, port)

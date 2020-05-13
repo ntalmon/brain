@@ -1,3 +1,4 @@
+import multiprocessing
 import subprocess
 
 from google.protobuf import json_format
@@ -37,3 +38,16 @@ def json2pb(js_dict, pb_obj, serialize=False):
         return pb_str
     pb_obj.ParseFromString(pb_str)
     return pb_obj
+
+
+def run_process(runner):
+    parent, child = multiprocessing.Pipe()
+
+    process = multiprocessing.Process(target=runner, args=(child,))
+    process.start()
+    parent.recv()
+    try:
+        yield lambda: parent.recv()
+    finally:
+        process.terminate()
+        process.join()
