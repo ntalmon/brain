@@ -15,7 +15,7 @@ MQ_URL = 'rabbitmq://127.0.0.1:5672'
 
 @pytest.fixture
 def random_snapshot(tmp_path):
-    snapshot = gen_snapshot(parsers_pb2.Snapshot(), 'parser', tmp_path=tmp_path)
+    snapshot = gen_snapshot(parsers_pb2.Snapshot(), 'parser', tmp_path=tmp_path, should_gen_user=True)
     return snapshot, snapshot.SerializeToString()
 
 

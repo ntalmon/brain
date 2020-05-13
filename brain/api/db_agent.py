@@ -3,7 +3,7 @@ import json
 import pymongo
 
 
-class MongoDBAgent:
+class DBAgent:
     def __init__(self, url):
         self.client = pymongo.MongoClient(url)
         self.db = self.client['brain']

@@ -1,13 +1,13 @@
 import gzip
-import multiprocessing
 import struct
-import subprocess
 
-import flask
 import pytest
+from click.testing import CliRunner
+
 import brain.client.server_agent
 
 from brain.autogen import reader_pb2, protocol_pb2
+from brain.cli.client import cli
 from brain.client import upload_sample
 from tests.data_generators import gen_user, gen_snapshot
 
@@ -64,44 +64,9 @@ def test_client(random_sample, mock_server):
         assert str(result.feelings) == str(snapshot.feelings)
 
 
-def _run_server(pipe):
-    app = flask.Flask(__name__)
-    pipe.send('ready')
-
-    @app.route('/snapshot', methods=['GET', 'POST'])
-    def route_snapshot():
-        data = flask.request.data
-        pipe.send(data)
-        return ''
-
-    app.run(host=HOST, port=PORT)
-
-
-@pytest.fixture
-def get_message():
-    parent, child = multiprocessing.Pipe()
-    process = multiprocessing.Process(target=_run_server, args=(child,))
-    process.start()
-    parent.recv()
-    try:
-        def get_message():
-            if not parent.poll(1):
-                raise TimeoutError()
-            return parent.recv()
-
-        yield get_message
-    finally:
-        process.terminate()
-        process.join()
-
-
-def test_cli(get_message, resources_path):
-    sample_file = resources_path / 'tests_sample.mind.gz'
-    cmd = ['python', '-m', 'brain.client', 'upload-sample', '-h', HOST, '-p', str(PORT), str(sample_file)]
-    import time
-    time.sleep(3)
-    process = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-
-    stdout, _ = process.communicate()
-    assert b'all snapshots uploaded successfully' in stdout.lower()
-    data = get_message()
+def test_cli(resources_path, mock_server):
+    sample_path = resources_path / 'tests_sample.mind.gz'
+    runner = CliRunner()
+    result = runner.invoke(cli, ['upload-sample', str(sample_path)])
+    assert result.exit_code == 0
+    assert 'All snapshots uploaded successfully' in result.output

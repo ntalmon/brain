@@ -9,9 +9,13 @@ from brain.autogen import reader_pb2
 first_names = ('John', 'Andy', 'Joe')
 last_names = ('Johnson', 'Smith', 'Williams')
 
+user_id_count = 0
+
 
 def gen_user(user):
-    user.user_id = random.randint(0, 100)
+    global user_id_count
+    user_id_count += 1
+    user.user_id = user_id_count
     user.username = f'{random.choice(first_names)} {random.choice(last_names)}'
     user.birthday = random.getrandbits(32)
     user.gender = random.choice(reader_pb2.User.Gender.values())
@@ -67,8 +71,8 @@ def gen_feelings(feelings):
 uuid_counter = 0
 
 
-def gen_snapshot(snapshot, fmt, tmp_path=None):
-    if fmt == 'parser':
+def gen_snapshot(snapshot, fmt, tmp_path=None, should_gen_user=False):
+    if fmt == 'parser' and should_gen_user:
         gen_user(snapshot.user)
     if fmt not in ['reader']:
         global uuid_counter
