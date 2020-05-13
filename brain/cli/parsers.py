@@ -12,10 +12,10 @@ def cli():
 @click.argument('parser', type=click.STRING)
 @click.argument('path', type=click.STRING)
 def cli_parse(parser, path):
-    """
-    TODO: handle path
-    """
-    brain.parsers.run_parser(parser, path)
+    import json
+    result = brain.parsers.run_parser(parser, path, is_path=True)
+    result = json.dumps(result)
+    print(result)
 
 
 @cli.command('run-parser')

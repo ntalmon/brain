@@ -14,7 +14,7 @@ def parse_depth_image(data):  # TODO: after writing parsed file, delete raw file
     array = np.load(path).reshape((height, width))
     plt.imshow(array)
     plt.savefig(new_path)
-    return {'path': new_path}
+    return {'width': width, 'height': height, 'path': new_path}
 
 
-parse_depth_image.field = 'depth-image'
+parse_depth_image.field = 'depth_image'

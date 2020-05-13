@@ -71,6 +71,7 @@ def parser(topic):
     return decorator
 
 
+# TODO: check if it is ok to add these additional parameters
 def run_parser(parser_name, data, is_path=False):
     if parser_name not in parsers:
         raise Exception(f'Could not find given parser name \'{parser_name}\'')

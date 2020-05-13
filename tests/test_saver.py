@@ -3,12 +3,13 @@ import json
 import pytest
 import brain.saver.saver
 from brain.autogen import parsers_pb2
-from brain.saver import Saver, run_saver
+from brain.saver import Saver
 from tests.data_generators import gen_user, gen_snapshot
-from tests.utils import protobuf2dict
+from tests.utils import protobuf2dict, dict_projection
 
 DB_URL = 'mongodb://127.0.0.1:27017'
 MQ_URL = 'rabbitmq://127.0.0.1:5672'
+PARSERS = ['pose', 'color_image', 'depth_image', 'feelings']
 
 
 @pytest.fixture
@@ -38,10 +39,7 @@ def random_results(tmp_path):
             snapshot = gen_snapshot(parsers_pb2.Snapshot(), 'parser', tmp_path=tmp_path)
             snapshot_dict = protobuf2dict(snapshot)
             users_snapshots[user['user_id']]['snapshots'].append(snapshot_dict)
-            results = {'pose': snapshot_dict['pose'],
-                       'color-image': snapshot_dict['color_image'],
-                       'depth-image': snapshot_dict['depth_image'],
-                       'feelings': snapshot_dict['feelings']}
+            results = dict_projection(snapshot_dict, PARSERS)
             for key, value in results.items():
                 all_results.append((key, {
                     'uuid': snapshot_dict['uuid'],
@@ -75,10 +73,8 @@ def compare_db(database, users_snapshots):
             else:
                 assert False, f'Could not find snapshot entry with uuid {uuid}'
             assert snapshot_entry['datetime'] == snapshot['datetime']
-            assert snapshot_entry['results']['pose'] == snapshot['pose']
-            assert snapshot_entry['results']['color-image'] == snapshot['color_image']
-            assert snapshot_entry['results']['depth-image'] == snapshot['depth_image']
-            assert snapshot_entry['results']['feelings'] == snapshot['feelings']
+            for parser in PARSERS:
+                assert snapshot_entry['results'][parser] == snapshot[parser]
 
 
 def test_save(saver, database, random_results):
@@ -124,9 +120,9 @@ def mock_mq_agent(monkeypatch):
 #     result = result['result']
 #     if parser == 'pose':
 #         verify_pose(result, snapshot)
-#     elif parser == 'color-image':
+#     elif parser == 'color_image':
 #         verify_color_image(result, snapshot)
-#     elif parser == 'depth-image':
+#     elif parser == 'depth_image':
 #         verify_depth_image(result, snapshot)
 #     else:
 #         verify_feelings(result, snapshot)

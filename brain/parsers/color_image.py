@@ -15,7 +15,7 @@ def parse_color_image(data):  # TODO: after writing parsed file, delete raw file
         data = reader.read()
     image = Image.frombytes('RGB', (width, height), data)
     image.save(new_path)
-    return {'path': new_path}
+    return {'width': width, 'height': height, 'path': new_path}
 
 
-parse_color_image.field = 'color-image'
+parse_color_image.field = 'color_image'

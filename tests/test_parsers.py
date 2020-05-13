@@ -1,22 +1,28 @@
 import json
 import os
 
-import numpy as np
 import pytest
+from click.testing import CliRunner
 
 import brain.parsers
 from brain.autogen import parsers_pb2
+from brain.cli.parsers import cli
 from brain.parsers import run_parser, invoke_parser
-from tests.data_generators import gen_snapshot, gen_user
-from tests.utils import protobuf2dict, json2pb
+from tests.data_generators import gen_snapshot
+from tests.utils import protobuf2dict
 
 MQ_URL = 'rabbitmq://127.0.0.1:5672'
+PARSERS = ['pose', 'color_image', 'depth_image', 'feelings']
 
 
 @pytest.fixture
 def random_snapshot(tmp_path):
     snapshot = gen_snapshot(parsers_pb2.Snapshot(), 'parser', tmp_path=tmp_path, should_gen_user=True)
-    return snapshot, snapshot.SerializeToString()
+    data = snapshot.SerializeToString()
+    file_path = str(tmp_path / 'snapshot.raw')
+    with open(file_path, 'wb') as file:
+        file.write(data)
+    return snapshot, data, file_path
 
 
 def verify_result_header(result, snapshot):
@@ -31,6 +37,8 @@ def verify_pose(result, snapshot):
 
 def verify_color_image(result, snapshot):
     # TODO: read image from file and compare
+    assert result['width'] == snapshot.color_image.width
+    assert result['height'] == snapshot.color_image.height
     assert os.path.isfile(result['path'])
 
 
@@ -44,7 +52,7 @@ def verify_feelings(result, snapshot):
 
 
 def test_pose(random_snapshot):
-    snapshot, data = random_snapshot
+    snapshot, data, _ = random_snapshot
     result = run_parser('pose', data)
     verify_result_header(result, snapshot)
     verify_pose(result['result'], snapshot)
@@ -52,22 +60,22 @@ def test_pose(random_snapshot):
 
 def test_color_image(random_snapshot):
     # TODO: read image from file and compare
-    snapshot, data = random_snapshot
-    result = run_parser('color-image', data)
+    snapshot, data, _ = random_snapshot
+    result = run_parser('color_image', data)
     verify_result_header(result, snapshot)
     verify_color_image(result['result'], snapshot)
 
 
 def test_depth_image(random_snapshot):
     # TODO: read image from file and compare
-    snapshot, data = random_snapshot
-    result = run_parser('depth-image', data)
+    snapshot, data, _ = random_snapshot
+    result = run_parser('depth_image', data)
     verify_result_header(result, snapshot)
-    verify_color_image(result['result'], snapshot)
+    verify_depth_image(result['result'], snapshot)
 
 
 def test_feelings(random_snapshot):
-    snapshot, data = random_snapshot
+    snapshot, data, _ = random_snapshot
     result = run_parser('feelings', data)
     verify_result_header(result, snapshot)
     verify_feelings(result['result'], snapshot)
@@ -97,9 +105,9 @@ def mock_mq_agent(monkeypatch):
     MockMQAgent.clear()
 
 
-@pytest.mark.parametrize('parser', ['pose', 'color-image', 'depth-image', 'feelings'])
+@pytest.mark.parametrize('parser', ['pose', 'color_image', 'depth_image', 'feelings'])
 def test_invoke_parser(parser, mock_mq_agent, random_snapshot):
-    snapshot, data = random_snapshot
+    snapshot, data, _ = random_snapshot
     MockMQAgent.snapshot = data
     invoke_parser(parser, MQ_URL)
     result = MockMQAgent.result
@@ -108,13 +116,27 @@ def test_invoke_parser(parser, mock_mq_agent, random_snapshot):
     result = result['result']
     if parser == 'pose':
         verify_pose(result, snapshot)
-    elif parser == 'color-image':
+    elif parser == 'color_image':
         verify_color_image(result, snapshot)
-    elif parser == 'depth-image':
+    elif parser == 'depth_image':
         verify_depth_image(result, snapshot)
-    else:
+    elif parser == 'feelings':
         verify_feelings(result, snapshot)
 
 
-def test_cli():
-    assert False
+def test_cli(random_snapshot):
+    snapshot, data, file_path = random_snapshot
+    runner = CliRunner()
+    for parser in PARSERS:
+        result = runner.invoke(cli, ['parse', parser, file_path])
+        assert result.exit_code == 0, result.exception
+        parsed = json.loads(result.stdout)
+        result_dict = parsed['result']
+        if parser == 'pose':
+            verify_pose(result_dict, snapshot)
+        elif parser == 'color_image':
+            verify_color_image(result_dict, snapshot)
+        elif parser == 'depth_image':
+            verify_depth_image(result_dict, snapshot)
+        elif parser == 'feelings':
+            verify_feelings(result_dict, snapshot)

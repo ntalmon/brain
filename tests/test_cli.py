@@ -51,7 +51,7 @@ def test_get_snapshot(mock_get):
     assert furl(result.stdout.rstrip('\n')) == API_URL / 'users' / user_id / 'snapshots' / snapshot_id
 
 
-@pytest.mark.parametrize('result_name', ['pose', 'color-image', 'depth-image', 'feelings'])
+@pytest.mark.parametrize('result_name', ['pose', 'color_image', 'depth_image', 'feelings'])
 def test_get_result(mock_get, result_name):
     runner = CliRunner()
     user_id = '1'

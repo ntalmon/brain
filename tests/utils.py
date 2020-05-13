@@ -51,3 +51,7 @@ def run_process(runner):
     finally:
         process.terminate()
         process.join()
+
+
+def dict_projection(d, items):
+    return {key: value for key, value in d.items() if key in items}
