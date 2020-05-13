@@ -1,36 +1,61 @@
 import pytest
+from click.testing import CliRunner
+from furl import furl
 
-import brain.client.client
+import brain.cli.cli
+from brain.cli.cli import cli
 
-HOST = '127.0.0.1'
-PORT = 1234
-PATH = 'snapshot.mind.gz'
-
-
-def mock_upload_sample(host, port, path):
-    assert host != HOST or port != PORT or path != PATH
-
-
-@pytest.fixture()
-def mock_client(monkeypatch):
-    monkeypatch.setattr(brain.client.client, 'upload_sample', mock_upload_sample)
+API_HOST = '127.0.0.1'
+API_PORT = 5000
+API_URL = furl(f'http://{API_HOST}:{API_PORT}')
+DB_URL = 'mongodb://127.0.0.1:27017'
 
 
-def test_get_users():
-    assert False
+@pytest.fixture
+def mock_get(monkeypatch):
+    def fake_get(url):
+        return url
+
+    monkeypatch.setattr(brain.cli.cli, 'get', fake_get)
 
 
-def test_get_user():
-    assert False
+def test_get_users(mock_get):
+    runner = CliRunner()
+    result = runner.invoke(cli, ['get-users'])
+    assert result.exit_code == 0
+    assert furl(result.stdout.rstrip('\n')) == API_URL / 'users'
 
 
-def test_get_snapshots():
-    assert False
+def test_get_user(mock_get):
+    runner = CliRunner()
+    user_id = '1'
+    result = runner.invoke(cli, ['get-user', user_id])
+    assert result.exit_code == 0, result.exception
+    assert furl(result.stdout.rstrip('\n')) == API_URL / 'users' / user_id
 
 
-def test_get_snapshot():
-    assert False
+def test_get_snapshots(mock_get):
+    runner = CliRunner()
+    user_id = '1'
+    result = runner.invoke(cli, ['get-snapshots', user_id])
+    assert result.exit_code == 0, result.exception
+    assert furl(result.stdout.rstrip('\n')) == API_URL / 'users' / user_id / 'snapshots'
 
 
-def test_get_result():
-    assert False
+def test_get_snapshot(mock_get):
+    runner = CliRunner()
+    user_id = '1'
+    snapshot_id = '2'
+    result = runner.invoke(cli, ['get-snapshot', user_id, snapshot_id])
+    assert result.exit_code == 0, result.exception
+    assert furl(result.stdout.rstrip('\n')) == API_URL / 'users' / user_id / 'snapshots' / snapshot_id
+
+
+@pytest.mark.parametrize('result_name', ['pose', 'color-image', 'depth-image', 'feelings'])
+def test_get_result(mock_get, result_name):
+    runner = CliRunner()
+    user_id = '1'
+    snapshot_id = '2'
+    result = runner.invoke(cli, ['get-result', user_id, snapshot_id, result_name])
+    assert result.exit_code == 0, result.exception
+    assert furl(result.stdout.rstrip('\n')) == API_URL / 'users' / user_id / 'snapshots' / snapshot_id / result_name
