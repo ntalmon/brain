@@ -1,15 +1,11 @@
-import gzip
-import struct
-
 import pytest
 from click.testing import CliRunner
 
 import brain.client.server_agent
 
-from brain.autogen import reader_pb2, protocol_pb2
-from brain.cli.client import cli
+from brain.autogen import protocol_pb2
 from brain.client import upload_sample
-from tests.data_generators import gen_user, gen_snapshot
+from brain.client.__main__ import cli
 
 HOST = '127.0.0.1'
 PORT = 8000
@@ -25,26 +21,6 @@ def mock_server(monkeypatch):
 
     monkeypatch.setattr(brain.client.server_agent, 'post', mock_post)
     return calls
-
-
-def write_sample(user, snapshots, path):
-    file_path = str(path / 'sample.mind.gz')
-    user_raw = user.SerializeToString()
-    snapshots_raw = [snapshot.SerializeToString() for snapshot in snapshots]
-    with gzip.open(file_path, 'wb') as file:
-        file.write(struct.pack('I', len(user_raw)) + user_raw)
-        for snapshot_raw in snapshots_raw:
-            file.write(struct.pack('I', len(snapshot_raw)) + snapshot_raw)
-
-    return file_path
-
-
-@pytest.fixture
-def random_sample(tmp_path):
-    user = gen_user(reader_pb2.User())
-    snapshots = [gen_snapshot(reader_pb2.Snapshot(), 'reader', tmp_path=tmp_path) for _ in range(5)]
-    file_path = write_sample(user, snapshots, tmp_path)
-    return user, snapshots, file_path
 
 
 def test_client(random_sample, mock_server):

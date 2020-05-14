@@ -14,4 +14,4 @@ app_path = project_path / 'app'
 brain_path = project_path / 'brain'
 config_path = project_path / 'config'
 data_path = project_path / 'brain-data'
-tests_path = project_path / 'tests'
+tests_path = project_path / 'tests'  # TODO: should this stay here?

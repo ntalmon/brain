@@ -2,11 +2,9 @@ import random
 
 import pymongo
 import pytest
-from click.testing import CliRunner
 
 from brain.api.api import app, init_db_agent
 from brain.autogen import parsers_pb2
-from brain.cli.api import cli
 from tests.data_generators import gen_snapshot, gen_user
 from tests.utils import protobuf2dict
 

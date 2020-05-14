@@ -2,8 +2,8 @@ import pytest
 from click.testing import CliRunner
 from furl import furl
 
-import brain.cli.cli
-from brain.cli.cli import cli
+import brain.cli.api_agent
+from brain.cli.__main__ import cli
 
 API_HOST = '127.0.0.1'
 API_PORT = 5000
@@ -16,7 +16,7 @@ def mock_get(monkeypatch):
     def fake_get(url):
         return url
 
-    monkeypatch.setattr(brain.cli.cli, 'get', fake_get)
+    monkeypatch.setattr(brain.cli.api_agent, 'get', fake_get)
 
 
 def test_get_users(mock_get):

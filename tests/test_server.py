@@ -1,7 +1,7 @@
 import pytest
 
 import brain.server.mq_agent
-from brain.autogen import protocol_pb2, parsers_pb2
+from brain.autogen import protocol_pb2
 from brain.server.client_agent import app
 from brain.server.server import init_publish, construct_publish
 from tests.data_generators import gen_snapshot
@@ -45,3 +45,7 @@ def test_server(client_message, mock_rabbitmq):
     assert exchange == 'snapshot'
     assert queue == ''
     # TODO: add data validation
+
+
+def test_cli():
+    pass

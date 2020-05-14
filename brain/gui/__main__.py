@@ -1,14 +1,22 @@
-import sys
+import click
 
-from brain.utils.config import client_config
+from brain.gui.gui import run_server
+from brain.utils.common import cli_main
+
+
+@click.group()
+def cli():
+    pass
+
+
+@cli.command('run-server')
+@click.option('-h', '--host', type=click.STRING, default='127.0.0.1')
+@click.option('-p', '--port', type=click.INT, default=8080)
+@click.option('-H', '--api-host', type=click.STRING, default='127.0.0.1')
+@click.option('-P', '--api-port', type=click.INT, default=5000)
+def cli_run_server(host, port, api_host, api_port):
+    run_server(host, port, api_host, api_port)
+
 
 if __name__ == '__main__':
-    from brain.cli.gui import run_cli
-
-    try:
-        run_cli()
-    except Exception as error:
-        if client_config['debug']:
-            raise
-        print(f'ERROR: {error}')
-        sys.exit(1)
+    cli_main(cli, prog_name='gui')
