@@ -7,12 +7,13 @@
   width: 20%;
   position: fixed;
   left: 0;
-  background-color: #f8f9fa;
+  background-color: white !important;
   text-align: center;
-  top: 71px;
+  top: 70px;
 }
 
 .posts {
+  background-color: white !important;
   height: 100%;
   width: 80%;
   position: relative;

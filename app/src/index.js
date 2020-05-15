@@ -1,70 +1,56 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { Link } from "react-router-dom";
 import "./index.css";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from "react-router-dom";
 import Users from "./users-page";
 import UserPage from "./user-page";
 
-function Nav() {
-  return (
-    <nav class="navbar navbar-expand-lg navbar-dark primary-color">
-      <a class="navbar-brand" href="#">
-        Brain
-      </a>
-      &nbsp;
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#basicExampleNav"
-        aria-controls="basicExampleNav"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="basicExampleNav">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">
-              Home
-              <span class="sr-only">(current)</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              Users
-            </a>
-          </li>
-        </ul>
-        <ul class="navbar-nav mr-left">
-          <li class="nav-item">
-            <form class="form-inline" id="user-navigation" for="#">
-              <div class="md-form input-group my-0">
-                <div class="input-group-prepend">
-                  <span class="input-group-text" id="basic-addon11">
-                    #
-                  </span>
-                </div>
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="User ID"
-                  aria-label="User ID"
-                  aria-describedby="basic-addon11"
-                />
-              </div>
-            </form>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="https://brain.readthedocs.io/en/latest/">
-              Documentation
-            </a>
-          </li>
-        </ul>
-      </div>
-    </nav>
-  );
+class Nav extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { redirect: false, path: "" };
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  render() {
+    if (this.state.redirect) {
+      // this.setState({ redirect: false });
+      return <Redirect to={this.state.path} />;
+    }
+    return (
+      <nav class="navbar navbar-expand-lg navbar-dark warning-color">
+        <Link class="navbar-brand" to="/">
+          Brain
+        </Link>
+        <div class="collapse navbar-collapse" id="basicExampleNav">
+          <ul class="navbar-nav mr-left">
+            <li class="nav-item">
+              <Link class="nav-link" to="/users">
+                Users
+              </Link>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                href="https://brain.readthedocs.io/en/latest/"
+              >
+                Documentation
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    );
+  }
+  handleSubmit(event) {
+    event.preventDefault();
+    this.setState({ redirect: true, path: "/users/" + event.target.value });
+  }
 }
 
 function Index() {

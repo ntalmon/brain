@@ -55,3 +55,27 @@ def run_process(runner):
 
 def dict_projection(d, items):
     return {key: value for key, value in d.items() if key in items}
+
+
+def run_in_background(callback, poll=1):
+    try:
+        from pytest_cov.embed import cleanup_on_sigterm
+    except ImportError:
+        pass
+    else:
+        cleanup_on_sigterm()
+
+    parent, child = multiprocessing.Pipe()
+    process = multiprocessing.Process(target=callback, args=(child,))
+    process.start()
+    parent.recv()
+    try:
+        def get_message():
+            if not parent.poll(poll):
+                raise TimeoutError()
+            return parent.recv()
+
+        yield get_message
+    finally:
+        process.terminate()
+        process.join()

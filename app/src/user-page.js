@@ -7,8 +7,8 @@ var defaultResults = {
     translation: { x: 0, y: 0, z: 0 },
     rotation: { x: 0, y: 0, z: 0, w: 0 },
   },
-  "color-image": { path: "#" },
-  "depth-image": { path: "#" },
+  color_image: { path: "#" },
+  depth_image: { path: "#" },
   feelings: { hunger: 0, thirst: 0, exhaustion: 0, happiness: 0 },
 };
 
@@ -83,6 +83,7 @@ const handleFeelings = (result) => {
     </div>
   );
 };
+
 function Result(props) {
   let [result, setResult] = useState(defaultResults[props.result]);
   useEffect(() => {
@@ -94,12 +95,14 @@ function Result(props) {
   switch (props.result) {
     case "pose":
       return handlePose(result);
-    case "color-image":
-    case "depth-image":
+    case "color_image":
+    case "depth_image":
       let url = formatURL(`${props.path}/data`);
       return handleImage(url);
     case "feelings":
       return handleFeelings(result);
+    default:
+      return <h1>WTF</h1>;
   }
 }
 
@@ -122,7 +125,7 @@ function Post(props) {
   let date = showTimestamp(props.datetime);
   return (
     <div>
-      <h1>#{props.snapshotId}</h1>
+      <h1>#{props.userName}</h1>
       <h3>{date}</h3>
       {resultsList}
     </div>
@@ -143,6 +146,7 @@ function Posts(props) {
       <div className="post">
         <Post
           userId={props.userId}
+          userName={props.userName}
           snapshotId={snapshot.uuid}
           datetime={snapshot.datetime}
         />

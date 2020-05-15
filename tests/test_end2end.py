@@ -1,6 +1,7 @@
 import subprocess
 import time
 
+import coverage
 import pytest
 
 LOCALHOST = '127.0.0.1'
@@ -10,6 +11,7 @@ SERVER_PORT = 8000
 
 
 def run_cmd(cmd):
+    coverage.process_startup()
     process = subprocess.Popen(cmd, stdout=subprocess.PIPE)
     return process
 

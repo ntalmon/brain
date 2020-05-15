@@ -7,7 +7,7 @@ body,
 }
 
 body {
-  background: #eee;
+  background-color: white !important;;
   overflow: hidden;
 }
 
@@ -16,7 +16,7 @@ body {
   height: 71px;
   position: fixed;
   top: 0;
-  background-color: #f8f9fa !important;
+  background-color: white !important;
 }
 
 .main-content {

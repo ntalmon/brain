@@ -10,6 +10,9 @@ class RabbitMQ:
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=host, port=port))
         self.channel = self.connection.channel()
 
+    def close(self):
+        self.connection.close()
+
     def consume(self, callback, exchange='', queue=''):
         if not exchange and not queue:
             raise Exception(f'Invalid parameters: expecting at least exchange or queue to be provided')
@@ -31,6 +34,7 @@ class RabbitMQ:
         self.channel.start_consuming()
 
     def multi_consume(self, callback, exchange='', queues=None):
+        # TODO: should we really need multi consume and can't use exchange?
         if not queues:
             if not exchange:
                 raise Exception(f'Invalid parameters: expecting at least exchange or queue to be provided')
