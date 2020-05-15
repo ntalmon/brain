@@ -110,25 +110,22 @@ def mock_mq_agent(monkeypatch):
     MockMQAgent.clear()
 
 
-# def test_run_saver(parser, mock_mq_agent, random_snapshot):
-#     snapshot, data = random_snapshot
-#     MockMQAgent.snapshot = data
-#     run_saver(DB_URL, MQ_URL)
-#     result = MockMQAgent.result
-#     result = json.loads(result)
-#     verify_result_header(result, snapshot)
-#     result = result['result']
-#     if parser == 'pose':
-#         verify_pose(result, snapshot)
-#     elif parser == 'color_image':
-#         verify_color_image(result, snapshot)
-#     elif parser == 'depth_image':
-#         verify_depth_image(result, snapshot)
-#     else:
-#         verify_feelings(result, snapshot)
-
-
 def test_run_saver():
+    # snapshot, data = random_snapshot
+    # MockMQAgent.snapshot = data
+    # run_saver(DB_URL, MQ_URL)
+    # result = MockMQAgent.result
+    # result = json.loads(result)
+    # verify_result_header(result, snapshot)
+    # result = result['result']
+    # if parser == 'pose':
+    #     verify_pose(result, snapshot)
+    # elif parser == 'color_image':
+    #     verify_color_image(result, snapshot)
+    # elif parser == 'depth_image':
+    #     verify_depth_image(result, snapshot)
+    # else:
+    #     verify_feelings(result, snapshot)
     assert False
 
 

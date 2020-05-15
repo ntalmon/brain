@@ -20,7 +20,6 @@ class TestRabbitMQ:
 
     @classmethod
     def teardown_class(cls):
-
         cls.rabbit.close()
 
     @pytest.fixture
