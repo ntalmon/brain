@@ -6,7 +6,7 @@ class MQAgent:
         self.utils = RabbitMQ(url)
 
     def consume_snapshots(self, callback, topic):
-        self.utils.consume(callback, exchange='snapshot', queue=topic)
+        self.utils.consume(callback, 'snapshot', [topic])
 
     def publish_result(self, result, topic):
-        self.utils.publish(result, queue=f'saver_{topic}')  # TODO: find right exchange and queue
+        self.utils.publish(result, exchange='saver', queue=f'saver_{topic}')  # TODO: find right exchange and queue

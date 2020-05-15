@@ -1,6 +1,3 @@
-import threading
-import time
-
 import pytest
 
 from brain.utils.mq.rabbitmq import RabbitMQ
@@ -23,6 +20,7 @@ class TestRabbitMQ:
 
     @classmethod
     def teardown_class(cls):
+
         cls.rabbit.close()
 
     @pytest.fixture
@@ -33,7 +31,7 @@ class TestRabbitMQ:
             def callback(data):
                 pipe.send(data)
 
-            self.rabbit.consume(callback, queue='q1')
+            self.rabbit.consume(callback, '', ['q1'])
 
         yield from run_in_background(wrapper, poll=2)
 
@@ -44,26 +42,19 @@ class TestRabbitMQ:
         assert data == msg
 
     @pytest.fixture
-    def simple_multi_consume(self):
+    def simple_fanout(self):
         def wrapper(pipe):
             pipe.send('ready')
 
-            pipe_lock = threading.Lock()
+            def callback(data):
+                pipe.send(data)
 
-            def callback(queue, data):
-                with pipe_lock:
-                    pipe.send((queue, data))
-
-            self.rabbit.multi_consume(callback, queues=['q3', 'q4'])
+            self.rabbit.consume(callback, 'e1', ['q2', 'q3'])
 
         yield from run_in_background(wrapper, poll=2)
 
-    def test_multi_consume(self, simple_multi_consume):
+    def test_fanout(self, simple_fanout):
         msg = b'Message from publisher!'
-        self.rabbit.publish(msg, queue='q3')
-        self.rabbit.publish(msg, queue='q4')
-        collected = set()
-        collected.add(simple_multi_consume())
-        collected.add(simple_multi_consume())
-        expected = {('q3', msg), ('q4', msg)}
-        assert collected == expected
+        self.rabbit.publish(msg, exchange='e1')
+        assert simple_fanout() == msg
+        assert simple_fanout() == msg

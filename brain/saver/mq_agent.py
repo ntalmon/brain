@@ -6,8 +6,8 @@ class MQAgent:
         self.utils = RabbitMQ(url)
 
     def consume_results(self, callback, topics):
-        def callback_wrapper(queue, data):
+        def callback_wrapper(data, queue):
             topic = queue[len('saver_'):]
             return callback(topic, data)
 
-        self.utils.multi_consume(callback_wrapper, queues=[f'saver_{topic}' for topic in topics])
+        self.utils.consume(callback_wrapper, 'saver', [f'saver_{topic}' for topic in topics], exchange_type='direct')
