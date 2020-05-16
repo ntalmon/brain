@@ -25,7 +25,7 @@ class RabbitMQ:
         def wrapper(channel, method, properties, body):
             try:
                 if exchange and exchange_type == 'direct':
-                    res = callback(body, method.routing_key)
+                    res = callback(method.routing_key, body)
                 else:
                     res = callback(body)
                 channel.basic_ack(delivery_tag=method.delivery_tag)

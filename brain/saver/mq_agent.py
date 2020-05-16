@@ -6,7 +6,7 @@ class MQAgent:
         self.utils = RabbitMQ(url)
 
     def consume_results(self, callback, topics):
-        def callback_wrapper(data, queue):
+        def callback_wrapper(queue, data):
             topic = queue[len('saver_'):]
             return callback(topic, data)
 

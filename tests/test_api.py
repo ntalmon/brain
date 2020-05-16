@@ -1,13 +1,22 @@
+import json
 import random
+from multiprocessing import Process
 
 import pymongo
 import pytest
+import requests
+from click.testing import CliRunner
 
-from brain.api.api import app, init_db_agent
+import brain.api.__main__
+
+from brain.api.__main__ import cli
+from brain.api.api import app, init_db_agent, run_api_server
 from brain.autogen import parsers_pb2
 from tests.data_generators import gen_snapshot, gen_user
-from tests.utils import protobuf2dict
+from tests.utils import protobuf2dict, run_in_background
 
+API_HOST = '127.0.0.1'
+API_PORT = 5000
 DB_HOST = '127.0.0.1'
 DB_PORT = 27017
 DB_URL = f'mongodb://{DB_HOST}:{DB_PORT}'
@@ -39,7 +48,7 @@ def populated_db(tmp_path):
     return db_data, users
 
 
-def test_run_server():
+def test_run_api_server():
     assert False
 
 
@@ -116,5 +125,21 @@ def test_get_result_data(populated_db):
             assert res.data == file_data
 
 
-def test_cli():
-    assert False
+@pytest.fixture
+def mock_run_api_server(monkeypatch):
+    def fake_run_api_server(host, port, database):
+        fake_run_api_server.host = host
+        fake_run_api_server.port = port
+        fake_run_api_server.database = database
+
+    monkeypatch.setattr(brain.api.__main__, 'run_api_server', fake_run_api_server)
+    yield fake_run_api_server
+
+
+def test_cli(mock_run_api_server):
+    runner = CliRunner()
+    result = runner.invoke(cli, ['run-server', '-h', API_HOST, '-p', API_PORT, '-d', DB_URL])
+    assert result.exit_code == 0
+    assert mock_run_api_server.host == API_HOST
+    assert mock_run_api_server.port == API_PORT
+    assert mock_run_api_server.database == DB_URL

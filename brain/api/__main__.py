@@ -1,6 +1,6 @@
 import click
 
-from brain.api.api import run_api_server
+from .api import run_api_server
 from brain.utils.common import cli_main
 
 

@@ -1,9 +1,13 @@
 import json
 
 import pytest
+from click.testing import CliRunner
+
 import brain.saver.saver
+import brain.saver.mq_agent
+from brain.saver.__main__ import cli
 from brain.autogen import parsers_pb2
-from brain.saver import Saver
+from brain.saver import Saver, run_saver
 from tests.data_generators import gen_user, gen_snapshot
 from tests.utils import protobuf2dict, dict_projection
 
@@ -27,15 +31,14 @@ def database():
     conn.close()
 
 
-@pytest.fixture
-def random_results(tmp_path):
+def gen_random_result(tmp_path, num_users, num_snapshots):
     users_snapshots = {}
     all_results = []
-    for i in range(5):
+    for i in range(num_users):
         user = gen_user(parsers_pb2.User())
         user = protobuf2dict(user)
         users_snapshots[user['user_id']] = {'user': user, 'snapshots': []}
-        for j in range(5):
+        for j in range(num_snapshots):
             snapshot = gen_snapshot(parsers_pb2.Snapshot(), 'parser', tmp_path=tmp_path)
             snapshot_dict = protobuf2dict(snapshot)
             users_snapshots[user['user_id']]['snapshots'].append(snapshot_dict)
@@ -48,6 +51,11 @@ def random_results(tmp_path):
                     'result': value
                 }))
     return all_results, users_snapshots
+
+
+@pytest.fixture
+def random_results(tmp_path):
+    return gen_random_result(tmp_path, 5, 5)
 
 
 def compare_db(database, users_snapshots):
@@ -86,48 +94,49 @@ def test_save(saver, database, random_results):
     compare_db(database, users_snapshots)
 
 
-class MockMQAgent:
-    snapshot = None
-    result = None
+class MockRabbitMQ:
+    results_to_send = []
 
     def __init__(self, url):
         pass
 
-    def consume_snapshots(self, callback, topic):
-        callback(self.__class__.snapshot)
-
-    def publish_result(self, result, topic):
-        self.__class__.result = result
+    def consume(self, callback, exchange, queues, exchange_type='fanout'):
+        for result in self.__class__.results_to_send:
+            queue, msg = result
+            callback(queue, msg)
 
     @classmethod
     def clear(cls):
-        cls.snapshot = cls.result = None
+        cls.results_to_send = []
 
 
 @pytest.fixture
-def mock_mq_agent(monkeypatch):
-    yield monkeypatch.setattr(brain.saver.saver, 'MQAgent', MockMQAgent)
-    MockMQAgent.clear()
+def mock_rabbitmq(monkeypatch):
+    yield monkeypatch.setattr(brain.saver.mq_agent, 'RabbitMQ', MockRabbitMQ)
+    MockRabbitMQ.clear()
 
 
-def test_run_saver():
-    # snapshot, data = random_snapshot
-    # MockMQAgent.snapshot = data
-    # run_saver(DB_URL, MQ_URL)
-    # result = MockMQAgent.result
-    # result = json.loads(result)
-    # verify_result_header(result, snapshot)
-    # result = result['result']
-    # if parser == 'pose':
-    #     verify_pose(result, snapshot)
-    # elif parser == 'color_image':
-    #     verify_color_image(result, snapshot)
-    # elif parser == 'depth_image':
-    #     verify_depth_image(result, snapshot)
-    # else:
-    #     verify_feelings(result, snapshot)
-    assert False
+def test_run_saver(database, random_results, mock_rabbitmq):
+    results, snapshots = random_results
+    new_results = [(f'saver_{item[0]}', json.dumps(item[1])) for item in results]
+    MockRabbitMQ.results_to_send = new_results
+    run_saver(DB_URL, MQ_URL)
+    compare_db(database, snapshots)
 
 
-def test_cli():
-    assert False
+@pytest.fixture
+def random_result(tmp_path):
+    return gen_random_result(tmp_path, 1, 1)
+
+
+def test_cli(tmp_path, database, random_results):
+    results, snapshots = random_results
+    runner = CliRunner()
+    for result in results:
+        result_name, result_data = result
+        file_path = str(tmp_path / f'{result_name}.raw')
+        with open(file_path, 'w') as file:
+            file.write(json.dumps(result_data))
+        res = runner.invoke(cli, ['save', result_name, file_path])
+        assert res.exit_code == 0
+    compare_db(database, snapshots)

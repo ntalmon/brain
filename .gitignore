@@ -7,6 +7,5 @@ docs/build/
 data/
 brain-data/
 tmp_script/
-htmlcov/
 
 *_pb2.py

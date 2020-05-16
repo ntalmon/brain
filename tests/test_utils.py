@@ -52,6 +52,7 @@ class TestRabbitMQ:
 
         yield from run_in_background(wrapper, poll=2)
 
+    @pytest.mark.skip()
     def test_fanout(self, simple_fanout):
         msg = b'Message from publisher!'
         self.rabbit.publish(msg, exchange='e1')

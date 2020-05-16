@@ -7,7 +7,7 @@ from brain.api.db_agent import DBAgent
 app = flask.Flask(__name__)
 flask_cors.CORS(app)
 
-db_agent = None
+db_agent = None  # type: DBAgent
 
 
 @app.route('/users')
