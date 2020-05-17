@@ -1,4 +1,4 @@
-FROM python:3.8-slim-buster
+FROM python:3.8
 COPY brain /brain
 COPY config /config
 COPY scripts/wait-for-it.sh /
