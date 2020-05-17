@@ -17,18 +17,6 @@ def serve(path):
     return flask.render_template('index.html', api_url=api_url)
 
 
-def shutdown_server():
-    func = flask.request.environ.get('werkzeug.server.shutdown')
-    if func is None:
-        raise RuntimeError('Not running with the Werkzeug Server')
-    func()
-
-
-@app.route('/shutdown', methods=['POST'])
-def shutdown():
-    shutdown_server()
-
-
 def run_server(host, port, api_host, api_port):
     global api_url
     api_url = f'http://{api_host}:{api_port}'

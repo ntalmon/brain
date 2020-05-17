@@ -7,9 +7,9 @@ import sys
 
 from google.protobuf import json_format
 
+from .mq_agent import MQAgent
 from brain import brain_path
 from brain.autogen import parsers_pb2
-from .mq_agent import MQAgent
 
 parsers = {}
 parsers_path = brain_path / 'parsers'

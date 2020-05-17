@@ -7,7 +7,7 @@ import pytest
 
 from brain import tests_path as _tests_path
 from brain.autogen import reader_pb2
-from tests.data_generators import gen_user, gen_snapshot
+from .data_generators import gen_user, gen_snapshot
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 _resources_path = _tests_path / 'resources'

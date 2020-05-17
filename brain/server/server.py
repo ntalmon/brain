@@ -1,8 +1,8 @@
 import threading
 
-from brain.server.client_agent import snapshot_handler, run
-from brain.server.mq_agent import MQAgent
-from brain.server.parsers_agent import construct_parsers_message
+from .client_agent import snapshot_handler, run
+from .mq_agent import MQAgent
+from .parsers_agent import construct_parsers_message
 
 publish_fn = None
 

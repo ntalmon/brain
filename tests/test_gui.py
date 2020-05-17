@@ -4,7 +4,7 @@ from click.testing import CliRunner
 
 from brain.gui.__main__ import cli
 from brain.gui.gui import run_server
-from tests.utils import run_flask_in_thread
+from .utils import run_flask_in_thread
 
 GUI_HOST = '127.0.0.1'
 GUI_PORT = 8080

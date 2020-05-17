@@ -1,4 +1,5 @@
 import multiprocessing
+import socket
 import subprocess
 import threading
 import time
@@ -91,8 +92,35 @@ def shutdown_server(url):
     requests.post(shutdown_url)
 
 
+def add_shutdown_to_app(app):
+    if hasattr(app, 'has_shutdown') and app.has_shutdown:
+        return
+
+    @app.route('/shutdown', methods=['POST'])
+    def shutdown():
+        func = flask.request.environ.get('werkzeug.server.shutdown')
+        if func is None:
+            raise RuntimeError('Not running with the Werkzeug Server')
+        func()
+
+    app.has_shutdown = True
+
+
+def wait_for_address(host, port, timeout=5.0):
+    start_time = time.perf_counter()
+    while True:
+        try:
+            with socket.create_connection((host, port), timeout=timeout):
+                break
+        except OSError as ex:
+            time.sleep(0.01)
+            if time.perf_counter() - start_time >= timeout:
+                raise TimeoutError('Waited too long for the port {} on host {} to start accepting '
+                                   'connections.'.format(port, host)) from ex
+
+
 def run_flask_in_thread(app, url, callback):
-    # add_shutdown_to_app(app)
+    add_shutdown_to_app(app)
     exc = None  # type: Exception
 
     def wrapper():  # TODO: move this procedure to common utils?
@@ -108,9 +136,9 @@ def run_flask_in_thread(app, url, callback):
 
     thr = threading.Thread(target=wrapper)
     thr.start()
-    # reasonable time to wait for flask app to start
-    # TODO: is there a "correct" way to wait for the flask app?
-    time.sleep(3)
+    url_obj = furl(url)
+    host, port = url_obj.host, url_obj.port
+    wait_for_address(host, port)
     yield poll_exc
     shutdown_server(url)
     poll_exc()

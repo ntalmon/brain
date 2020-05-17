@@ -10,8 +10,8 @@ import brain.api.__main__
 from brain.api.__main__ import cli
 from brain.api.api import app, init_db_agent, run_api_server
 from brain.autogen import parsers_pb2
-from tests.data_generators import gen_snapshot, gen_user
-from tests.utils import protobuf2dict, run_flask_in_thread
+from .data_generators import gen_snapshot, gen_user
+from .utils import protobuf2dict, run_flask_in_thread
 
 API_HOST = '127.0.0.1'
 API_PORT = 5000
@@ -45,21 +45,6 @@ def populated_db(tmp_path):
         db_data.append(entry)
     users.insert_many(db_data)
     return db_data, users
-
-
-@pytest.fixture
-def api_server_in_thread():
-    yield from run_flask_in_thread(app, API_URL, lambda: run_api_server(API_HOST, API_PORT, DB_URL))
-
-
-def test_run_api_server(populated_db, api_server_in_thread):
-    poll_exc = api_server_in_thread
-    poll_exc()
-    res = requests.get(f'{API_URL}/users')
-    poll_exc()
-    assert res.status_code == 200
-    res = res.json()
-    assert len(res) == 5
 
 
 def api_get_and_compare(url, expected_json):
@@ -133,6 +118,21 @@ def test_get_result_data(populated_db):
             with open(result['path'], 'rb') as file:
                 file_data = file.read()
             assert res.data == file_data
+
+
+@pytest.fixture
+def api_server_in_thread():
+    yield from run_flask_in_thread(app, API_URL, lambda: run_api_server(API_HOST, API_PORT, DB_URL))
+
+
+def test_run_api_server(populated_db, api_server_in_thread):
+    poll_exc = api_server_in_thread
+    poll_exc()
+    res = requests.get(f'{API_URL}/users', verify=False, timeout=5)
+    poll_exc()
+    assert res.status_code == 200
+    res = res.json()
+    assert len(res) == 5
 
 
 @pytest.fixture

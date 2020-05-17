@@ -39,3 +39,7 @@ def test_end2end(services, random_sample):
     assert proc_client.returncode == 0, stderr
     assert b'All snapshots uploaded successfully' in stdout
     proc_client.terminate()
+
+
+def test_thread2thread():
+    pass

@@ -2,7 +2,7 @@ import os
 
 import flask
 import flask_cors
-from brain.api.db_agent import DBAgent
+from .db_agent import DBAgent
 
 app = flask.Flask(__name__)
 flask_cors.CORS(app)
@@ -55,18 +55,6 @@ def get_snapshot_result_data(user_id, snapshot_id, result_name):
     if not os.path.isfile(file_path):
         flask.abort(404)
     return flask.send_file(file_path, mimetype='image/jpeg', attachment_filename=f'{result_name}.jpg')
-
-
-def shutdown_server():
-    func = flask.request.environ.get('werkzeug.server.shutdown')
-    if func is None:
-        raise RuntimeError('Not running with the Werkzeug Server')
-    func()
-
-
-@app.route('/shutdown', methods=['POST'])
-def shutdown():
-    shutdown_server()
 
 
 def init_db_agent(database_url):

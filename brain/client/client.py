@@ -1,4 +1,4 @@
-from brain.client.reader import Reader
+from .reader import Reader
 from .server_agent import ServerAgent
 
 
