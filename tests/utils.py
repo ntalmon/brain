@@ -1,6 +1,7 @@
 import multiprocessing
 import subprocess
 
+import flask
 from google.protobuf import json_format
 
 
@@ -79,3 +80,15 @@ def run_in_background(callback, poll=1):
     finally:
         process.terminate()
         process.join()
+
+
+def add_shutdown_to_app(app):
+    def shutdown_server():
+        func = flask.request.environ.get('werkzeug.server.shutdown')
+        if func is None:
+            raise RuntimeError('Not running with the Werkzeug Server')
+        func()
+
+    @app.route('/shutdown', methods=['POST'])
+    def shutdown():
+        shutdown_server()
