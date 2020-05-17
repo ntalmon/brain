@@ -57,6 +57,18 @@ def get_snapshot_result_data(user_id, snapshot_id, result_name):
     return flask.send_file(file_path, mimetype='image/jpeg', attachment_filename=f'{result_name}.jpg')
 
 
+def shutdown_server():
+    func = flask.request.environ.get('werkzeug.server.shutdown')
+    if func is None:
+        raise RuntimeError('Not running with the Werkzeug Server')
+    func()
+
+
+@app.route('/shutdown', methods=['POST'])
+def shutdown():
+    shutdown_server()
+
+
 def init_db_agent(database_url):
     global db_agent
     db_agent = DBAgent(database_url)

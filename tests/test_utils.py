@@ -1,3 +1,5 @@
+import time
+
 import pytest
 
 from brain.utils.mq.rabbitmq import RabbitMQ
@@ -55,5 +57,6 @@ class TestRabbitMQ:
     def test_fanout(self, simple_fanout):
         msg = b'Message from publisher!'
         self.rabbit.publish(msg, exchange='e1')
+        time.sleep(1)
         assert simple_fanout() == msg
         assert simple_fanout() == msg

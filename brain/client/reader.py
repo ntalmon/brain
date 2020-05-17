@@ -1,6 +1,3 @@
-"""
-TODO: handle readers design
-"""
 import gzip
 import struct
 

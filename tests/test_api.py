@@ -1,6 +1,4 @@
 import random
-import threading
-import time
 
 import pymongo
 import pytest
@@ -13,10 +11,11 @@ from brain.api.__main__ import cli
 from brain.api.api import app, init_db_agent, run_api_server
 from brain.autogen import parsers_pb2
 from tests.data_generators import gen_snapshot, gen_user
-from tests.utils import protobuf2dict, add_shutdown_to_app
+from tests.utils import protobuf2dict, run_flask_in_thread
 
 API_HOST = '127.0.0.1'
 API_PORT = 5000
+API_URL = f'http://{API_HOST}:{API_PORT}'
 DB_HOST = '127.0.0.1'
 DB_PORT = 27017
 DB_URL = f'mongodb://{DB_HOST}:{DB_PORT}'
@@ -50,35 +49,13 @@ def populated_db(tmp_path):
 
 @pytest.fixture
 def api_server_in_thread():
-    add_shutdown_to_app(app)
-    exc = None  # type: Exception
-
-    def wrapper():  # TODO: move this procedure to common utils?
-        try:
-            run_api_server(API_HOST, API_PORT, DB_URL)
-        except Exception as error:
-            nonlocal exc
-            exc = error
-
-    def poll_exc():
-        if exc:
-            raise exc
-
-    thr = threading.Thread(target=wrapper)
-    thr.start()
-    # reasonable time to wait for flask app to start
-    # TODO: is there a "correct" way to wait for the flask app?
-    time.sleep(3)
-    yield poll_exc
-    res = requests.post(f'http://{API_HOST}:{API_PORT}/shutdown')
-    poll_exc()
-    thr.join(timeout=10)
+    yield from run_flask_in_thread(app, API_URL, lambda: run_api_server(API_HOST, API_PORT, DB_URL))
 
 
 def test_run_api_server(populated_db, api_server_in_thread):
     poll_exc = api_server_in_thread
     poll_exc()
-    res = requests.get(f'http://{API_HOST}:{API_PORT}/users')
+    res = requests.get(f'{API_URL}/users')
     poll_exc()
     assert res.status_code == 200
     res = res.json()

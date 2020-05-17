@@ -1,7 +1,11 @@
 import multiprocessing
 import subprocess
+import threading
+import time
 
 import flask
+import requests
+from furl import furl
 from google.protobuf import json_format
 
 
@@ -82,13 +86,32 @@ def run_in_background(callback, poll=1):
         process.join()
 
 
-def add_shutdown_to_app(app):
-    def shutdown_server():
-        func = flask.request.environ.get('werkzeug.server.shutdown')
-        if func is None:
-            raise RuntimeError('Not running with the Werkzeug Server')
-        func()
+def shutdown_server(url):
+    shutdown_url = str(furl(url) / 'shutdown')
+    requests.post(shutdown_url)
 
-    @app.route('/shutdown', methods=['POST'])
-    def shutdown():
-        shutdown_server()
+
+def run_flask_in_thread(app, url, callback):
+    # add_shutdown_to_app(app)
+    exc = None  # type: Exception
+
+    def wrapper():  # TODO: move this procedure to common utils?
+        try:
+            callback()
+        except Exception as error:
+            nonlocal exc
+            exc = error
+
+    def poll_exc():
+        if exc:
+            raise exc
+
+    thr = threading.Thread(target=wrapper)
+    thr.start()
+    # reasonable time to wait for flask app to start
+    # TODO: is there a "correct" way to wait for the flask app?
+    time.sleep(3)
+    yield poll_exc
+    shutdown_server(url)
+    poll_exc()
+    thr.join(timeout=10)
