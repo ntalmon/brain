@@ -4,14 +4,15 @@
 
 set -e
 echo "Building docker images"
-docker build -f docker/api/Dockerfile . -t brain-api &
-docker build -f docker/color_image/Dockerfile . -t brain-color-image &
-docker build -f docker/depth_image/Dockerfile . -t brain-depth-image &
-docker build -f docker/feelings/Dockerfile . -t brain-feelings &
-docker build -f docker/gui/Dockerfile . -t brain-gui &
-docker build -f docker/pose/Dockerfile . -t brain-pose &
-docker build -f docker/saver/Dockerfile . -t brain-saver &
-docker build -f docker/server/Dockerfile . -t brain-server &
+docker build -f docker/common . -t brain-common
+docker build -f docker/api . -t brain-api &
+docker build -f docker/color_image . -t brain-color-image &
+docker build -f docker/depth_image . -t brain-depth-image &
+docker build -f docker/feelings . -t brain-feelings &
+docker build -f docker/gui . -t brain-gui &
+docker build -f docker/pose . -t brain-pose &
+docker build -f docker/saver . -t brain-saver &
+docker build -f docker/server . -t brain-server &
 wait
 
 echo "Stop running containers"

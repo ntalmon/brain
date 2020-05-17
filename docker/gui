@@ -1,0 +1,3 @@
+# TODO: complete implementation
+FROM brain-common
+CMD ["python", "-m", "brain.gui", "run-server", "-h", "127.0.0.1", "-p", "8080", "-H", "127.0.0.1", "-P", "5000"]
