@@ -1,10 +1,3 @@
-"""
-TODO: separate between base agent and http agent
-TODO: choose right agent according to url
-TODO: remove config usage
-TODO: make sure server is asynchronous and multithreaded
-TODO: resolve flask-class issue
-"""
 import flask
 
 from brain.autogen import protocol_pb2
@@ -17,16 +10,17 @@ def snapshot_handler(f):
     snapshot_handlers.append(f)
 
 
-@app.route('/snapshot', methods=['GET', 'POST'])
+@app.route('/snapshot', methods=['POST'])
 def handle_snapshot():
-    if flask.request.method == 'GET':
-        return  # TODO: handle this case
-    snapshot_msg = flask.request.data  # TODO: get exact post data
+    snapshot_msg = flask.request.data
     snapshot = protocol_pb2.Snapshot()
-    snapshot.ParseFromString(snapshot_msg)
+    try:
+        snapshot.ParseFromString(snapshot_msg)
+    except Exception as error:
+        flask.abort()
     for handler in snapshot_handlers:
         handler(snapshot)
-    return ''  # TODO: handle this
+    return 'Snapshot handled successfully'
 
 
 def run(host, port):

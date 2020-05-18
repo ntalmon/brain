@@ -15,9 +15,6 @@ def cli():
 @click.argument('mq', type=click.STRING)
 @cli_suppress
 def cli_run_server(host, port, mq):
-    """
-    TODO: handle publish argument
-    """
     publish = construct_publish(mq)
     run_server(host, port, publish)
 

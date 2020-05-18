@@ -51,14 +51,3 @@ class RabbitMQ:
 
     def stop_consuming(self):
         self.channel.stop_consuming()
-
-
-if __name__ == '__main__':
-    mq = RabbitMQ('rabbitmq://127.0.0.1:5672')
-
-
-    def cb(msg):
-        print([msg])
-
-
-    mq.consume(cb, '', ['q1'])

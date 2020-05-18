@@ -1,6 +1,3 @@
-"""
-TODO: handle errors
-"""
 import click
 
 from .api_agent import api_get

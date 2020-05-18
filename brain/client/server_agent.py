@@ -32,6 +32,4 @@ class ServerAgent:
         new_snapshot = self._construct_snapshot(user, snapshot)
         url = self.url / 'snapshot'
         snapshot_msg = new_snapshot.SerializeToString()
-        status = post(url, snapshot_msg)
-        if status != 200:
-            raise Exception(f'Failed to send snapshot. Server returned with code {status}')
+        post(url, snapshot_msg)

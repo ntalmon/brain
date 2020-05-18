@@ -21,7 +21,7 @@ snapshot_lock = threading.Lock()
 snapshot_counter = 0
 
 
-def generate_snapshot_uuid():  # TODO: is this the right way to generate uuid?
+def generate_snapshot_uuid():
     global snapshot_counter
     with snapshot_lock:
         uuid = snapshot_counter
