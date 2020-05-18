@@ -3,6 +3,7 @@ TODO: send context to parsers if needed
 """
 import importlib
 import json
+import pathlib
 import sys
 
 from google.protobuf import json_format
@@ -53,8 +54,8 @@ def get_parsers():
 
 
 class Context:
-    def __init__(self):
-        pass
+    def __init__(self, path):
+        self.color_image_raw = str(path / 'color_image_raw')
 
     def save(self, file, data):
         pass

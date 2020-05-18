@@ -38,6 +38,7 @@ class TestRabbitMQ:
 
     def test_consume(self, simple_consume):
         msg = b'Message from publisher!'
+        time.sleep(1)
         self.rabbit.publish(msg, queue='q1')
         data = simple_consume()
         assert data == msg
@@ -56,7 +57,7 @@ class TestRabbitMQ:
 
     def test_fanout(self, simple_fanout):
         msg = b'Message from publisher!'
-        self.rabbit.publish(msg, exchange='e1')
         time.sleep(1)
+        self.rabbit.publish(msg, exchange='e1')
         assert simple_fanout() == msg
         assert simple_fanout() == msg

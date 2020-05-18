@@ -3,9 +3,11 @@ import socket
 import subprocess
 import threading
 import time
+from functools import partial
 
 import flask
 import requests
+from click.testing import CliRunner
 from furl import furl
 from google.protobuf import json_format
 
@@ -119,13 +121,12 @@ def wait_for_address(host, port, timeout=5.0):
                                    'connections.'.format(port, host)) from ex
 
 
-def run_flask_in_thread(app, url, callback):
-    add_shutdown_to_app(app)
+def run_in_thread(main_func, setup=None, teardown=None):
     exc = None  # type: Exception
 
-    def wrapper():  # TODO: move this procedure to common utils?
+    def wrapper():
         try:
-            callback()
+            main_func()
         except Exception as error:
             nonlocal exc
             exc = error
@@ -136,10 +137,26 @@ def run_flask_in_thread(app, url, callback):
 
     thr = threading.Thread(target=wrapper)
     thr.start()
-    url_obj = furl(url)
-    host, port = url_obj.host, url_obj.port
-    wait_for_address(host, port)
+    if setup:
+        setup()
     yield poll_exc
-    shutdown_server(url)
+    if teardown:
+        teardown()
     poll_exc()
     thr.join(timeout=10)
+
+
+def run_flask_in_thread(app, url, callback):
+    add_shutdown_to_app(app)
+    url_obj = furl(url)
+    host, port = url_obj.host, url_obj.port
+    setup = partial(wait_for_address, host, port)
+    teardown = partial(shutdown_server, url)
+    return run_in_thread(callback, setup=setup, teardown=teardown)
+
+
+def cli_run_and_check(cli, *args, **kwargs):
+    runner = CliRunner()
+    result = runner.invoke(cli, *args, **kwargs)
+    assert result.exit_code == 0, result.exception
+    return result.stdout

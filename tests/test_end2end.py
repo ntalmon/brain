@@ -1,8 +1,11 @@
 import subprocess
 import time
+from functools import partial
 
 import coverage
 import pytest
+
+from tests.utils import cli_run_and_check, run_flask_in_thread
 
 LOCALHOST = '127.0.0.1'
 MQ_URL = 'rabbitmq://127.0.0.1:5672'
@@ -41,5 +44,10 @@ def test_end2end(services, random_sample):
     proc_client.terminate()
 
 
-def test_thread2thread():
-    pass
+@pytest.fixture
+def server_thread():
+    from brain.server.__main__ import cli
+    from brain.server.client_agent import app
+    callback = partial(cli_run_and_check, cli, ['run-server', MQ_URL])
+    # TODO: handle server url
+    yield from run_flask_in_thread(app, 'http://127.0.0.1:8000', callback)
