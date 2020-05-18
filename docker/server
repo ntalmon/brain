@@ -1,2 +1,3 @@
 FROM brain-common
-CMD ["python", "-m", "brain.server", "run-server", "rabbitmq://localhost:5672"]
+CMD ["./wait-for-it.sh", "rabbitmq://127.0.0.1:5672", "--", "python", "-m", "brain.server", "run-server", \
+ 	"rabbitmq://localhost:5672"]

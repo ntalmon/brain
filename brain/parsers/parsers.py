@@ -2,7 +2,9 @@
 TODO: send context to parsers if needed
 """
 import importlib
+import inspect
 import json
+import os
 import pathlib
 import sys
 
@@ -44,6 +46,10 @@ def load_parsers():
         for name, obj in module.__dict__.items():
             if callable(obj) and name.startswith('parse_') and hasattr(obj, 'field'):
                 parsers[obj.field] = _wrap_parser(obj)
+            elif inspect.isclass(obj) and name.lower().endswith('parser') and hasattr(obj, 'parse') and \
+                    hasattr(obj, 'field'):
+                instance = obj()
+                parsers[obj.field] = _wrap_parser(instance.parse)
 
 
 load_parsers()
@@ -55,13 +61,20 @@ def get_parsers():
 
 class Context:
     def __init__(self, path):
-        self.color_image_raw = str(path / 'color_image_raw')
+        if isinstance(path, str):
+            path = pathlib.Path(path)
+        self.base_path = path
 
     def save(self, file, data):
-        pass
+        mode = 'w' + 'b' * isinstance(data, bytes)
+        with open(self.path(file), mode) as writer:
+            writer.write(data)
 
     def path(self, file):
-        pass
+        return str(self.base_path / file)
+
+    def delete(self, file):
+        os.remove(self.path(file))
 
 
 def parser(topic):
@@ -72,7 +85,6 @@ def parser(topic):
     return decorator
 
 
-# TODO: check if it is ok to add these additional parameters
 def run_parser(parser_name, data, is_path=False):
     if parser_name not in parsers:
         raise Exception(f'Could not find given parser name \'{parser_name}\'')
@@ -84,7 +96,7 @@ def run_parser(parser_name, data, is_path=False):
 
 def invoke_parser(topic, url):
     if topic not in parsers:
-        return  # TODO: handle this case
+        raise Exception(f'Parser not found: {topic}')
     _parser = parsers[topic]
     mq_agent = MQAgent(url)
 
