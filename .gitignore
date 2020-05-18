@@ -8,4 +8,5 @@ data/
 brain-data/
 tmp_script/
 
+*.pyc
 *_pb2.py

@@ -1,10 +1,11 @@
 import threading
+from typing import Callable
 
 from .client_agent import snapshot_handler, run
 from .mq_agent import MQAgent
 from .parsers_agent import construct_parsers_message
 
-publish_fn = None
+publish_fn = None  # type: Callable
 
 
 def construct_publish(mq_url):

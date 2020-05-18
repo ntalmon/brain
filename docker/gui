@@ -1,3 +1,6 @@
-# TODO: complete implementation
 FROM brain-common
+ADD app /app
+RUN apt-get install -y npm
+RUN npm install -g npm@latest
+RUN ./build.sh app
 CMD ["python", "-m", "brain.gui", "run-server", "-h", "127.0.0.1", "-p", "8080", "-H", "127.0.0.1", "-P", "5000"]
