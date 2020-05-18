@@ -29,17 +29,35 @@ Final project of Advanced System Design. See [full documentation](https://brain.
 
 ## Usage
 ### Client
-The client is available as `brain.client` as container the following interface:
-```python
-from brain.client import upload_sample
-upload_sample(host='127.0.0.1', port=8000, path='sample.mind.gz')
+The client is available in `brain.client` with the following interface:
+```pycon
+>>> from brain.client import upload_sample
+>>> upload_sample(host='127.0.0.1', port=8000, path='sample.mind.gz')
 ```
-It will read the snapshots from the given file, and stream them to the server with the given host and port.
+It will read the snapshots from the given `path`, and stream them to the server with the given `host` and `port`.
 
-Or with the following CLI:
+The client is also available with the following CLI:
 ```bash
 $ python -m brain.client upload-sample \
     -h/--host '127.0.0.1'              \
     -p/--port 8000                     \
     'sample.mind.gz'
 ```
+### Server
+The server is available in `brain.server` with the following interface:
+```pycon
+>>> from brain.server import run_server
+>>> def print_message(message):
+...     print(message)
+>>> run_server()
+```
+It will listen on `host`:`port` and pass received messages to `publish` 
+
+The server is also available with the following CLI:
+```bash
+$ python -m brain.server run-server \
+    -h/--host '127.0.0.1'           \
+    -p/--port 8000                  \
+    'rabbitmq://127.0.0.1:5672'
+```
+Using the CLI, the server will publish the received snapshots to a message queue at the given address.
