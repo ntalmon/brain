@@ -28,14 +28,14 @@ build_docker() {
 }
 
 build_app() {
-	npm install app/
+	npm install --prefix app/
 	npm run --prefix app/ build
 }
 
 if [[ $# -eq 0 ]] ; then
 	usage
 else
-	mkdir brain-data
+	mkdir -p brain-data
 	for command in "$@"; do
 		if [[ "$command" == "protobuf" ]]; then
 			build_protobuf
