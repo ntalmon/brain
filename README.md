@@ -79,7 +79,6 @@ $ python -m brain.parsers run-parser 'pose' 'rabbitmq://127.0.0.1:5672'
 - `parse` will run the parser with with data in the given file, and print the result.
 - `run-parser` will run the parser as a service, i.e. it will consume the message queue at \
 the given address, parse incoming messages, and publish the results back to the queue.
-
 #### Available parsers
 - `pose` - collects the translation and the rotation of the users's head at a given timestamp.
 - `color_image` - collects the color image of what the user was seeing at a given timestamp.
@@ -111,3 +110,27 @@ The parser can expose its parsing function in several ways:
           return result
   ```
   The important things to keep in mind are the 'Parser' suffix, the `field` and the `parse` method.
+### Saver
+The saver is available in `brain.saver` with the following interface:
+```python
+from brain.saver import Saver
+saver = Saver(database_url)
+data = ...
+saver.save('pose', data)
+```
+It will connect to the database at `database_url`, and save the given `data` under the given `topic` to the database.
+
+The saver is also available with the following CLI:
+```bash
+$ python -m brain.saver save                    \
+    -d/--database 'mongodb://127.0.0.1:27017'   \
+    'pose'                                      \
+    'pose.result'
+$ python -m brain.saver run-saver   \
+    'mongodb://127.0.0.1:27017'     \
+    'rabbitmq://127.0.0.1:5672'
+```
+- `save` accepts a topic name and a path to some raw data, as consumed from the message queue, \
+    and saves it to a database.
+- `run-saver` will run the saver as a service, i.e. it will consume the message queue, and save \
+    incoming messages to the database.
