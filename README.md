@@ -134,3 +134,38 @@ $ python -m brain.saver run-saver   \
     and saves it to a database.
 - `run-saver` will run the saver as a service, i.e. it will consume the message queue, and save \
     incoming messages to the database.
+### API
+The API is available in `brain.api` with the following interface:
+```python
+from brain.api import run_api_server
+run_api_server(
+    host='127.0.1',
+    port=5000,
+    database_url='mongodb://127.0.0.1:27017'
+)
+```
+It will listen on `host`:`port` and serve data from database_url.
+
+The API is also available with the following CLI:
+```bash
+$ python -m brain.api run-server    \
+    -h/--host '127.0.0.1'           \
+    -p/--port 5000                  \
+    -d/--database 'mongodb://127.0.0.1:27017'
+```
+The API is RESTful API and supports the following endpoints:
+- `GET /users` \
+    Returns the list of all supported users, including their IDs and names only.
+- `GET/users/<user-id>` \
+    Returns the specified users' details: ID, name, birthday and gender.
+- `GET /users/<user-id>/snapshots` \
+    Returns the list of the specified user's snapshot IDs and datetimes only.
+- `GET /users/<user-id>/snapshots/<snapshot-id>` \
+    Returns the specified snapshot's details: ID, datetime, and the available results' \
+     names only (e.g. **pose**).
+- `GET /users/<user-id>/snapshots/<snapshot-id>/<result-name>` \
+    Returns the specified snapshot's result in JSON format. \
+    For some parse results that contain large binary files (like **color_image** and **depth_image**), \
+    the blob will be saved into the disk, and the result will contain the file path.
+    The file data is available the following URL: \
+    `GET /users/<user-id>/snapshots/<snapshot-id>/<result-name>/data`.
