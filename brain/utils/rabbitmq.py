@@ -38,6 +38,7 @@ class RabbitMQ:
             except Exception:
                 channel.basic_nack(delivery_tag=method.delivery_tag)
                 raise
+            return res
 
         for queue in queues:
             self.channel.basic_consume(queue=queue, auto_ack=False, on_message_callback=wrapper)
@@ -45,7 +46,7 @@ class RabbitMQ:
 
     def publish(self, data, exchange='', queue=''):
         if not exchange and not queue:
-            return  # TODO: handle this case
+            raise Exception('Queue or exchange were not given')
 
         self.channel.basic_publish(exchange, queue, data)
 

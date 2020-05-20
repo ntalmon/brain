@@ -8,11 +8,9 @@ import brain.parsers
 from brain.autogen import parsers_pb2
 from brain.parsers.__main__ import cli
 from brain.parsers import run_parser, invoke_parser
-from tests.data_generators import gen_snapshot
-from tests.utils import protobuf2dict
-
-MQ_URL = 'rabbitmq://127.0.0.1:5672'
-PARSERS = ['pose', 'color_image', 'depth_image', 'feelings']
+from .consts import *
+from .data_generators import gen_snapshot
+from .utils import protobuf2dict
 
 
 @pytest.fixture

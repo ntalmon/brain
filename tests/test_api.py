@@ -10,23 +10,17 @@ import brain.api.__main__
 from brain.api.__main__ import cli
 from brain.api.api import app, init_db_agent, run_api_server
 from brain.autogen import parsers_pb2
+from .consts import *
 from .data_generators import gen_snapshot, gen_user
 from .utils import protobuf2dict, run_flask_in_thread
-
-API_HOST = '127.0.0.1'
-API_PORT = 5000
-API_URL = f'http://{API_HOST}:{API_PORT}'
-DB_HOST = '127.0.0.1'
-DB_PORT = 27017
-DB_URL = f'mongodb://{DB_HOST}:{DB_PORT}'
 
 
 @pytest.fixture
 def populated_db(tmp_path):
     conn = pymongo.MongoClient(host=DB_HOST, port=DB_PORT)
-    db = conn['brain']
-    db.drop_collection('users')
-    users = db['users']
+    conn.drop_database(DB_NAME)
+    db = conn[DB_NAME]
+    collection = db[COLLECTION_NAME]
     db_data = []
     for _ in range(5):
         user = gen_user(parsers_pb2.User())
@@ -43,8 +37,8 @@ def populated_db(tmp_path):
                     s_entry['results'][result] = s_entry.pop(result)
             entry['snapshots'].append(s_entry)
         db_data.append(entry)
-    users.insert_many(db_data)
-    return db_data, users
+    collection.insert_many(db_data)
+    return db_data, collection
 
 
 def api_get_and_compare(url, expected_json):
@@ -55,14 +49,14 @@ def api_get_and_compare(url, expected_json):
 
 
 def test_get_users(populated_db):
-    db_data, users = populated_db
+    db_data, collection = populated_db
     init_db_agent(DB_URL)
     expected = [{'user_id': entry['user_id'], 'username': entry['username']} for entry in db_data]
     api_get_and_compare('/users', expected)
 
 
 def test_get_user(populated_db):
-    db_data, users = populated_db
+    db_data, collection = populated_db
     init_db_agent(DB_URL)
     entry = random.choice(db_data)
     user_id = entry['user_id']
@@ -72,7 +66,7 @@ def test_get_user(populated_db):
 
 
 def test_get_snapshots(populated_db):
-    db_data, users = populated_db
+    db_data, collection = populated_db
     init_db_agent(DB_URL)
     entry = random.choice(db_data)
     user_id = entry['user_id']
@@ -81,7 +75,7 @@ def test_get_snapshots(populated_db):
 
 
 def test_get_snapshot(populated_db):
-    db_data, users = populated_db
+    db_data, collection = populated_db
     init_db_agent(DB_URL)
     entry = random.choice(db_data)
     user_id = entry['user_id']
@@ -92,7 +86,7 @@ def test_get_snapshot(populated_db):
 
 
 def test_get_result(populated_db):
-    db_data, users = populated_db
+    db_data, collection = populated_db
     init_db_agent(DB_URL)
     entry = random.choice(db_data)
     user_id = entry['user_id']
@@ -103,7 +97,7 @@ def test_get_result(populated_db):
 
 
 def test_get_result_data(populated_db):
-    db_data, users = populated_db
+    db_data, collection = populated_db
     init_db_agent(DB_URL)
     entry = random.choice(db_data)
     user_id = entry['user_id']

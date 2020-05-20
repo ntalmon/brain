@@ -43,6 +43,7 @@ $ python -m brain.client upload-sample \
     -p/--port 8000                     \
     'sample.mind.gz'
 ```
+
 ### Server
 The server is available in `brain.server` with the following interface:
 ```python
@@ -61,6 +62,7 @@ $ python -m brain.server run-server \
     'rabbitmq://127.0.0.1:5672'
 ```
 Using the CLI, the server will publish the received snapshots to a message queue at the given address.
+
 ### Parsers
 The parsers are available in `brain.parsers` with the following interface:
 ```python
@@ -110,6 +112,7 @@ The parser can expose its parsing function in several ways:
           return result
   ```
   The important things to keep in mind are the 'Parser' suffix, the `field` and the `parse` method.
+
 ### Saver
 The saver is available in `brain.saver` with the following interface:
 ```python
@@ -134,6 +137,7 @@ $ python -m brain.saver run-saver   \
     and saves it to a database.
 - `run-saver` will run the saver as a service, i.e. it will consume the message queue, and save \
     incoming messages to the database.
+
 ### API
 The API is available in `brain.api` with the following interface:
 ```python
@@ -169,6 +173,7 @@ The API is RESTful API and supports the following endpoints:
     the blob will be saved into the disk, and the result will contain the file path.
     The file data is available the following URL: \
     `GET /users/<user-id>/snapshots/<snapshot-id>/<result-name>/data`.
+
 ### CLI
 The CLI consumes and reflects the API and contains the following commands:
 ```bash
@@ -179,6 +184,7 @@ $ python -m brain.cli get-snapshot USER_ID SNAPSHOT_ID
 $ python -m brain.cli get-result USER_ID SNAPSHOT_ID RESULT_NAME
 ```
 All commands accept the `-h/--host` and `-p/--port` flags to configure the host and port of the API.
+
 ### GUI
 The GUI is consumes the API and reflects the retrieved data. \
 It is available in `brain.gui` with the following interface:
@@ -191,7 +197,7 @@ run_server(
     api_port=5000
 )
 ```
- The GUI is also available with the following CLI:
+The GUI is also available with the following CLI:
 ```bash
 $ python -m brain.gui run-server    \
     -h/--host '127.0.0.1'           \
@@ -199,7 +205,8 @@ $ python -m brain.gui run-server    \
     -H/--api-host '127.0.0.1'       \
     -P/--api-port 5050
 ```
-### Deployment
+
+## Deployment
 Each one of the services can also run from a container.
 In order to build and start all the containers, you should run:
 ```bash

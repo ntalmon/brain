@@ -5,12 +5,8 @@ from functools import partial
 import coverage
 import pytest
 
-from tests.utils import cli_run_and_check, run_flask_in_thread
-
-LOCALHOST = '127.0.0.1'
-MQ_URL = 'rabbitmq://127.0.0.1:5672'
-DB_URL = 'mongodb://127.0.0.1:27017'
-SERVER_PORT = 8000
+from .consts import *
+from .utils import cli_run_and_check, run_flask_in_thread
 
 
 def run_cmd(cmd):
@@ -35,6 +31,7 @@ def services():
         process.terminate()
 
 
+@pytest.mark.skip()
 def test_end2end(services, random_sample):
     user, snapshots, file_path = random_sample
     proc_client = run_cmd(['python', '-m', 'brain.client', 'upload-sample', str(file_path)])

@@ -1,14 +1,9 @@
 import pytest
 from click.testing import CliRunner
-from furl import furl
 
 import brain.cli.api_agent
 from brain.cli.__main__ import cli
-
-API_HOST = '127.0.0.1'
-API_PORT = 5000
-API_URL = furl(f'http://{API_HOST}:{API_PORT}')
-DB_URL = 'mongodb://127.0.0.1:27017'
+from .consts import *
 
 
 @pytest.fixture
@@ -23,7 +18,7 @@ def test_get_users(mock_get):
     runner = CliRunner()
     result = runner.invoke(cli, ['get-users'])
     assert result.exit_code == 0
-    assert furl(result.stdout.rstrip('\n')) == API_URL / 'users'
+    assert furl(result.stdout.rstrip('\n')) == API_FURL / 'users'
 
 
 def test_get_user(mock_get):
@@ -31,7 +26,7 @@ def test_get_user(mock_get):
     user_id = '1'
     result = runner.invoke(cli, ['get-user', user_id])
     assert result.exit_code == 0, result.exception
-    assert furl(result.stdout.rstrip('\n')) == API_URL / 'users' / user_id
+    assert furl(result.stdout.rstrip('\n')) == API_FURL / 'users' / user_id
 
 
 def test_get_snapshots(mock_get):
@@ -39,7 +34,7 @@ def test_get_snapshots(mock_get):
     user_id = '1'
     result = runner.invoke(cli, ['get-snapshots', user_id])
     assert result.exit_code == 0, result.exception
-    assert furl(result.stdout.rstrip('\n')) == API_URL / 'users' / user_id / 'snapshots'
+    assert furl(result.stdout.rstrip('\n')) == API_FURL / 'users' / user_id / 'snapshots'
 
 
 def test_get_snapshot(mock_get):
@@ -48,7 +43,7 @@ def test_get_snapshot(mock_get):
     snapshot_id = '2'
     result = runner.invoke(cli, ['get-snapshot', user_id, snapshot_id])
     assert result.exit_code == 0, result.exception
-    assert furl(result.stdout.rstrip('\n')) == API_URL / 'users' / user_id / 'snapshots' / snapshot_id
+    assert furl(result.stdout.rstrip('\n')) == API_FURL / 'users' / user_id / 'snapshots' / snapshot_id
 
 
 @pytest.mark.parametrize('result_name', ['pose', 'color_image', 'depth_image', 'feelings'])
@@ -58,4 +53,4 @@ def test_get_result(mock_get, result_name):
     snapshot_id = '2'
     result = runner.invoke(cli, ['get-result', user_id, snapshot_id, result_name])
     assert result.exit_code == 0, result.exception
-    assert furl(result.stdout.rstrip('\n')) == API_URL / 'users' / user_id / 'snapshots' / snapshot_id / result_name
+    assert furl(result.stdout.rstrip('\n')) == API_FURL / 'users' / user_id / 'snapshots' / snapshot_id / result_name

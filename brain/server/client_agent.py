@@ -17,7 +17,8 @@ def handle_snapshot():
     try:
         snapshot.ParseFromString(snapshot_msg)
     except Exception as error:
-        flask.abort()
+        print(error)
+        flask.abort(400)
     for handler in snapshot_handlers:
         handler(snapshot)
     return 'Snapshot handled successfully'

@@ -8,12 +8,9 @@ import brain.saver.mq_agent
 from brain.saver.__main__ import cli
 from brain.autogen import parsers_pb2
 from brain.saver import Saver, run_saver
-from tests.data_generators import gen_user, gen_snapshot
-from tests.utils import protobuf2dict, dict_projection
-
-DB_URL = 'mongodb://127.0.0.1:27017'
-MQ_URL = 'rabbitmq://127.0.0.1:5672'
-PARSERS = ['pose', 'color_image', 'depth_image', 'feelings']
+from .consts import *
+from .data_generators import gen_user, gen_snapshot
+from .utils import protobuf2dict, dict_projection
 
 
 @pytest.fixture
@@ -59,11 +56,11 @@ def random_results(tmp_path):
 
 
 def compare_db(database, users_snapshots):
-    users = database['users']
-    collection = users.find({})
-    collection = list(collection)
+    collection = database[COLLECTION_NAME]
+    collection_data = collection.find({})
+    collection_data = list(collection_data)
     for user_id, items in users_snapshots.items():
-        for user_entry in collection:
+        for user_entry in collection_data:
             if user_entry['user_id'] == user_id:
                 break
         else:

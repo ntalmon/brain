@@ -1,4 +1,4 @@
-from brain.utils.mq.rabbitmq import RabbitMQ
+from brain.utils.rabbitmq import RabbitMQ
 
 
 class MQAgent:

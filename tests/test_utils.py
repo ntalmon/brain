@@ -2,10 +2,9 @@ import time
 
 import pytest
 
-from brain.utils.mq.rabbitmq import RabbitMQ
-from tests.utils import run_in_background
-
-MQ_URL = 'rabbitmq://127.0.0.1:5672'
+from brain.utils.rabbitmq import RabbitMQ
+from .consts import *
+from .utils import run_in_background
 
 
 @pytest.fixture

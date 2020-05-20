@@ -8,11 +8,8 @@ from brain.server.__main__ import cli
 from brain.autogen import protocol_pb2
 from brain.server.client_agent import app
 from brain.server.server import init_publish, construct_publish
-from tests.data_generators import gen_snapshot
-
-HOST = '127.0.0.1'
-PORT = 8000
-MQ_URL = 'rabbitmq://127.0.0.1:5672'
+from .consts import *
+from .data_generators import gen_snapshot
 
 
 @pytest.fixture
@@ -62,8 +59,8 @@ class MockMQAgent:
 
 
 def fake_run_server(host, port, publish):
-    assert host == HOST
-    assert port == PORT
+    assert host == SERVER_HOST
+    assert port == SERVER_PORT
     publish('Message to verify')
 
 

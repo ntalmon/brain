@@ -4,13 +4,8 @@ from click.testing import CliRunner
 
 from brain.gui.__main__ import cli
 from brain.gui.gui import run_server
+from .consts import *
 from .utils import run_flask_in_thread
-
-GUI_HOST = '127.0.0.1'
-GUI_PORT = 8080
-GUI_URL = f'http://{GUI_HOST}:{GUI_PORT}'
-API_HOST = '127.0.0.1'
-API_PORT = 5000
 
 
 def simple_get_index():
