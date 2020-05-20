@@ -5,6 +5,21 @@
 # Brain
 Final project of Advanced System Design. See [full documentation](https://brain.readthedocs.io/en/latest/).
 
+The basic idea of the project is to build python-based, software-only implementation \
+of [Brain Computer Interface](https://en.wikipedia.org/wiki/Brain%E2%80%93computer_interface). The real client and hardware
+will be replace by a sample \
+file contains cognition snapshots.
+#### Basic flow - upload snapshots
+1. The client reads the sample file and streams the snapshots one by one to the server.
+2. The server the receives snapshots, and sends them to different parsers using a message queue.
+3. The parsers are parsing the snapshots and send the results to the saver using the message queue.
+4. The saver receives parsed snapshots (snapshots + parsing results) and saves them to the database.
+#### Read the uploaded data
+There are several ways to get the uploaded data:
+- The API - RESTful API for getting data from the database (users, snapshots, results, etc.).
+- The CLI - command line interface for the API.
+- The GUI - reflects the API and presenting the uploaded data.
+
 ## Installation
 1. Clone the repository and enter it:
 
@@ -26,6 +41,12 @@ Final project of Advanced System Design. See [full documentation](https://brain.
     $ pytest tests/
     ...
     ```
+## Deployment
+Each one of the services can also run from a container.
+In order to build and start all the containers, you should run:
+```bash
+$ ./scripts/run-pipeline.sh
+```
 
 ## Usage
 ### Client
@@ -204,11 +225,4 @@ $ python -m brain.gui run-server    \
     -p/--port 8080                  \
     -H/--api-host '127.0.0.1'       \
     -P/--api-port 5050
-```
-
-## Deployment
-Each one of the services can also run from a container.
-In order to build and start all the containers, you should run:
-```bash
-$ ./scripts/run-pipeline.sh
 ```
