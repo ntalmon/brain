@@ -169,3 +169,39 @@ The API is RESTful API and supports the following endpoints:
     the blob will be saved into the disk, and the result will contain the file path.
     The file data is available the following URL: \
     `GET /users/<user-id>/snapshots/<snapshot-id>/<result-name>/data`.
+### CLI
+The CLI consumes and reflects the API and contains the following commands:
+```bash
+$ python -m brain.cli get-users
+$ python -m brain.cli get-user USER_ID
+$ python -m brain.cli get-snapshots USER_ID
+$ python -m brain.cli get-snapshot USER_ID SNAPSHOT_ID
+$ python -m brain.cli get-result USER_ID SNAPSHOT_ID RESULT_NAME
+```
+All commands accept the `-h/--host` and `-p/--port` flags to configure the host and port of the API.
+### GUI
+The GUI is consumes the API and reflects the retrieved data. \
+It is available in `brain.gui` with the following interface:
+```python
+from brain.gui import run_server
+run_server(
+    host='127.0.0.1',
+    port=8080,
+    api_host='127.0.0.1',
+    api_port=5000
+)
+```
+ The GUI is also available with the following CLI:
+```bash
+$ python -m brain.gui run-server    \
+    -h/--host '127.0.0.1'           \
+    -p/--port 8080                  \
+    -H/--api-host '127.0.0.1'       \
+    -P/--api-port 5050
+```
+### Deployment
+Each one of the services can also run from a container.
+In order to build and start all the containers, you should run:
+```bash
+$ ./scripts/run-pipeline.sh
+```
