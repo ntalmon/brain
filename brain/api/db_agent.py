@@ -20,12 +20,18 @@ class DBAgent(MongoDB):
             return snapshots
         return snapshots['snapshots']
 
-    def find_snapshot(self, user_id, snapshot_id):
+    def find_snapshot(self, user_id, snapshot_id, include_path=False):
         user_id = str(user_id)  # TODO: temporary workaround!!! should solve it
         snapshot_id = str(snapshot_id)  # TODO: temporary workaround!!! should solve it
-        snapshot = self.find_one({'_id': user_id},
-                                 {'snapshots': {'$elemMatch': {'_id': snapshot_id}}, '_id': 0,
-                                  'snapshots.uuid': 1, 'snapshots.datetime': 1, 'snapshots.results': 1})
+        if include_path:
+            snapshot = self.find_one({'_id': user_id},
+                                     {'snapshots': {'$elemMatch': {'_id': snapshot_id}}, '_id': 0,
+                                      'snapshots.uuid': 1, 'snapshots.datetime': 1, 'snapshots.results': 1,
+                                      'snapshots.path': 1})
+        else:
+            snapshot = self.find_one({'_id': user_id},
+                                     {'snapshots': {'$elemMatch': {'_id': snapshot_id}}, '_id': 0,
+                                      'snapshots.uuid': 1, 'snapshots.datetime': 1, 'snapshots.results': 1})
         if snapshot is None:
             return snapshot
         snapshots = snapshot['snapshots']

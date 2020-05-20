@@ -1,8 +1,5 @@
-def parse_feelings(data):
-    if 'feelings' not in data:
-        return  # TODO: handle this case
-    feelings = data['feelings']
-    return feelings
+def parse_feelings(data, context):
+    return data
 
 
 parse_feelings.field = 'feelings'

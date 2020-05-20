@@ -1,8 +1,5 @@
-def parse_pose(data):
-    if 'pose' not in data:
-        return None  # TODO: handle this case
-    pose = data['pose']
-    return pose
+def parse_pose(data, context):
+    return data
 
 
 parse_pose.field = 'pose'

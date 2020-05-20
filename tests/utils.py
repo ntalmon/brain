@@ -24,6 +24,11 @@ def protobuf2dict(x):
     return json_format.MessageToDict(x, including_default_value_fields=True, preserving_proto_field_name=True)
 
 
+def copy_protobuf(item_a, item_b, attrs):
+    for attr in attrs:
+        setattr(item_a, attr, getattr(item_b, attr))
+
+
 def cmp_protobuf(x, y):
     dict_x = protobuf2dict(x)
     dict_y = protobuf2dict(y)

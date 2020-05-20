@@ -1,7 +1,7 @@
 import click
 
-from . import upload_sample
 from brain.utils.common import cli_suppress
+from .client import upload_sample
 
 
 @click.group()

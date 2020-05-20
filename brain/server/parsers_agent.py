@@ -1,7 +1,9 @@
+import pathlib
+
 import numpy as np
 
 from brain import data_path
-from brain.autogen import parsers_pb2
+from brain.autogen import server_parsers_pb2
 
 
 def copy_protobuf(item_a, item_b, attrs):
@@ -9,23 +11,25 @@ def copy_protobuf(item_a, item_b, attrs):
         setattr(item_a, attr, getattr(item_b, attr))
 
 
-def handle_color_image(snapshot, data, snapshot_dir):
-    image_file = snapshot_dir / 'color_image.raw'
-    with open(str(image_file), 'wb') as writer:
+def handle_color_image(snapshot, data):
+    path = pathlib.Path(snapshot.path)
+    image_file = str(path / 'color_image.raw')
+    with open(image_file, 'wb') as writer:
         writer.write(data)
+    snapshot.color_image.file_name = image_file
 
-    snapshot.color_image.path = str(image_file)
 
-
-def handle_depth_image(snapshot, data, snapshot_dir):
-    image_file = snapshot_dir / 'depth_image.raw'
+def handle_depth_image(snapshot, data):
+    path = pathlib.Path(snapshot.path)
+    image_file = 'depth_image.raw'
+    image_file_path = str(path / image_file)
     array = np.array(data).astype(np.float)
-    np.save(str(image_file), array)
-    snapshot.depth_image.path = str(image_file) + '.npy'
+    np.save(image_file_path, array)
+    snapshot.depth_image.file_name = image_file + '.npy'
 
 
 def construct_parsers_message(snapshot, snapshot_uuid):
-    parsers_snapshot = parsers_pb2.Snapshot()
+    parsers_snapshot = server_parsers_pb2.Snapshot()
     parsers_snapshot.uuid = snapshot_uuid
     copy_protobuf(parsers_snapshot, snapshot, ['datetime'])
     copy_protobuf(parsers_snapshot.user, snapshot.user, ['user_id', 'username', 'birthday', 'gender'])
@@ -43,8 +47,10 @@ def construct_parsers_message(snapshot, snapshot_uuid):
     snapshot_dir = user_dir / str(timestamp)
     if not snapshot_dir.exists():
         snapshot_dir.mkdir()
+    parsers_snapshot.path = str(snapshot_dir)
+
     if snapshot.color_image:
-        handle_color_image(parsers_snapshot, snapshot.color_image.data, snapshot_dir)
+        handle_color_image(parsers_snapshot, snapshot.color_image.data)
     if parsers_snapshot.depth_image:
-        handle_depth_image(parsers_snapshot, snapshot.depth_image.data, snapshot_dir)
+        handle_depth_image(parsers_snapshot, snapshot.depth_image.data)
     return parsers_snapshot.SerializeToString()

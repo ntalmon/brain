@@ -1,3 +1,4 @@
+import pathlib
 import random
 
 import pymongo
@@ -9,10 +10,10 @@ import brain.api.__main__
 
 from brain.api.__main__ import cli
 from brain.api.api import app, init_db_agent, run_api_server
-from brain.autogen import parsers_pb2
+from brain.autogen import server_parsers_pb2
 from .consts import *
 from .data_generators import gen_snapshot, gen_user
-from .utils import protobuf2dict, run_flask_in_thread
+from .utils import protobuf2dict, run_flask_in_thread, copy_protobuf
 
 
 @pytest.fixture
@@ -23,12 +24,14 @@ def populated_db(tmp_path):
     collection = db[COLLECTION_NAME]
     db_data = []
     for _ in range(5):
-        user = gen_user(parsers_pb2.User())
+        user = gen_user(server_parsers_pb2.User())
         entry = protobuf2dict(user)
         entry['_id'] = entry['user_id']
         entry['snapshots'] = []
         for _ in range(5):
-            snapshot = gen_snapshot(parsers_pb2.Snapshot(), 'parser', tmp_path=tmp_path)
+            snapshot = server_parsers_pb2.Snapshot()
+            copy_protobuf(snapshot.user, user, ['user_id', 'username', 'birthday', 'gender'])
+            snapshot = gen_snapshot(snapshot, 'parser', tmp_path=tmp_path)
             s_entry = protobuf2dict(snapshot)
             s_entry['_id'] = s_entry['uuid']
             s_entry['results'] = {}
@@ -109,7 +112,8 @@ def test_get_result_data(populated_db):
             assert res.status_code == 200
             assert res.mimetype == 'image/jpeg'
             result = snapshot['results'][topic]
-            with open(result['path'], 'rb') as file:
+            file_path = pathlib.Path(snapshot['path']) / result['file_name']
+            with open(str(file_path), 'rb') as file:
                 file_data = file.read()
             assert res.data == file_data
 

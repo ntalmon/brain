@@ -1,19 +1,15 @@
-import pathlib
-
 from PIL import Image
 
 
-def parse_color_image(data):  # TODO: after writing parsed file, delete raw file
-    if 'color_image' not in data:
+def parse_color_image(data, context):  # TODO: after writing parsed file, delete raw file
+    if 'width' not in data or 'height' not in data or 'file_name' not in data:
         return  # TODO: handle this case
-    color_image = data['color_image']
-    if 'width' not in color_image or 'height' not in color_image or 'path' not in color_image:
-        return  # TODO: handle this case
-    width, height, path = color_image['width'], color_image['height'], color_image['path']
-    new_path = str(pathlib.Path(path).parent / 'color_image.jpg')  # TODO: find new path
+    width, height, file_name = data['width'], data['height'], data['file_name']
+    path = context.path(file_name)
+    new_path = context.path('color_image.jpg')
     with open(path, 'rb') as reader:
-        data = reader.read()
-    image = Image.frombytes('RGB', (width, height), data)
+        color_image = reader.read()
+    image = Image.frombytes('RGB', (width, height), color_image)
     image.save(new_path)
     return {'width': width, 'height': height, 'path': new_path}
 

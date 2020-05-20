@@ -5,7 +5,7 @@ import brain.server.__main__
 import brain.server.mq_agent
 import brain.server.server
 from brain.server.__main__ import cli
-from brain.autogen import protocol_pb2
+from brain.autogen import client_server_pb2
 from brain.server.client_agent import app
 from brain.server.server import init_publish, construct_publish
 from .consts import *
@@ -14,7 +14,7 @@ from .data_generators import gen_snapshot
 
 @pytest.fixture
 def client_message():
-    snapshot = gen_snapshot(protocol_pb2.Snapshot(), 'protocol', should_gen_user=True)
+    snapshot = gen_snapshot(client_server_pb2.Snapshot(), 'protocol', should_gen_user=True)
     return snapshot, snapshot.SerializeToString()
 
 

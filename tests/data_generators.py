@@ -1,9 +1,10 @@
 import os
+import pathlib
 import random
 
 import numpy as np
 
-from brain.autogen import reader_pb2
+from brain.autogen import sample_pb2
 
 first_names = ('John', 'Andy', 'Joe')
 last_names = ('Johnson', 'Smith', 'Williams')
@@ -17,7 +18,7 @@ def gen_user(user):
     user.user_id = user_id_count
     user.username = f'{random.choice(first_names)} {random.choice(last_names)}'
     user.birthday = random.getrandbits(32)
-    user.gender = random.choice(reader_pb2.User.Gender.values())
+    user.gender = random.choice(sample_pb2.User.Gender.values())
     return user
 
 
@@ -32,21 +33,22 @@ def gen_pose(pose):
     return pose
 
 
-def gen_color_image(color_image, fmt, tmp_path=None):
+def gen_color_image(color_image, fmt, path=None):
     color_image.width = random.randint(5, 10)
     color_image.height = random.randint(5, 10)
     data = os.urandom(color_image.width * color_image.height * 3)
     if fmt in ['reader', 'protocol']:
         color_image.data = data
     else:
-        file_path = str(tmp_path / 'color_image.raw')
+        file_name = 'color_image.raw'
+        file_path = str(path / file_name)
         with open(file_path, 'wb') as file:
             file.write(data)
-        color_image.path = file_path
+        color_image.file_name = file_name
     return color_image
 
 
-def gen_depth_image(depth_image, fmt, tmp_path=None):
+def gen_depth_image(depth_image, fmt, path=None):
     depth_image.width = random.randint(5, 10)
     depth_image.height = random.randint(5, 10)
     data = [float(random.uniform(-100, 100)) for i in range(depth_image.width * depth_image.height)]
@@ -54,8 +56,10 @@ def gen_depth_image(depth_image, fmt, tmp_path=None):
         depth_image.data[:] = data
     else:
         array = np.array(data).astype(np.float)
-        np.save(str(tmp_path / 'depth_image'), array)
-        depth_image.path = str(tmp_path / 'depth_image.npy')
+        file_name = 'depth_image'
+        np.save(str(path / file_name), array)
+        file_name = 'depth_image.npy'
+        depth_image.file_name = file_name
     return depth_image
 
 
@@ -77,10 +81,23 @@ def gen_snapshot(snapshot, fmt, tmp_path=None, should_gen_user=False):
         global uuid_counter
         uuid_counter += 1
         snapshot.uuid = uuid_counter
+    if fmt in ['parser']:
+        user_dir = tmp_path / str(snapshot.user.user_id)
+        if not user_dir.exists():
+            user_dir.mkdir()
+        timestamp = snapshot.datetime
+        snapshot_dir = user_dir / str(timestamp)
+        if not snapshot_dir.exists():
+            snapshot_dir.mkdir()
+        snapshot.path = str(snapshot_dir)
     snapshot.datetime = random.getrandbits(64)
+    if fmt in ['parser']:
+        path = pathlib.Path(snapshot.path)
+    else:
+        path = tmp_path
     gen_pose(snapshot.pose)
-    gen_color_image(snapshot.color_image, fmt, tmp_path=tmp_path)
-    gen_depth_image(snapshot.depth_image, fmt, tmp_path=tmp_path)
+    gen_color_image(snapshot.color_image, fmt, path=path)
+    gen_depth_image(snapshot.depth_image, fmt, path=path)
     gen_feelings(snapshot.feelings)
     snapshot.ParseFromString(snapshot.SerializeToString())  # "align" to protobuf formats
     return snapshot

@@ -1,7 +1,7 @@
 import click
 
-from .api_agent import api_get
 from brain.utils.common import cli_suppress
+from .api_agent import api_get
 
 
 @click.group()

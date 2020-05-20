@@ -9,9 +9,9 @@ usage() {
 }
 
 build_protobuf() {
-	python -m grpc_tools.protoc -I brain/protobuf/ --python_out=brain/autogen reader.proto
-	python -m grpc_tools.protoc -I brain/protobuf/ --python_out=brain/autogen protocol.proto
-	python -m grpc_tools.protoc -I brain/protobuf/ --python_out=brain/autogen parsers.proto
+	python -m grpc_tools.protoc -I brain/protobuf/ --python_out=brain/autogen sample.proto
+	python -m grpc_tools.protoc -I brain/protobuf/ --python_out=brain/autogen client_server.proto
+	python -m grpc_tools.protoc -I brain/protobuf/ --python_out=brain/autogen server_parsers.proto
 }
 
 build_docker() {

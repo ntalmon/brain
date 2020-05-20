@@ -6,11 +6,11 @@ from click.testing import CliRunner
 import brain.saver.saver
 import brain.saver.mq_agent
 from brain.saver.__main__ import cli
-from brain.autogen import parsers_pb2
+from brain.autogen import server_parsers_pb2
 from brain.saver import Saver, run_saver
 from .consts import *
 from .data_generators import gen_user, gen_snapshot
-from .utils import protobuf2dict, dict_projection
+from .utils import protobuf2dict, dict_projection, copy_protobuf
 
 
 @pytest.fixture
@@ -32,11 +32,13 @@ def gen_random_result(tmp_path, num_users, num_snapshots):
     users_snapshots = {}
     all_results = []
     for i in range(num_users):
-        user = gen_user(parsers_pb2.User())
-        user = protobuf2dict(user)
+        user_pb = gen_user(server_parsers_pb2.User())
+        user = protobuf2dict(user_pb)
         users_snapshots[user['user_id']] = {'user': user, 'snapshots': []}
         for j in range(num_snapshots):
-            snapshot = gen_snapshot(parsers_pb2.Snapshot(), 'parser', tmp_path=tmp_path)
+            snapshot = server_parsers_pb2.Snapshot()
+            copy_protobuf(snapshot.user, user_pb, ['user_id', 'username', 'birthday', 'gender'])
+            snapshot = gen_snapshot(snapshot, 'parser', tmp_path=tmp_path)
             snapshot_dict = protobuf2dict(snapshot)
             users_snapshots[user['user_id']]['snapshots'].append(snapshot_dict)
             results = dict_projection(snapshot_dict, PARSERS)

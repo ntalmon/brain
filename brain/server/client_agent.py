@@ -1,6 +1,6 @@
 import flask
 
-from brain.autogen import protocol_pb2
+from brain.autogen import client_server_pb2
 
 app = flask.Flask(__name__)
 snapshot_handlers = []
@@ -13,7 +13,7 @@ def snapshot_handler(f):
 @app.route('/snapshot', methods=['POST'])
 def handle_snapshot():
     snapshot_msg = flask.request.data
-    snapshot = protocol_pb2.Snapshot()
+    snapshot = client_server_pb2.Snapshot()
     try:
         snapshot.ParseFromString(snapshot_msg)
     except Exception as error:

@@ -1,6 +1,10 @@
+"""
+Provides interface for the client to communicate with the server.
+TODO: add module interface
+"""
 from furl import furl
 
-from brain.autogen import protocol_pb2
+from brain.autogen import client_server_pb2
 from brain.utils.http import post
 
 
@@ -16,8 +20,8 @@ class ServerAgent:
         self.url = furl(scheme='http', host=host, port=port)
 
     @classmethod
-    def _construct_snapshot(cls, user, snapshot):
-        new_snapshot = protocol_pb2.Snapshot()
+    def construct_snapshot(cls, user, snapshot):
+        new_snapshot = client_server_pb2.Snapshot()
         copy_protobuf(new_snapshot, snapshot, ['datetime'])
         copy_protobuf(new_snapshot.user, user, ['user_id', 'username', 'birthday', 'gender'])
         copy_protobuf(new_snapshot.pose.translation, snapshot.pose.translation, ['x', 'y', 'z'])
@@ -29,7 +33,7 @@ class ServerAgent:
         return new_snapshot
 
     def send_snapshot(self, user, snapshot):
-        new_snapshot = self._construct_snapshot(user, snapshot)
+        new_snapshot = self.construct_snapshot(user, snapshot)
         url = self.url / 'snapshot'
         snapshot_msg = new_snapshot.SerializeToString()
         post(url, snapshot_msg)

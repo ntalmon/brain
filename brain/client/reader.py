@@ -1,14 +1,18 @@
 import gzip
 import struct
 
-from brain.autogen import reader_pb2
+from brain.autogen import sample_pb2
 
 
 class Reader:
-    def __init__(self, path):
+    """
+    Reads snapshots from the sample file.
+    """
+
+    def __init__(self, path: str):
         self.path = path
         self.file_reader = None
-        self.user = None
+        self.user = None  #
         self._loaded = False
 
     def _read_message(self):
@@ -27,7 +31,7 @@ class Reader:
             return self.user
         self.file_reader = gzip.open(self.path, 'rb')  # TODO: should this be configuration dependent?
         msg_user = self._read_message()
-        user = reader_pb2.User()
+        user = sample_pb2.User()
         user.ParseFromString(msg_user)
         self._loaded = True
         self.user = user
@@ -45,6 +49,6 @@ class Reader:
             self.file_reader.close()
             raise StopIteration
 
-        snapshot = reader_pb2.Snapshot()
+        snapshot = sample_pb2.Snapshot()
         snapshot.ParseFromString(msg_snapshot)
         return snapshot

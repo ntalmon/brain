@@ -1,16 +1,13 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import pathlib
 
 
-def parse_depth_image(data):  # TODO: after writing parsed file, delete raw file
-    if 'depth_image' not in data:
+def parse_depth_image(data, context):  # TODO: after writing parsed file, delete raw file
+    if 'width' not in data or 'height' not in data or 'file_name' not in data:
         return  # TODO: handle this case
-    depth_image = data['depth_image']
-    if 'width' not in depth_image or 'height' not in depth_image or 'path' not in depth_image:
-        return  # TODO: handle this case
-    width, height, path = depth_image['width'], depth_image['height'], depth_image['path']
-    new_path = str(pathlib.Path(path).parent / 'depth_image.jpg')  # TODO: is it OK to save in the saver directory?
+    width, height, file_name = data['width'], data['height'], data['file_name']
+    path = context.path(file_name)
+    new_path = context.path('depth_image.jpg')
     array = np.load(path).reshape((height, width))
     plt.imshow(array)
     plt.savefig(new_path)

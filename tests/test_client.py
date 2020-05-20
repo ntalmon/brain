@@ -3,7 +3,7 @@ from click.testing import CliRunner
 
 import brain.client.server_agent
 
-from brain.autogen import protocol_pb2
+from brain.autogen import client_server_pb2
 from brain.client import upload_sample
 from brain.client.__main__ import cli
 from .consts import *
@@ -28,7 +28,7 @@ def test_client(random_sample, mock_server):
     assert len(calls) == len(snapshots)
     for call, snapshot in zip(calls, snapshots):
         url, data = call
-        result = protocol_pb2.Snapshot()
+        result = client_server_pb2.Snapshot()
         result.ParseFromString(data)
         assert result.datetime == snapshot.datetime
         assert str(result.user) == str(user)

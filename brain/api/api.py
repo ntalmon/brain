@@ -1,7 +1,9 @@
 import os
+import pathlib
 
 import flask
 import flask_cors
+
 from .db_agent import DBAgent
 
 app = flask.Flask(__name__)
@@ -49,9 +51,13 @@ def get_snapshot_result(user_id, snapshot_id, result_name):
 @app.route('/users/<int:user_id>/snapshots/<int:snapshot_id>/<result_name>/data')
 def get_snapshot_result_data(user_id, snapshot_id, result_name):
     result = common_api_wrapper(lambda: db_agent.find_snapshot_result(user_id, snapshot_id, result_name), to_json=False)
-    if 'path' not in result:
+    if 'file_name' not in result:
         flask.abort(404)
-    file_path = result['path']
+    file_name = result['file_name']
+    snapshot = common_api_wrapper(lambda: db_agent.find_snapshot(user_id, snapshot_id, include_path=True),
+                                  to_json=False)
+    path = snapshot['path']
+    file_path = str(pathlib.Path(path) / file_name)
     if not os.path.isfile(file_path):
         flask.abort(404)
     return flask.send_file(file_path, mimetype='image/jpeg', attachment_filename=f'{result_name}.jpg')

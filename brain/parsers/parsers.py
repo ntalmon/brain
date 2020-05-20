@@ -12,29 +12,10 @@ from google.protobuf import json_format
 
 from .mq_agent import MQAgent
 from brain import brain_path
-from brain.autogen import parsers_pb2
+from brain.autogen import server_parsers_pb2
 
 parsers = {}
 parsers_path = brain_path / 'parsers'
-
-
-def _wrap_parser(parse_fn):
-    def _wrapper(data):
-        # TODO: currently assume snapshot is protobuf, maybe change it
-        snapshot = parsers_pb2.Snapshot()
-        snapshot.ParseFromString(data)
-        json_snapshot = json_format.MessageToDict(
-            snapshot, including_default_value_fields=True, preserving_proto_field_name=True)
-        parse_res = parse_fn(json_snapshot)
-        res = {
-            'uuid': json_snapshot['uuid'],
-            'datetime': json_snapshot['datetime'],
-            'user': json_snapshot['user'],
-            'result': parse_res
-        }
-        return res  # TODO: json.dumps?
-
-    return _wrapper
 
 
 def load_parsers():
@@ -45,11 +26,11 @@ def load_parsers():
         module = importlib.import_module(f'{parsers_path.name}.{path.stem}')
         for name, obj in module.__dict__.items():
             if callable(obj) and name.startswith('parse_') and hasattr(obj, 'field'):
-                parsers[obj.field] = _wrap_parser(obj)
+                parsers[obj.field] = obj
             elif inspect.isclass(obj) and name.lower().endswith('parser') and hasattr(obj, 'parse') and \
                     hasattr(obj, 'field'):
                 instance = obj()
-                parsers[obj.field] = _wrap_parser(instance.parse)
+                parsers[obj.field] = instance.parse
 
 
 load_parsers()
@@ -60,21 +41,48 @@ def get_parsers():
 
 
 class Context:
-    def __init__(self, path):
-        if isinstance(path, str):
+    def __init__(self, path=''):
+        if path and isinstance(path, str):
             path = pathlib.Path(path)
         self.base_path = path
 
     def save(self, file, data):
+        if not self.base_path:
+            raise Exception()  # TODO: add message
         mode = 'w' + 'b' * isinstance(data, bytes)
         with open(self.path(file), mode) as writer:
             writer.write(data)
 
     def path(self, file):
+        if not self.base_path:
+            raise Exception()  # TODO: add message
         return str(self.base_path / file)
 
     def delete(self, file):
+        if not self.base_path:
+            raise Exception()  # TODO: add message
         os.remove(self.path(file))
+
+
+def parser_wrapper(parse_fn, data):
+    # TODO: currently assume snapshot is protobuf, maybe change it
+    snapshot = server_parsers_pb2.Snapshot()
+    snapshot.ParseFromString(data)
+    json_snapshot = json_format.MessageToDict(
+        snapshot, including_default_value_fields=True, preserving_proto_field_name=True)
+    field = parse_fn.field
+    parser_data = json_snapshot[field]  # TODO: handle case where field not in json_snapshot
+    path = json_snapshot['path']  # TODO: handle case where path not in json_snapshot
+    ctx = Context(path)
+
+    parse_res = parse_fn(parser_data, ctx)
+    res = {
+        'uuid': json_snapshot['uuid'],
+        'datetime': json_snapshot['datetime'],
+        'user': json_snapshot['user'],
+        'result': parse_res
+    }
+    return res  # TODO: json.dumps?
 
 
 def parser(topic):
@@ -91,7 +99,10 @@ def run_parser(parser_name, data, is_path=False):
     if is_path:
         with open(data, 'rb') as file:
             data = file.read()
-    return parsers[parser_name](data)
+    parse_fn = parsers[parser_name]
+    if hasattr(data, 'parsers'):
+        pass
+    return parser_wrapper(parse_fn, data)
 
 
 def invoke_parser(topic, url):
@@ -101,9 +112,9 @@ def invoke_parser(topic, url):
     mq_agent = MQAgent(url)
 
     def callback(body):
-        snapshot = parsers_pb2.Snapshot()
+        snapshot = server_parsers_pb2.Snapshot()
         snapshot.ParseFromString(body)
-        res = _parser(body)  # TODO: change res format if needed
+        res = parser_wrapper(_parser, body)  # TODO: change res format if needed
         parse_res_msg = json.dumps(res)
         mq_agent.publish_result(parse_res_msg, topic)
 

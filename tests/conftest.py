@@ -6,7 +6,7 @@ import sys
 import pytest
 
 from brain import tests_path as _tests_path
-from brain.autogen import reader_pb2
+from brain.autogen import sample_pb2
 from .data_generators import gen_user, gen_snapshot
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -43,7 +43,7 @@ def write_sample(user, snapshots, path):
 
 @pytest.fixture
 def random_sample(tmp_path):
-    user = gen_user(reader_pb2.User())
-    snapshots = [gen_snapshot(reader_pb2.Snapshot(), 'reader', tmp_path=tmp_path) for _ in range(5)]
+    user = gen_user(sample_pb2.User())
+    snapshots = [gen_snapshot(sample_pb2.Snapshot(), 'reader', tmp_path=tmp_path) for _ in range(5)]
     file_path = write_sample(user, snapshots, tmp_path)
     return user, snapshots, file_path
