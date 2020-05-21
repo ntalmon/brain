@@ -9,6 +9,7 @@ click==7.1.1
 codecov==2.1.0
 coverage==5.0.4
 cycler==0.10.0
+docker==4.2.0
 docutils==0.16
 entrypoints==0.3
 flake8==3.7.9
@@ -60,5 +61,6 @@ sphinxcontrib-qthelp==1.0.3
 sphinxcontrib-serializinghtml==1.1.4
 urllib3==1.25.8
 wcwidth==0.1.9
+websocket-client==0.57.0
 Werkzeug==1.0.1
 wrapt==1.11.2

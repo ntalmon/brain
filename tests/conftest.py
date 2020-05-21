@@ -3,11 +3,13 @@ import os
 import struct
 import sys
 
+import docker
 import pytest
 
 from brain import tests_path as _tests_path
 from brain.autogen import sample_pb2
 from .data_generators import gen_user, gen_snapshot
+from .utils import wait_for_address
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 _resources_path = _tests_path / 'resources'
@@ -47,3 +49,15 @@ def random_sample(tmp_path):
     snapshots = [gen_snapshot(sample_pb2.Snapshot(), 'reader', tmp_path=tmp_path) for _ in range(5)]
     file_path = write_sample(user, snapshots, tmp_path)
     return user, snapshots, file_path
+
+
+@pytest.fixture(scope='session', autouse=True)
+def run_containers():
+    client = docker.from_env()
+    mongo_container = client.containers.run('mongo:latest', detach=True, ports={'27017/tcp': 27017})
+    rabbit_container = client.containers.run('rabbitmq:latest', detach=True, ports={'5672/tcp': 5672})
+    wait_for_address('127.0.0.1', 27017, timeout=15)
+    wait_for_address('127.0.0.1', 5672, timeout=15)
+    yield
+    mongo_container.stop()
+    rabbit_container.stop()

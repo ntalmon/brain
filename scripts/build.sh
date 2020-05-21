@@ -43,6 +43,9 @@ else
 			build_docker
 		elif [[ "$command" == "app" ]]; then
 			build_app
+		elif [[ "$command" == "tests" ]]; then
+			build_protobuf
+			build_app
 		fi
 	done
 fi

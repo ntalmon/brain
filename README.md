@@ -35,9 +35,12 @@ There are several ways to get the uploaded data:
     $ source .env/bin/activate
     [brain] $ # you're good to go!
     ```
-3. To check that everything is working as expected, run the tests:
+3. Run the build script to build everything required before running the tets:
     ```bash
-    $ # start docker containers for mongodb and rabbitmq
+    $ ./scripts/build.sh tests
+    ```
+4. To check that everything is working as expected, run the tests:
+    ```bash
     $ pytest tests/
     ...
     ```
