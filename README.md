@@ -33,15 +33,14 @@ There are several ways to get the uploaded data:
     $ ./scripts/install.sh
     ...
     $ source .env/bin/activate
-    [brain] $ # you're good to go!
     ```
-3. Run the build script to build everything required before running the tets:
+3. Run the build script to build everything required before running the tests:
     ```bash
-    $ ./scripts/build.sh tests
+    [brain] $ ./scripts/build.sh tests
     ```
 4. To check that everything is working as expected, run the tests:
     ```bash
-    $ pytest tests/
+    [brain] $ pytest tests/
     ...
     ```
 ## Deployment

@@ -1,3 +1,5 @@
+import time
+
 import pika
 from furl import furl
 
@@ -9,8 +11,20 @@ class RabbitMQ:
         self.url = url
         _url = furl(url)
         host, port = _url.host, _url.port
-        self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=host, port=port))
+        self.connection = self.connect(host, port)
         self.channel = self.connection.channel()
+
+    @classmethod
+    def connect(cls, host, port, max_retries=15, sleep=1):
+        last_error = None  # type: Exception
+        for i in range(max_retries):
+            try:
+                return pika.BlockingConnection(pika.ConnectionParameters(host=host, port=port))
+            except pika.connection.exceptions.AMQPError as error:
+                last_error = error
+                print(f'Exception while trying to connect: {str(error)}, waiting {sleep} seconds before retrying')
+                time.sleep(sleep)
+        raise last_error
 
     def close(self):
         self.channel.close()

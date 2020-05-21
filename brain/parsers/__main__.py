@@ -1,3 +1,5 @@
+import json
+
 import click
 
 from brain.utils.common import cli_suppress
@@ -14,7 +16,6 @@ def cli():
 @click.argument('path', type=click.STRING)
 @cli_suppress
 def cli_parse(parser, path):
-    import json
     result = run_parser(parser, path, is_path=True)
     result = json.dumps(result)
     print(result)

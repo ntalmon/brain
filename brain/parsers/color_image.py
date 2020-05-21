@@ -1,9 +1,7 @@
 from PIL import Image
 
 
-def parse_color_image(data, context):  # TODO: after writing parsed file, delete raw file
-    if 'width' not in data or 'height' not in data or 'file_name' not in data:
-        return  # TODO: handle this case
+def parse_color_image(data, context):
     width, height, file_name = data['width'], data['height'], data['file_name']
     path = context.path(file_name)
     new_path = context.path('color_image.jpg')
@@ -11,6 +9,7 @@ def parse_color_image(data, context):  # TODO: after writing parsed file, delete
         color_image = reader.read()
     image = Image.frombytes('RGB', (width, height), color_image)
     image.save(new_path)
+    context.delete(file_name)
     return {'width': width, 'height': height, 'path': new_path}
 
 

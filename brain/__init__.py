@@ -6,7 +6,6 @@ TODO: client registration (optional)
 TODO: add framework for agents drivers
 TODO: parsers framework to support classes
 TODO: run make in docker images
-TODO: README.md to use pycon instead of python
 """
 import pathlib
 

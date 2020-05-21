@@ -32,7 +32,7 @@ class DBAgent(MongoDB):
             snapshot = self.find_one({'_id': user_id},
                                      {'snapshots': {'$elemMatch': {'_id': snapshot_id}}, '_id': 0,
                                       'snapshots.uuid': 1, 'snapshots.datetime': 1, 'snapshots.results': 1})
-        if snapshot is None:
+        if not snapshot:
             return snapshot
         snapshots = snapshot['snapshots']
         if not snapshots:

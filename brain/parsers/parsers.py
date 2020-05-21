@@ -1,6 +1,3 @@
-"""
-TODO: send context to parsers if needed
-"""
 import importlib
 import inspect
 import json
@@ -48,19 +45,19 @@ class Context:
 
     def save(self, file, data):
         if not self.base_path:
-            raise Exception()  # TODO: add message
+            raise Exception('Cannot access context.path when save is not initialized')
         mode = 'w' + 'b' * isinstance(data, bytes)
         with open(self.path(file), mode) as writer:
             writer.write(data)
 
     def path(self, file):
         if not self.base_path:
-            raise Exception()  # TODO: add message
+            raise Exception('Cannot access context.path when save is not initialized')
         return str(self.base_path / file)
 
     def delete(self, file):
         if not self.base_path:
-            raise Exception()  # TODO: add message
+            raise Exception('Cannot access context.delete when save is not initialized')
         os.remove(self.path(file))
 
 
@@ -71,8 +68,8 @@ def parser_wrapper(parse_fn, data):
     json_snapshot = json_format.MessageToDict(
         snapshot, including_default_value_fields=True, preserving_proto_field_name=True)
     field = parse_fn.field
-    parser_data = json_snapshot[field]  # TODO: handle case where field not in json_snapshot
-    path = json_snapshot['path']  # TODO: handle case where path not in json_snapshot
+    parser_data = json_snapshot[field]
+    path = json_snapshot['path']
     ctx = Context(path)
 
     parse_res = parse_fn(parser_data, ctx)
@@ -100,8 +97,6 @@ def run_parser(parser_name, data, is_path=False):
         with open(data, 'rb') as file:
             data = file.read()
     parse_fn = parsers[parser_name]
-    if hasattr(data, 'parsers'):
-        pass
     return parser_wrapper(parse_fn, data)
 
 
