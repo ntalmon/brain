@@ -12,9 +12,13 @@ app = flask.Flask(__name__, static_folder=str(build_path), template_folder=str(b
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve(path):
-    if path != '' and os.path.exists(os.path.join(app.static_folder, path)):
-        return flask.send_from_directory(app.static_folder, path)
-    return flask.render_template('index.html', api_url=api_url)
+    try:
+        if path != '' and os.path.exists(os.path.join(app.static_folder, path)):
+            return flask.send_from_directory(app.static_folder, path)
+        return flask.render_template('index.html', api_url=api_url)
+    except Exception as error:
+        print(f'Exception: {str(error)}')
+        flask.abort(500)
 
 
 def run_server(host, port, api_host, api_port):

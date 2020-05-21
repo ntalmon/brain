@@ -49,9 +49,10 @@ class RabbitMQ:
                 else:
                     res = callback(body)
                 channel.basic_ack(delivery_tag=method.delivery_tag)
-            except Exception:
+            except Exception as error:
+                print(f'Exception: {error}')
                 channel.basic_nack(delivery_tag=method.delivery_tag)
-                raise
+                res = None
             return res
 
         for queue in queues:
