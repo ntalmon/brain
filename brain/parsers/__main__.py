@@ -1,7 +1,7 @@
 import click
 
-from . import run_parser, invoke_parser
 from brain.utils.common import cli_suppress
+from . import run_parser, invoke_parser
 
 
 @click.group()

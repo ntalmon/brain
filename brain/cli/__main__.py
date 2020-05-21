@@ -1,12 +1,13 @@
 import click
 
 from brain.utils.common import cli_suppress
+from brain.utils.consts import *
 from .api_agent import api_get
 
 
 @click.group()
-@click.option('-h', '--host', type=click.STRING, default='127.0.0.1')
-@click.option('-p', '--port', type=click.INT, default=5000)
+@click.option('-h', '--host', type=click.STRING, default=API_HOST)
+@click.option('-p', '--port', type=click.INT, default=API_PORT)
 @click.pass_context
 @cli_suppress
 def cli(ctx, host, port):

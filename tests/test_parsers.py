@@ -6,9 +6,9 @@ from click.testing import CliRunner
 
 import brain.parsers
 from brain.autogen import server_parsers_pb2
-from brain.parsers.__main__ import cli
 from brain.parsers import run_parser, invoke_parser
-from .consts import *
+from brain.parsers.__main__ import cli
+from brain.utils.consts import *
 from .data_generators import gen_snapshot
 from .utils import protobuf2dict
 

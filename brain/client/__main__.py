@@ -1,6 +1,7 @@
 import click
 
 from brain.utils.common import cli_suppress
+from brain.utils.consts import *
 from .client import upload_sample
 
 
@@ -10,8 +11,8 @@ def cli():
 
 
 @cli.command('upload-sample')
-@click.option('-h', '--host', type=click.STRING, default='127.0.0.1')
-@click.option('-p', '--port', type=click.INT, default=8000)
+@click.option('-h', '--host', type=click.STRING, default=SERVER_HOST)
+@click.option('-p', '--port', type=click.INT, default=SERVER_PORT)
 @click.argument('path', type=click.STRING)
 @cli_suppress
 def cli_upload_sample(host, port, path):

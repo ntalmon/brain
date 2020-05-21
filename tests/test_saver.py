@@ -3,12 +3,12 @@ import json
 import pytest
 from click.testing import CliRunner
 
-import brain.saver.saver
 import brain.saver.mq_agent
-from brain.saver.__main__ import cli
+import brain.saver.saver
 from brain.autogen import server_parsers_pb2
 from brain.saver import Saver, run_saver
-from .consts import *
+from brain.saver.__main__ import cli
+from brain.utils.consts import *
 from .data_generators import gen_user, gen_snapshot
 from .utils import protobuf2dict, dict_projection, copy_protobuf
 

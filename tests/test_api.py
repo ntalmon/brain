@@ -7,11 +7,10 @@ import requests
 from click.testing import CliRunner
 
 import brain.api.__main__
-
 from brain.api.__main__ import cli
 from brain.api.api import app, init_db_agent, run_api_server
 from brain.autogen import server_parsers_pb2
-from .consts import *
+from brain.utils.consts import *
 from .data_generators import gen_snapshot, gen_user
 from .utils import protobuf2dict, run_flask_in_thread, copy_protobuf
 

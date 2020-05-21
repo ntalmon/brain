@@ -2,11 +2,10 @@ import pytest
 from click.testing import CliRunner
 
 import brain.client.server_agent
-
 from brain.autogen import client_server_pb2
 from brain.client import upload_sample
 from brain.client.__main__ import cli
-from .consts import *
+from brain.utils.consts import *
 
 
 @pytest.fixture

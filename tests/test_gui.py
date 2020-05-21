@@ -4,7 +4,7 @@ from click.testing import CliRunner
 
 from brain.gui.__main__ import cli
 from brain.gui.gui import run_server
-from .consts import *
+from brain.utils.consts import *
 from .utils import run_flask_in_thread
 
 

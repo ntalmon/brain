@@ -8,6 +8,7 @@ import pytest
 
 from brain import tests_path as _tests_path
 from brain.autogen import sample_pb2
+from brain.utils.consts import *
 from .data_generators import gen_user, gen_snapshot
 from .utils import wait_for_address
 
@@ -54,10 +55,12 @@ def random_sample(tmp_path):
 @pytest.fixture(scope='session', autouse=True)
 def run_containers():
     client = docker.from_env()
-    mongo_container = client.containers.run('mongo:latest', detach=True, ports={'27017/tcp': 27017})
-    rabbit_container = client.containers.run('rabbitmq:latest', detach=True, ports={'5672/tcp': 5672})
-    wait_for_address('127.0.0.1', 27017, timeout=15)
-    wait_for_address('127.0.0.1', 5672, timeout=15)
+    mongo_container = client.containers.run('mongo:latest', detach=True, ports={f'{DB_PORT}/tcp': DB_PORT},
+                                            network='host')
+    rabbit_container = client.containers.run('rabbitmq:latest', detach=True, ports={f'{MQ_PORT}/tcp': MQ_PORT},
+                                             network='host')
+    wait_for_address(DB_HOST, DB_PORT, timeout=15.0)
+    wait_for_address(MQ_HOST, MQ_PORT, timeout=15.0)
     yield
     mongo_container.stop()
     rabbit_container.stop()

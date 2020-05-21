@@ -5,7 +5,7 @@ from functools import partial
 import coverage
 import pytest
 
-from .consts import *
+from brain.utils.consts import *
 from .utils import cli_run_and_check, run_flask_in_thread
 
 

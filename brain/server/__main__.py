@@ -1,7 +1,8 @@
 import click
 
-from . import run_server, construct_publish
 from brain.utils.common import cli_suppress
+from brain.utils.consts import *
+from . import run_server, construct_publish
 
 
 @click.group()
@@ -10,8 +11,8 @@ def cli():
 
 
 @cli.command('run-server')
-@click.option('-h', '--host', type=click.STRING, default='127.0.0.1')
-@click.option('-p', '--port', type=click.INT, default=8000)
+@click.option('-h', '--host', type=click.STRING, default=SERVER_HOST)
+@click.option('-p', '--port', type=click.INT, default=SERVER_PORT)
 @click.argument('mq', type=click.STRING)
 @cli_suppress
 def cli_run_server(host, port, mq):

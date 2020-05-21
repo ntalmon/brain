@@ -1,7 +1,8 @@
 import click
 
-from . import run_saver, Saver
 from brain.utils.common import cli_suppress
+from brain.utils.consts import *
+from . import run_saver, Saver
 
 
 @click.group()
@@ -10,7 +11,7 @@ def cli():
 
 
 @cli.command('save')
-@click.option('-d', '--database', type=click.STRING, default='mongodb://127.0.0.1:27017')
+@click.option('-d', '--database', type=click.STRING, default=DB_URL)
 @click.argument('topic', type=click.STRING)
 @click.argument('path', type=click.STRING)
 @cli_suppress

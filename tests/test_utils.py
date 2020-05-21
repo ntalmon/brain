@@ -2,8 +2,8 @@ import time
 
 import pytest
 
+from brain.utils.consts import *
 from brain.utils.rabbitmq import RabbitMQ
-from .consts import *
 from .utils import run_in_background
 
 

@@ -2,6 +2,7 @@ import click
 
 from . import run_api_server
 from brain.utils.common import cli_suppress
+from brain.utils.consts import API_PORT, MQ_URL
 
 
 @click.group()
@@ -10,9 +11,9 @@ def cli():
 
 
 @cli.command('run-server')
-@click.option('-h', '--host', type=click.STRING, default='127.0.0.1')
-@click.option('-p', '--port', type=click.INT, default=5000)
-@click.option('-d', '--database', type=click.STRING, default='mongodb://127.0.0.1:27017')
+@click.option('-h', '--host', type=click.STRING, default=API_PORT)
+@click.option('-p', '--port', type=click.INT, default=API_PORT)
+@click.option('-d', '--database', type=click.STRING, default=MQ_URL)
 @cli_suppress
 def cli_run_server(host, port, database):
     run_api_server(host, port, database)

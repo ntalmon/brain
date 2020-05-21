@@ -3,7 +3,7 @@ from click.testing import CliRunner
 
 import brain.cli.api_agent
 from brain.cli.__main__ import cli
-from .consts import *
+from brain.utils.consts import *
 
 
 @pytest.fixture

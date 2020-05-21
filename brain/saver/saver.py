@@ -3,9 +3,9 @@ TODO: design decision, consume single queue and infer topic from data, or consum
 """
 import json
 
+from brain.parsers import get_parsers
 from .db_agent import DBAgent
 from .mq_agent import MQAgent
-from brain.parsers import get_parsers
 
 topics = get_parsers()
 
