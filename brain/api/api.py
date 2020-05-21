@@ -16,11 +16,13 @@ def common_api_wrapper(callback, to_json=True):
     try:
         result = callback()
         if result is None:
-            flask.abort(404)
-        return flask.jsonify(result) if to_json else result
+            abort = 404
+        else:
+            return flask.jsonify(result) if to_json else result
     except Exception as error:
         print(str(error))
-        flask.abort(500)
+        abort = 500
+    flask.abort(abort)
 
 
 @app.route('/users')

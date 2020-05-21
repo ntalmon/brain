@@ -18,16 +18,6 @@ def saver():
     return Saver(DB_URL)
 
 
-@pytest.fixture
-def database():
-    import pymongo
-    conn = pymongo.MongoClient(DB_URL)
-    conn.drop_database('brain')
-    db = conn.brain
-    yield db
-    conn.close()
-
-
 def gen_random_result(tmp_path, num_users, num_snapshots):
     users_snapshots = {}
     all_results = []
@@ -128,7 +118,16 @@ def random_result(tmp_path):
     return gen_random_result(tmp_path, 1, 1)
 
 
-def test_cli(tmp_path, database, random_results):
+@pytest.fixture
+def mock_run_saver(monkeypatch):
+    def fake_run_saver(db, mq):
+        assert db == DB_URL
+        assert mq == MQ_URL
+
+    monkeypatch.setattr(brain.saver.__main__, 'run_saver', fake_run_saver)
+
+
+def test_cli(tmp_path, database, random_results, mock_run_saver):
     results, snapshots = random_results
     runner = CliRunner()
     for result in results:
@@ -139,3 +138,5 @@ def test_cli(tmp_path, database, random_results):
         res = runner.invoke(cli, ['save', result_name, file_path])
         assert res.exit_code == 0
     compare_db(database, snapshots)
+    res = runner.invoke(cli, ['run-saver', DB_URL, MQ_URL])
+    assert res.exit_code == 0, res.exception

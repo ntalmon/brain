@@ -33,10 +33,8 @@ class DBAgent(MongoDB):
                                      {'snapshots': {'$elemMatch': {'_id': snapshot_id}}, '_id': 0,
                                       'snapshots.uuid': 1, 'snapshots.datetime': 1, 'snapshots.results': 1})
         if not snapshot:
-            return snapshot
-        snapshots = snapshot['snapshots']
-        if not snapshots:
             return None
+        snapshots = snapshot['snapshots']
         snapshot = snapshots[0]
         snapshot['results'] = list(snapshot['results'].keys())
         return snapshot

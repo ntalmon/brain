@@ -1,5 +1,5 @@
-def parse_feelings(data, context):
-    return data
+class FeelingParser:
+    field = 'feelings'
 
-
-parse_feelings.field = 'feelings'
+    def parse(self, data, context):
+        return data

@@ -4,6 +4,7 @@ import struct
 import sys
 
 import docker
+import pymongo
 import pytest
 
 from brain import tests_path as _tests_path
@@ -64,3 +65,13 @@ def run_containers():
     yield
     mongo_container.stop()
     rabbit_container.stop()
+
+
+@pytest.fixture
+def database():
+    conn = pymongo.MongoClient(DB_URL)
+    conn.drop_database(DB_NAME)
+    db = conn.brain
+    yield db
+    conn.drop_database(DB_NAME)
+    conn.close()

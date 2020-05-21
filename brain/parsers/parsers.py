@@ -23,11 +23,13 @@ def load_parsers():
         module = importlib.import_module(f'{parsers_path.name}.{path.stem}')
         for name, obj in module.__dict__.items():
             if callable(obj) and name.startswith('parse_') and hasattr(obj, 'field'):
+                obj.parser_type = 'function'
                 parsers[obj.field] = obj
             elif inspect.isclass(obj) and name.lower().endswith('parser') and hasattr(obj, 'parse') and \
                     hasattr(obj, 'field'):
                 instance = obj()
-                parsers[obj.field] = instance.parse
+                instance.parser_type = 'class'
+                parsers[obj.field] = instance
 
 
 load_parsers()
@@ -68,6 +70,8 @@ def parser_wrapper(parse_fn, data):
     json_snapshot = json_format.MessageToDict(
         snapshot, including_default_value_fields=True, preserving_proto_field_name=True)
     field = parse_fn.field
+    if parse_fn.parser_type == 'class':
+        parse_fn = parse_fn.parse
     parser_data = json_snapshot[field]
     path = json_snapshot['path']
     ctx = Context(path)

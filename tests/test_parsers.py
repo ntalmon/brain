@@ -5,9 +5,11 @@ import pytest
 from click.testing import CliRunner
 
 import brain.parsers
+import brain.parsers.mq_agent
 from brain.autogen import server_parsers_pb2
 from brain.parsers import run_parser, invoke_parser
 from brain.parsers.__main__ import cli
+from brain.parsers.mq_agent import MQAgent
 from brain.utils.consts import *
 from .data_generators import gen_snapshot
 from .utils import protobuf2dict
@@ -122,7 +124,48 @@ def test_invoke_parser(parser, mock_mq_agent, random_snapshot):
         verify_feelings(result, snapshot)
 
 
-def test_cli(random_snapshot):
+@pytest.fixture
+def mock_rabbitmq(monkeypatch):
+    def expected_callback(data):
+        pass
+
+    expected_data = 'Expected data'
+
+    class MockRabbitMQ:
+        def __init__(self, url):
+            assert url == MQ_URL
+
+        def consume(self, callback, exchange, queues, exchange_type='fanout'):
+            assert callback == expected_callback
+            assert exchange == 'snapshot'
+            assert queues == ['pose']
+
+        def publish(self, data, exchange='', queue=''):
+            assert data == expected_data
+            assert exchange == 'saver'
+            assert queue == 'saver_pose'
+
+    monkeypatch.setattr(brain.parsers.mq_agent, 'RabbitMQ', MockRabbitMQ)
+    yield expected_callback, expected_data
+
+
+def test_mq_agent(mock_rabbitmq):
+    expected_callback, expected_data = mock_rabbitmq
+    mq_agent = MQAgent(MQ_URL)
+    mq_agent.consume_snapshots(expected_callback, 'pose')
+    mq_agent.publish_result(expected_data, 'pose')
+
+
+@pytest.fixture
+def mock_invoke_parser(monkeypatch):
+    def fake_invoke_parser(parser, mq_url):
+        assert parser == 'pose'
+        assert mq_url == MQ_URL
+
+    monkeypatch.setattr(brain.parsers.__main__, 'invoke_parser', fake_invoke_parser)
+
+
+def test_cli(random_snapshot, mock_invoke_parser):
     snapshot, data, file_path = random_snapshot
     runner = CliRunner()
     for parser in PARSERS:
@@ -138,3 +181,6 @@ def test_cli(random_snapshot):
             verify_depth_image(result_dict, snapshot)
         elif parser == 'feelings':
             verify_feelings(result_dict, snapshot)
+
+    res = runner.invoke(cli, ['run-parser', 'pose', MQ_URL])
+    assert res.exit_code == 0, res.exception
