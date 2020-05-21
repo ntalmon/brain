@@ -5,10 +5,9 @@
 # Brain
 Final project of Advanced System Design. See [full documentation](https://brain.readthedocs.io/en/latest/).
 
-The basic idea of the project is to build python-based, software-only implementation \
-of [Brain Computer Interface](https://en.wikipedia.org/wiki/Brain%E2%80%93computer_interface). The real client and hardware
-will be replace by a sample \
-file contains cognition snapshots.
+The basic idea of the project is to build python-based, software-only implementation
+of [Brain Computer Interface](https://en.wikipedia.org/wiki/Brain%E2%80%93computer_interface). \
+The real client and hardware will be replace by a sample file contains cognition snapshots.
 #### Basic flow - upload snapshots
 1. The client reads the sample file and streams the snapshots one by one to the server.
 2. The server the receives snapshots, and sends them to different parsers using a message queue.
