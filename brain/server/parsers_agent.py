@@ -43,8 +43,7 @@ def construct_parsers_message(snapshot, snapshot_uuid):
     user_dir = data_path / str(user_id)
     if not user_dir.exists():
         user_dir.mkdir()
-    timestamp = parsers_snapshot.datetime
-    snapshot_dir = user_dir / str(timestamp)
+    snapshot_dir = user_dir / str(parsers_snapshot.uuid)
     if not snapshot_dir.exists():
         snapshot_dir.mkdir()
     parsers_snapshot.path = str(snapshot_dir)

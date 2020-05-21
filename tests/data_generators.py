@@ -85,8 +85,7 @@ def gen_snapshot(snapshot, fmt, tmp_path=None, should_gen_user=False):
         user_dir = tmp_path / str(snapshot.user.user_id)
         if not user_dir.exists():
             user_dir.mkdir()
-        timestamp = snapshot.datetime
-        snapshot_dir = user_dir / str(timestamp)
+        snapshot_dir = user_dir / str(snapshot.uuid)
         if not snapshot_dir.exists():
             snapshot_dir.mkdir()
         snapshot.path = str(snapshot_dir)

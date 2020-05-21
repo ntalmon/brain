@@ -1,8 +1,8 @@
 import click
 
-from . import run_api_server
 from brain.utils.common import cli_suppress
-from brain.utils.consts import API_PORT, MQ_URL
+from brain.utils.consts import *
+from . import run_api_server
 
 
 @click.group()
@@ -11,7 +11,7 @@ def cli():
 
 
 @cli.command('run-server')
-@click.option('-h', '--host', type=click.STRING, default=API_PORT)
+@click.option('-h', '--host', type=click.STRING, default=API_HOST)
 @click.option('-p', '--port', type=click.INT, default=API_PORT)
 @click.option('-d', '--database', type=click.STRING, default=MQ_URL)
 @cli_suppress

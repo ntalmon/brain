@@ -3,5 +3,4 @@ ADD app /app
 RUN apt-get install -y npm
 RUN npm install -g npm@latest
 RUN ./build.sh app
-CMD ["./wait-for-it.sh", "http://127.0.0.1:5000", "--", "python", "-m", "brain.gui", "run-server", "-h", "127.0.0.1", \
- 	"-p", "8080", "-H", "127.0.0.1", "-P", "5000"]
+CMD ["./wait-for-it.sh", "/127.0.0.1:5000", "--", "python", "-m", "brain.gui", "run-server", "-h", "127.0.0.1", "-p", "8080", "-H", "127.0.0.1", "-P", "5000"]
