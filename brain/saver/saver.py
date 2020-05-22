@@ -1,6 +1,3 @@
-"""
-TODO: design decision, consume single queue and infer topic from data, or consume multiple dedicated queues
-"""
 import json
 
 from brain.parsers import get_parsers

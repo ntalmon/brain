@@ -1,2 +1,2 @@
 FROM brain-common
-CMD ["./wait-for-it.sh", "127.0.0.1:27017", "--", "./wait-for-it.sh", "rabbitmq://127.0.0.1:5672", "--", "python", "-m", "brain.saver", "run-saver", "mongodb://127.0.0.1:27017", "rabbitmq://127.0.0.1:5672"]
+CMD ["./wait-for-it.sh", "127.0.0.1:27017", "--", "./wait-for-it.sh", "127.0.0.1:5672", "--", "python", "-u", "-m", "brain.saver", "run-saver", "mongodb://127.0.0.1:27017", "rabbitmq://127.0.0.1:5672"]

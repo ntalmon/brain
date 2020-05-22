@@ -9,4 +9,4 @@ class MQAgent:
         self.utils.consume(callback, 'snapshot', [topic])
 
     def publish_result(self, result, topic):
-        self.utils.publish(result, exchange='saver', queue=f'saver_{topic}')  # TODO: find right exchange and queues
+        self.utils.publish(result, exchange='saver', queue=f'saver_{topic}')

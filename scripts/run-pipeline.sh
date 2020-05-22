@@ -18,6 +18,8 @@ docker run -d -p 5672:5672 --rm --name brain-rabbitmq rabbitmq
 echo "Starting mongodb container"
 docker run -d -p 27017:27017 --rm --name brain-mongo mongo
 
+./scripts/wait-for-it.sh 127.0.0.1:5672
+
 echo "Starting containers"
 docker run -d --network host -v brain-volume:/brain-data --rm --name "brain-server" brain-server &
 docker run -d --network host -v brain-volume:/brain-data --rm --name "brain-saver" brain-saver &

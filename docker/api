@@ -1,2 +1,2 @@
 FROM brain-common
-CMD ["./wait-for-it.sh", "127.0.0.1:27017", "--", "python", "-m", "brain.api", "run-server", "-d", "mongodb://127.0.0.1:27017"]
+CMD ["./wait-for-it.sh", "127.0.0.1:27017", "--", "python", "-u", "-m", "brain.api", "run-server", "-d", "mongodb://127.0.0.1:27017"]

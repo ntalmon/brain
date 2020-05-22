@@ -64,7 +64,6 @@ class Context:
 
 
 def parser_wrapper(parse_fn, data):
-    # TODO: currently assume snapshot is protobuf, maybe change it
     snapshot = server_parsers_pb2.Snapshot()
     snapshot.ParseFromString(data)
     json_snapshot = json_format.MessageToDict(
@@ -83,7 +82,7 @@ def parser_wrapper(parse_fn, data):
         'user': json_snapshot['user'],
         'result': parse_res
     }
-    return res  # TODO: json.dumps?
+    return res
 
 
 def parser(topic):
@@ -113,7 +112,7 @@ def invoke_parser(topic, url):
     def callback(body):
         snapshot = server_parsers_pb2.Snapshot()
         snapshot.ParseFromString(body)
-        res = parser_wrapper(_parser, body)  # TODO: change res format if needed
+        res = parser_wrapper(_parser, body)
         parse_res_msg = json.dumps(res)
         mq_agent.publish_result(parse_res_msg, topic)
 

@@ -19,7 +19,8 @@ class RabbitMQ:
         last_error = None  # type: Exception
         for i in range(max_retries):
             try:
-                return pika.BlockingConnection(pika.ConnectionParameters(host=host, port=port))
+                conn = pika.BlockingConnection(pika.ConnectionParameters(host=host, port=port))
+                return conn
             except pika.connection.exceptions.AMQPError as error:
                 last_error = error
                 print(f'Exception while trying to connect: {str(error)}, waiting {sleep} seconds before retrying')

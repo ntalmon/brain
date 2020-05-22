@@ -23,7 +23,7 @@ class Reader:
         msg = self.file_reader.read(size)
         if len(msg) != size:
             self.file_reader.close()
-            raise Exception('Invalid file format')
+            raise Exception(f'Invalid file format: expected to read {size} bytes')
         return msg
 
     def load(self):
@@ -31,8 +31,14 @@ class Reader:
             return self.user
         self.file_reader = gzip.open(self.path, 'rb')  # TODO: should this be configuration dependent?
         msg_user = self._read_message()
-        user = sample_pb2.User()
-        user.ParseFromString(msg_user)
+        if not msg_user:
+            raise Exception('Invalid file format, header was not found')
+        try:
+            user = sample_pb2.User()
+            user.ParseFromString(msg_user)
+        except Exception:
+            print(f'Invalid file format: cannot load user')
+            raise
         self._loaded = True
         self.user = user
         return user
@@ -45,7 +51,7 @@ class Reader:
             raise Exception('Reader is unloaded, can\'t read snapshots. Use reader.load() before')
 
         msg_snapshot = self._read_message()
-        if not msg_snapshot:  # TODO: check how we make sure we ended read the file
+        if not msg_snapshot:
             self.file_reader.close()
             raise StopIteration
 
