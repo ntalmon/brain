@@ -181,11 +181,11 @@ function UserPage(props) {
       <div className="profile">
         <div className="user-image">{user.initials}</div>
         <h2 className="user-name-text">{user.userName}</h2>
-        <div>
-          <span className="user-detail">User ID: {userId}</span>
-          <span className="user-detail">Birthday: {birthday}</span>
-          <span className="user-detail">Gender: {user.gender}</span>
-        </div>
+        <ul className="profile-details">
+          <li className="user-detail">User ID: {userId}</li>
+          <li className="user-detail">Birthday: {birthday}</li>
+          <li className="user-detail">Gender: {user.gender}</li>
+        </ul>
       </div>
       <div className="posts">
         <Posts userId={userId} />

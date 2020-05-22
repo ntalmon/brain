@@ -12,6 +12,12 @@
   top: 70px;
 }
 
+.profile-details {
+  padding-left: 20px;
+  /* text-align: left; */
+  align-items: left;
+}
+
 .posts {
   background-color: white !important;
   height: 100%;
