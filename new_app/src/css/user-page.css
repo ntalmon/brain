@@ -1,0 +1,39 @@
+.user-page {
+  width: 100%;
+  height: 100%;
+  font-family: "Anonymous Pro", monospace;
+  text-align: center;
+}
+
+.user-profile {
+  width: 20%;
+  height: 100%;
+  position: fixed;
+  border-right: 1px solid white;
+  color: white;
+  /* text-align: left; */
+}
+
+.user-profile-header {
+  margin-top: 50px;
+  align-items: center;
+}
+
+.user-profile-details {
+  margin-top: 50px;
+  text-align: left;
+  padding-left: 20px;
+}
+
+.user-snapshots {
+  width: 80%;
+  height: 100%;
+  position: relative;
+  left: 20%;
+  overflow-y: auto;
+}
+
+.snapshot {
+  background-color: transparent;
+  color: white;
+}

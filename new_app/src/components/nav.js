@@ -1,17 +1,33 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
+import { Link, withRouter } from "react-router-dom";
 import "../css/nav.css";
 
 class Nav extends React.Component {
+  static propTypes = {
+    match: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
+  };
+
+  constructor(props) {
+    super(props);
+    this.state = { active: "home" };
+  }
+
   render() {
+    let path = this.props.location.pathname;
+    let homeClass = "nav-item" + (path === "/" ? " active" : "");
+    let usersClass = "nav-item" + (path.startsWith("/users") ? " active" : "");
+
     return (
-      <nav class="navbar navbar-expand-lg navbar-dark elegant-color">
-        <Link class="navbar-brand" to="/">
+      <nav className="navbar navbar-expand-lg navbar-dark elegant-color">
+        <Link className="navbar-brand" to="/">
           Brain
         </Link>
 
         <button
-          class="navbar-toggler"
+          className="navbar-toggler"
           type="button"
           data-toggle="collapse"
           data-target="#basicExampleNav"
@@ -19,40 +35,39 @@ class Nav extends React.Component {
           aria-expanded="false"
           aria-label="Toggle navigation"
         >
-          <span class="navbar-toggler-icon"></span>
+          <span className="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse" id="basicExampleNav">
-          <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-              <Link class="nav-link" to="/">
+        <div className="collapse navbar-collapse" id="basicExampleNav">
+          <ul className="navbar-nav mr-auto">
+            <li className={homeClass}>
+              <Link className="nav-link" to="/">
                 Home
-                <span class="sr-only">(current)</span>
               </Link>
             </li>
-            <li class="nav-item">
-              <Link class="nav-link" to="/users">
+            <li className={usersClass}>
+              <Link className="nav-link" to="/users">
                 Users
               </Link>
             </li>
           </ul>
 
-          <ul class="navbar-nav">
-            <li class="nav-item" id="docs-link">
+          <ul className="navbar-nav">
+            <li className="nav-item" id="docs-link">
               <a
-                class="nav-link"
+                className="nav-link"
                 href="https://brain.readthedocs.io/en/latest/"
               >
                 Docs
               </a>
             </li>
-            <li class="nav-item">
+            <li className="nav-item">
               <a
-                class="nav-link"
+                className="nav-link"
                 id="github-link"
                 href="https://github.com/noamtau1/brain"
               >
-                <i class="fab fa-github fa-2x" id="github-link-icon"></i>
+                <i className="fab fa-github fa-2x" id="github-link-icon"></i>
               </a>
             </li>
           </ul>
@@ -60,6 +75,14 @@ class Nav extends React.Component {
       </nav>
     );
   }
+
+  onClickHome = () => {
+    this.setState({ active: "home" });
+  };
+
+  onClickUsers = () => {
+    this.setState({ active: "users" });
+  };
 }
 
-export default Nav;
+export default withRouter(Nav);

@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import "../css/landingPage.css";
+import "../css/landing-page.css";
 
 function LandingPage() {
   return (
@@ -16,8 +16,8 @@ function LandingPage() {
           their snapshots, and parsing results.
         </h2>
       </div>
-      <Link to="/users" id="users-press-me">
-        <button class="btn aqua-gradient btn-lg">View users</button>
+      <Link id="users-press-me" to="/users">
+        <button className="btn aqua-gradient btn-lg">View users</button>
       </Link>
     </div>
   );

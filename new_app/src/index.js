@@ -3,9 +3,9 @@ import ReactDOM from "react-dom";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import "./index.css";
 import Nav from "./components/nav";
-import LandingPage from "./components/landingPage";
-import UsersPage from "./components/usersPage";
-import UserPage from "./components/userPage";
+import LandingPage from "./components/landing-page";
+import UsersPage from "./components/users-page";
+import UserPage from "./components/user-page";
 
 function App() {
   return (

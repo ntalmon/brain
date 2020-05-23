@@ -20,3 +20,10 @@ export async function fetchAPI(relativePath) {
     });
   });
 }
+
+export const getInitials = (name) => {
+  let firstLastName = name.split(" ");
+  if (firstLastName.length < 2) return name[0];
+  let initials = firstLastName[0][0] + firstLastName[1][0];
+  return initials;
+};

@@ -2,7 +2,9 @@ import os
 import pathlib
 import random
 
+import matplotlib.pyplot as plt
 import numpy as np
+from PIL.Image import Image
 
 from brain.autogen import sample_pb2
 
@@ -39,12 +41,15 @@ def gen_color_image(color_image, fmt, path=None):
     data = os.urandom(color_image.width * color_image.height * 3)
     if fmt in ['reader', 'protocol']:
         color_image.data = data
-    else:
+    elif fmt in ['parser']:
         file_name = 'color_image.raw'
         file_path = str(path / file_name)
         with open(file_path, 'wb') as file:
             file.write(data)
         color_image.file_name = file_name
+    elif fmt == 'saver':
+        image = Image.frombytes('RGB', (color_image.width, color_image.height), data)
+        image.save(str(path / 'color_image.jpg'))
     return color_image
 
 
@@ -54,12 +59,16 @@ def gen_depth_image(depth_image, fmt, path=None):
     data = [float(random.uniform(-100, 100)) for i in range(depth_image.width * depth_image.height)]
     if fmt in ['reader', 'protocol']:
         depth_image.data[:] = data
-    else:
+    elif fmt in ['parser']:
         array = np.array(data).astype(np.float)
         file_name = 'depth_image'
         np.save(str(path / file_name), array)
         file_name = 'depth_image.npy'
         depth_image.file_name = file_name
+    elif fmt in ['saver']:
+        plt.imshow(data)
+        depth_image.path = str(path / 'depth_image.jpg')
+        plt.savefig(depth_image.path)
     return depth_image
 
 
@@ -77,11 +86,11 @@ uuid_counter = 0
 def gen_snapshot(snapshot, fmt, tmp_path=None, should_gen_user=False):
     if should_gen_user:
         gen_user(snapshot.user)
-    if fmt not in ['reader', 'protocol']:
+    if fmt not in ['reader', 'protocol', 'saver']:
         global uuid_counter
         uuid_counter += 1
         snapshot.uuid = uuid_counter
-    if fmt in ['parser']:
+    if fmt in ['parser', 'saver']:
         user_dir = tmp_path / str(snapshot.user.user_id)
         if not user_dir.exists():
             user_dir.mkdir()
