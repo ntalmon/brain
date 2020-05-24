@@ -3,6 +3,7 @@ from click.testing import CliRunner
 
 import brain.server.__main__
 import brain.server.mq_agent
+import brain.server.parsers_agent
 import brain.server.server
 from brain.server.__main__ import cli
 from brain.server.client_agent import app
@@ -32,7 +33,12 @@ def mock_rabbitmq(monkeypatch):
     monkeypatch.setattr(brain.server.mq_agent, 'RabbitMQ', MockRabbitMQ)
 
 
-def test_server(client_message, mock_rabbitmq):
+@pytest.fixture
+def mock_path(monkeypatch, tmp_path):
+    monkeypatch.setattr(brain.server.parsers_agent, 'data_path', tmp_path)
+
+
+def test_server(client_message, mock_rabbitmq, mock_path):
     snapshot, msg = client_message
     publish = construct_publish(MQ_URL)
     init_publish(publish)
