@@ -3,8 +3,6 @@ import time
 import pika
 from furl import furl
 
-stop_consuming_secret = b'Secret message, stop consuming'
-
 
 class RabbitMQ:
     def __init__(self, url):
@@ -40,10 +38,6 @@ class RabbitMQ:
                 self.channel.queue_bind(exchange=exchange, queue=queue)
 
         def wrapper(channel, method, properties, body):
-            if body == stop_consuming_secret:
-                channel.basic_ack(delivery_tag=method.delivery_tag)
-                channel.stop_consuming()
-                return
             try:
                 if exchange and exchange_type == 'direct':
                     res = callback(method.routing_key, body)
@@ -65,6 +59,3 @@ class RabbitMQ:
             raise Exception('Queue or exchange were not given')
 
         self.channel.basic_publish(exchange, queue, data)
-
-    def stop_consuming(self):
-        self.channel.stop_consuming()

@@ -1,10 +1,14 @@
+import threading
 import time
 
+import flask
+import pika
 import pytest
 
 from brain.utils.consts import *
+from brain.utils.http import get, post
 from brain.utils.rabbitmq import RabbitMQ
-from .utils import run_in_background
+from .utils import run_in_background, add_shutdown_to_app, shutdown_server, wait_for_address
 
 
 @pytest.fixture
@@ -60,3 +64,41 @@ class TestRabbitMQ:
         self.rabbit.publish(msg, exchange='e1')
         assert simple_fanout() == msg
         assert simple_fanout() == msg
+
+    def test_exceptions(self):
+        with pytest.raises(pika.connection.exceptions.AMQPError):
+            RabbitMQ.connect(MQ_HOST, 1234, max_retries=3)
+
+
+@pytest.fixture
+def simple_app():
+    app = flask.Flask(__name__)
+    add_shutdown_to_app(app)
+
+    @app.route('/', methods=['GET', 'POST'])
+    def default():
+        return 'xyz'
+
+    thr = threading.Thread(target=lambda: app.run(host='127.0.0.1', port=8003))
+    thr.start()
+    wait_for_address('127.0.0.1', 8003)
+    url = 'http://127.0.0.1:8003'
+    yield url
+    shutdown_server(url)
+    thr.join(timeout=30)
+
+
+def test_get(simple_app):
+    res = get(f'{simple_app}/')
+    assert res == 'xyz'
+    with pytest.raises(Exception) as error:
+        get(f'{simple_app}/bad_path')
+    assert 'failed with exit-code' in str(error.value)
+
+
+def test_post(simple_app):
+    res = post(f'{simple_app}/', 'abc')
+    assert res == 'xyz'
+    with pytest.raises(Exception) as error:
+        post(f'{simple_app}/bad_path', 'abc')
+    assert 'failed with exit-code' in str(error.value)

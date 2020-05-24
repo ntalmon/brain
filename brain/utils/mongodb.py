@@ -36,18 +36,6 @@ class MongoDB:
         self._check_connection()
         return self.collection.find_one(*args, **kwargs)
 
-    def insert_one(self, *args, **kwargs):
-        self._check_connection()
-        return self.collection.insert_one(*args, **kwargs)
-
-    def insert_many(self, *args, **kwargs):
-        self._check_connection()
-        return self.collection.insert_many(*args, **kwargs)
-
     def update_one(self, *args, **kwargs):
         self._check_connection()
         return self.collection.update_one(*args, **kwargs)
-
-    def update_many(self, *args, **kwargs):
-        self._check_connection()
-        return self.collection.update_many(*args, **kwargs)
