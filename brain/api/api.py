@@ -1,5 +1,4 @@
 import os
-import pathlib
 
 import flask
 import flask_cors

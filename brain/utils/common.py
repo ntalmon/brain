@@ -1,7 +1,12 @@
 import functools
+import pathlib
 import sys
 
 from brain.utils.config import client_config
+
+
+def normalize_path(path):
+    return pathlib.Path(str(path))
 
 
 def cli_suppress(f):

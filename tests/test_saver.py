@@ -19,7 +19,7 @@ def saver():
 @pytest.fixture(scope='module')
 def random_results(tmp_path_factory):
     path = tmp_path_factory.mktemp('saver')
-    return gen_data_for_saver(path, 5, 5)
+    return gen_data_for_saver(path, 2, 2)
 
 
 def compare_db(database, users_snapshots):

@@ -2,10 +2,8 @@ import gzip
 import os
 import struct
 import sys
-import tempfile
 
 import docker
-import py
 import pymongo
 import pytest
 
@@ -28,11 +26,6 @@ def tests_path():
 @pytest.fixture(scope='session')
 def resources_path():
     return _resources_path
-
-
-@pytest.fixture(scope='session')
-def sample_path():
-    return _sample_path
 
 
 def write_sample(user, snapshots, path):
@@ -63,14 +56,14 @@ def run_containers():
     rabbit_container = client.containers.run('rabbitmq:latest', detach=True, ports={f'{MQ_PORT}/tcp': MQ_PORT},
                                              network='host')
     wait_for_address(DB_HOST, DB_PORT, timeout=15.0)
-    # wait_for_address(MQ_HOST, MQ_PORT, timeout=15.0)
+    wait_for_address(MQ_HOST, MQ_PORT, timeout=15.0)
     yield
     mongo_container.stop()
     rabbit_container.stop()
 
 
-@pytest.fixture(scope='session')
-def database():
+@pytest.fixture(scope='session', autouse=True)
+def database(run_containers):
     conn = pymongo.MongoClient(DB_URL)
     conn.drop_database(DB_NAME)
     db = conn.brain

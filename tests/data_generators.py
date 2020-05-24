@@ -1,5 +1,4 @@
 import os
-import pathlib
 import random
 
 import matplotlib.pyplot as plt
@@ -90,7 +89,7 @@ def gen_depth_image_base():
 def gen_depth_image_data(depth_image=None):
     width, height, data = gen_depth_image_base()
     if depth_image:
-        depth_image.width, depth_image.height, depth_image.data = width, height, data
+        depth_image.width, depth_image.height, depth_image.data[:] = width, height, data
         return depth_image
     return {'width': width, 'height': height, 'data': data}
 
@@ -159,7 +158,7 @@ def get_snapshot_path(snapshot, path, is_dict=False):
     snapshot_dir = user_dir / str(snapshot_id)
     if not snapshot_dir.exists():
         snapshot_dir.mkdir()
-    return snapshot_dir
+    return str(snapshot_dir)
 
 
 def gen_snapshot_for_client(snapshot=None):
@@ -175,9 +174,8 @@ def gen_snapshot_for_client(snapshot=None):
 def gen_snapshot_for_server(snapshot=None, should_gen_user=False):
     snapshot = snapshot or client_server_pb2.Snapshot()
     gen_datetime(snapshot)
-    gen_snapshot_id(snapshot)
     if should_gen_user:
-        gen_user(snapshot)
+        gen_user(snapshot.user)
     gen_pose(snapshot.pose)
     gen_color_image_data(snapshot.color_image)
     gen_depth_image_data(snapshot.depth_image)
@@ -192,10 +190,10 @@ def gen_snapshot_for_parsers(path, snapshot=None, should_gen_user=False):
     snapshot.uuid = gen_snapshot_id()
     if should_gen_user:
         gen_user(snapshot.user)
-    snapshot_path = get_snapshot_path(snapshot, path)
+    snapshot.path = get_snapshot_path(snapshot, path)
     gen_pose(snapshot.pose)
-    gen_color_image_raw(snapshot_path, snapshot.color_image)
-    gen_depth_image_raw(snapshot_path, snapshot.depth_image)
+    gen_color_image_raw(snapshot.path, snapshot.color_image)
+    gen_depth_image_raw(snapshot.path, snapshot.depth_image)
     gen_feelings(snapshot.feelings)
     align_protobuf(snapshot)
     return snapshot
@@ -207,9 +205,12 @@ def gen_data_for_saver(path, num_users, num_snapshots):
     all_results = []
     for i in range(num_users):
         user = gen_user()
+        # TODO: do not str()!!
+        user['user_id'] = str(user['user_id'])
         snapshots = []
         for j in range(num_snapshots):
-            snapshot = {'datetime': gen_datetime(), 'uuid': gen_snapshot_id(), 'user': user, 'pose': gen_pose,
+            # TODO: do not str()!!
+            snapshot = {'datetime': str(gen_datetime()), 'uuid': str(gen_snapshot_id()), 'user': user, 'pose': gen_pose,
                         'feelings': gen_feelings()}
             snapshot_path = get_snapshot_path(snapshot, path, is_dict=True)
             snapshot['pose'] = gen_pose()
