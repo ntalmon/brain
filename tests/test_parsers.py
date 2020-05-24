@@ -6,18 +6,17 @@ from click.testing import CliRunner
 
 import brain.parsers
 import brain.parsers.mq_agent
-from brain.autogen import server_parsers_pb2
 from brain.parsers import run_parser, invoke_parser
 from brain.parsers.__main__ import cli
 from brain.parsers.mq_agent import MQAgent
 from brain.utils.consts import *
-from .data_generators import gen_snapshot
+from .data_generators import gen_snapshot_for_parsers
 from .utils import protobuf2dict
 
 
 @pytest.fixture
 def random_snapshot(tmp_path):
-    snapshot = gen_snapshot(server_parsers_pb2.Snapshot(), 'parser', tmp_path=tmp_path, should_gen_user=True)
+    snapshot = gen_snapshot_for_parsers(tmp_path, should_gen_user=True)
     data = snapshot.SerializeToString()
     file_path = str(tmp_path / 'snapshot.raw')
     with open(file_path, 'wb') as file:

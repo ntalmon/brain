@@ -7,7 +7,7 @@ import sys
 
 from google.protobuf import json_format
 
-from brain import brain_path
+from brain import brain_path, data_path
 from brain.autogen import server_parsers_pb2
 from .mq_agent import MQAgent
 
@@ -72,7 +72,8 @@ def parser_wrapper(parse_fn, data):
     if parse_fn.parser_type == 'class':
         parse_fn = parse_fn.parse
     parser_data = json_snapshot[field]
-    path = json_snapshot['path']
+    # TODO: move path generation to utils
+    path = data_path / str(snapshot.user.user_id) / str(snapshot.uuid)
     ctx = Context(path)
 
     parse_res = parse_fn(parser_data, ctx)

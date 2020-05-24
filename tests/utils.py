@@ -1,4 +1,5 @@
 import multiprocessing
+import pathlib
 import socket
 import subprocess
 import threading
@@ -68,6 +69,14 @@ def run_process(runner):
 
 def dict_projection(d, items):
     return {key: value for key, value in d.items() if key in items}
+
+
+def normalize_path(path):
+    return pathlib.Path(str(path))
+
+
+def align_protobuf(message):
+    return message.ParseFromString(message.SerializeToString())
 
 
 def run_in_background(callback, poll=1):

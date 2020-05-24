@@ -16,12 +16,11 @@ message User {
 message Snapshot {
     uint64 uuid = 1;
     uint64 datetime = 2;
-    string path = 3;
-    User user = 4;
-    Pose pose = 5;
-    ColorImage color_image = 6;
-    DepthImage depth_image = 7;
-    Feelings feelings = 8;
+    User user = 3;
+    Pose pose = 4;
+    ColorImage color_image = 5;
+    DepthImage depth_image = 6;
+    Feelings feelings = 7;
 }
 
 message Pose {

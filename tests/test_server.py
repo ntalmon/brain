@@ -4,17 +4,16 @@ from click.testing import CliRunner
 import brain.server.__main__
 import brain.server.mq_agent
 import brain.server.server
-from brain.autogen import client_server_pb2
 from brain.server.__main__ import cli
 from brain.server.client_agent import app
 from brain.server.server import init_publish, construct_publish
 from brain.utils.consts import *
-from .data_generators import gen_snapshot
+from .data_generators import gen_snapshot_for_server
 
 
 @pytest.fixture
 def client_message():
-    snapshot = gen_snapshot(client_server_pb2.Snapshot(), 'protocol', should_gen_user=True)
+    snapshot = gen_snapshot_for_server(should_gen_user=True)
     return snapshot, snapshot.SerializeToString()
 
 

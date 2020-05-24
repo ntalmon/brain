@@ -1,4 +1,3 @@
-import pathlib
 import random
 
 import pytest
@@ -8,40 +7,15 @@ from click.testing import CliRunner
 import brain.api.__main__
 from brain.api.__main__ import cli
 from brain.api.api import app, init_db_agent, run_api_server, common_api_wrapper
-from brain.autogen import server_parsers_pb2
 from brain.utils.consts import *
-from .data_generators import gen_snapshot, gen_user
-from .utils import protobuf2dict, run_flask_in_thread, copy_protobuf
+from .data_generators import gen_db_data
+from .utils import run_flask_in_thread, normalize_path
 
 
-def gen_db_data(database, tmp_path, auto_save=True):
-    collection = database[COLLECTION_NAME]
-    db_data = []
-    for _ in range(5):
-        user = gen_user(server_parsers_pb2.User())
-        entry = protobuf2dict(user)
-        entry['_id'] = entry['user_id']
-        entry['snapshots'] = []
-        for _ in range(5):
-            snapshot = server_parsers_pb2.Snapshot()
-            copy_protobuf(snapshot.user, user, ['user_id', 'username', 'birthday', 'gender'])
-            snapshot = gen_snapshot(snapshot, 'parser', tmp_path=tmp_path)
-            s_entry = protobuf2dict(snapshot)
-            s_entry['_id'] = s_entry['uuid']
-            s_entry['results'] = {}
-            for result in ['pose', 'color_image', 'depth_image', 'feelings']:
-                if result in s_entry:
-                    s_entry['results'][result] = s_entry.pop(result)
-            entry['snapshots'].append(s_entry)
-        db_data.append(entry)
-    if auto_save:
-        collection.insert_many(db_data)
-    return db_data, collection
-
-
-@pytest.fixture
-def populated_db(database, tmp_path):
-    return gen_db_data(database, tmp_path)
+@pytest.fixture(scope='module')
+def populated_db(database, tmp_path_factory):
+    path = tmp_path_factory.mktemp('api')
+    return gen_db_data(path, 5, 5, database=database)
 
 
 def api_get_and_compare(url, code=200):
@@ -117,8 +91,8 @@ def test_get_result_data(populated_db):
             assert res.status_code == 200
             assert res.mimetype == 'image/jpeg'
             result = snapshot['results'][topic]
-            file_path = pathlib.Path(snapshot['path']) / result['file_name']
-            with open(str(file_path), 'rb') as file:
+            file_path = result['path']
+            with open(file_path, 'rb') as file:
                 file_data = file.read()
             assert res.data == file_data
 
@@ -177,16 +151,17 @@ def test_common_api_wrapper(mock_flask_abort):
 
 
 @pytest.fixture
-def populated_db_no_save(database, tmp_path):
-    return gen_db_data(database, tmp_path, auto_save=False)
+def populated_db_no_save(tmp_path):
+    return gen_db_data(tmp_path, 1, 1)
 
 
-def test_get_snapshot_result_data_file_name(populated_db_no_save):
-    db_data, collection = populated_db_no_save
+def test_get_snapshot_result_data_file_name(database, populated_db_no_save):
+    db_data = populated_db_no_save
+    collection = database[COLLECTION_NAME]
     u_entry = db_data[0]
     s_entry = u_entry['snapshots'][0]
     r_entry = s_entry['results']['color_image']
-    r_entry.pop('file_name')
+    r_entry.pop('path')
     collection.insert_many(db_data)
     user_id = u_entry['user_id']
     snapshot_id = s_entry['uuid']
@@ -199,8 +174,7 @@ def test_get_snapshot_result_data_file_path(populated_db):
     u_entry = db_data[0]
     s_entry = u_entry['snapshots'][0]
     r_entry = s_entry['results']['color_image']
-    file_name = r_entry['file_name']
-    file_path = pathlib.Path(s_entry['path']) / file_name
+    file_path = normalize_path(r_entry['path'])
     file_path.unlink()
     user_id = u_entry['user_id']
     snapshot_id = s_entry['uuid']
@@ -216,7 +190,12 @@ def partially_populated_db(database):
          'snapshots': [{'_id': '1', 'uuid': '1', 'datetime': 123, 'results': {'feelings': {}}}]}
     ]
     collection = database[COLLECTION_NAME]
+    backup = list(collection.find({}))
+    collection.drop()
     collection.insert_many(db_data)
+    yield
+    collection.drop()
+    collection.insert_many(backup)
 
 
 def test_user_not_exist(partially_populated_db):

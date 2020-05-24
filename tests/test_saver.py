@@ -5,12 +5,10 @@ from click.testing import CliRunner
 
 import brain.saver.mq_agent
 import brain.saver.saver
-from brain.autogen import server_parsers_pb2
 from brain.saver import Saver, run_saver
 from brain.saver.__main__ import cli
 from brain.utils.consts import *
-from .data_generators import gen_user, gen_snapshot
-from .utils import protobuf2dict, dict_projection, copy_protobuf
+from .data_generators import gen_data_for_saver
 
 
 @pytest.fixture
@@ -18,33 +16,10 @@ def saver():
     return Saver(DB_URL)
 
 
-def gen_random_result(tmp_path, num_users, num_snapshots):
-    users_snapshots = {}
-    all_results = []
-    for i in range(num_users):
-        user_pb = gen_user(server_parsers_pb2.User())
-        user = protobuf2dict(user_pb)
-        users_snapshots[user['user_id']] = {'user': user, 'snapshots': []}
-        for j in range(num_snapshots):
-            snapshot = server_parsers_pb2.Snapshot()
-            copy_protobuf(snapshot.user, user_pb, ['user_id', 'username', 'birthday', 'gender'])
-            snapshot = gen_snapshot(snapshot, 'parser', tmp_path=tmp_path)
-            snapshot_dict = protobuf2dict(snapshot)
-            users_snapshots[user['user_id']]['snapshots'].append(snapshot_dict)
-            results = dict_projection(snapshot_dict, PARSERS)
-            for key, value in results.items():
-                all_results.append((key, {
-                    'uuid': snapshot_dict['uuid'],
-                    'datetime': snapshot_dict['datetime'],
-                    'user': user,
-                    'result': value
-                }))
-    return all_results, users_snapshots
-
-
-@pytest.fixture
-def random_results(tmp_path):
-    return gen_random_result(tmp_path, 5, 5)
+@pytest.fixture(scope='module')
+def random_results(tmp_path_factory):
+    path = tmp_path_factory.mktemp('saver')
+    return gen_data_for_saver(path, 5, 5)
 
 
 def compare_db(database, users_snapshots):
@@ -111,11 +86,6 @@ def test_run_saver(database, random_results, mock_rabbitmq):
     MockRabbitMQ.results_to_send = new_results
     run_saver(DB_URL, MQ_URL)
     compare_db(database, snapshots)
-
-
-@pytest.fixture
-def random_result(tmp_path):
-    return gen_random_result(tmp_path, 1, 1)
 
 
 @pytest.fixture

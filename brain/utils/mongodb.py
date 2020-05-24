@@ -1,8 +1,7 @@
 import pymongo
 import pymongo.database
 
-DB_NAME = 'brain'
-COLLECTION_NAME = 'users_and_snapshots'
+from brain.utils.consts import *
 
 
 class MongoDB:
