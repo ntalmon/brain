@@ -31,9 +31,18 @@
   position: relative;
   left: 20%;
   overflow-y: auto;
+  padding-bottom: 30px;
 }
 
 .snapshot {
   background-color: transparent;
   color: white;
+}
+
+.tab {
+  margin-left: 40px;
+}
+
+.feelings-progress-bar {
+  width: 80%;
 }
