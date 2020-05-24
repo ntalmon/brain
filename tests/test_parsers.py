@@ -9,6 +9,7 @@ import brain.parsers.mq_agent
 from brain.parsers import run_parser, invoke_parser
 from brain.parsers.__main__ import cli
 from brain.parsers.mq_agent import MQAgent
+from brain.parsers.parsers import Context
 from brain.utils.consts import *
 from .data_generators import gen_snapshot_for_parsers
 from .utils import protobuf2dict
@@ -146,6 +147,20 @@ def mock_rabbitmq(monkeypatch):
 
     monkeypatch.setattr(brain.parsers.mq_agent, 'RabbitMQ', MockRabbitMQ)
     yield expected_callback, expected_data
+
+
+def test_context(tmp_path):
+    ctx = Context(str(tmp_path))
+    ctx.save('file.txt', 'Some data')
+    with open(str(tmp_path / 'file.txt'), 'r') as file:
+        assert file.read() == 'Some data'
+    ctx = Context()
+    calls = {ctx.save: ['file.txt', 'Some data'], ctx.path: ['file.txt'], ctx.delete: ['file.txt']}
+    for func, args in calls.items():
+        with pytest.raises(Exception) as error:
+            func(*args)
+
+        assert 'Cannot access context' in str(error.value)
 
 
 def test_mq_agent(mock_rabbitmq):
