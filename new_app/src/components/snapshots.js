@@ -140,9 +140,19 @@ function Snapshot(props) {
   let colorImage = details.results.includes("color_image")
     ? formatURL(`${snapshotUrl}/color_image/data`)
     : "";
+  let acolorImageView = colorImage ? (
+    <img src={colorImage} className="img-fluid" />
+  ) : (
+    ""
+  );
   let depthImage = details.results.includes("depth_image")
     ? formatURL(`${snapshotUrl}/depth_image/data`)
     : "";
+  let adepthImageView = depthImage ? (
+    <img src={depthImage} className="img-fluid" />
+  ) : (
+    ""
+  );
 
   let pose = "";
   if (details.results.includes("pose") && moreDetails)
@@ -159,22 +169,15 @@ function Snapshot(props) {
   let colorImageView = "";
   let depthImageView = "";
   if (moreDetails) {
-    colorImageView = (
-      <ShowImages colorImage={colorImage} depthImage={depthImage} />
-    );
-    depthImageView = (
-      <img
-        src={formatURL(`${snapshotUrl}/depth_image/data`)}
-        className="img-fluid"
-      />
-    );
+    colorImageView = <img src={colorImage} className="img-fluid" />;
+    depthImageView = <img src={depthImage} className="img-fluid" />;
   }
 
   return (
     <div className="snapshot-container">
       <div className="jumbotron text-center hoverable p-4 snapshot">
         <div className="row">
-          <div className="col-md-7 text-md-left ml-3 mt-3">
+          <div className="col-md-6 text-md-left ml-3 mt-3">
             <h4 className="h4 mb-4">Snapshot #{snapshotId}</h4>
             <p className="font-weight-normal">
               by{" "}
@@ -214,10 +217,27 @@ function Snapshot(props) {
               </div>
             </div>
           </div>
-          <div className="col-md-4 offset-md-1 mx-3 my-3">
-            <div className="collapse" id={`collapse-${domId}`}>
-              {colorImageView}
-              <div className="mt-3">
+          <div className="col-md-5 offset-md-1 mx-0 my-3">
+            <div className="collapse container" id={`collapse-${domId}`}>
+              <div className="mt-5 color-image">
+                {colorImageView ? (
+                  <h5 style={{ textAlign: "left" }}>Color image</h5>
+                ) : (
+                  ""
+                )}
+                <div className="view overlay">
+                  {colorImageView}
+                  <a>
+                    <div className="mask rgba-white-slight"></div>
+                  </a>
+                </div>
+              </div>
+              <div className="mt-4 depth-image">
+                {depthImageView ? (
+                  <h5 style={{ textAlign: "left" }}>Depth image</h5>
+                ) : (
+                  ""
+                )}
                 <div className="view overlay">
                   {depthImageView}
                   <a>

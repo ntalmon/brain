@@ -6,7 +6,7 @@
 }
 
 .user-profile {
-  width: 20%;
+  width: 25%;
   height: 100%;
   position: fixed;
   border-right: 1px solid white;
@@ -14,9 +14,38 @@
   /* text-align: left; */
 }
 
+.profile-picture-wrapper {
+  display: inline-block;
+}
+
+.avatar-circle {
+  width: 160px;
+  height: 160px;
+  background-color: black;
+  text-align: center;
+  /* align-items:center; */
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+}
+
+.initials {
+  position: relative;
+  top: 25px;
+  font-size: 50px;
+  line-height: 110px;
+  color: #fff;
+  /* font-family: "Courier New", monospace; */
+  /* font-family: "Anonymous Pro", monospace; */
+  font-weight: bold;
+}
+
 .user-profile-header {
+  width: 100%;
+  /* display: inline-block; */
   margin-top: 50px;
   align-items: center;
+  text-align: center;
 }
 
 .user-profile-details {
@@ -26,10 +55,10 @@
 }
 
 .user-snapshots {
-  width: 80%;
+  width: 75%;
   height: 100%;
   position: relative;
-  left: 20%;
+  left: 25%;
   overflow-y: auto;
   padding-bottom: 30px;
 }
@@ -45,4 +74,8 @@
 
 .feelings-progress-bar {
   width: 80%;
+}
+
+.color-image {
+  margin-top: 100px;
 }

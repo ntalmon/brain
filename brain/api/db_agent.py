@@ -21,6 +21,7 @@ class DBAgent(MongoDB):
     """
     Provides the API->database communication.
     """
+
     def __init__(self, url):
         MongoDB.__init__(self, url)
 

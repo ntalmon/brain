@@ -7,5 +7,5 @@ class FeelingParser:
     field = 'feelings'
 
     def parse(self, data, context):
-        logger.debug(f'running feelings parser')
+        logger.info(f'running feelings parser')
         return data

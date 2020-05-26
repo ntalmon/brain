@@ -1,31 +1,55 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "../css/users-page.css";
-import { fetchAPI, showTimestamp } from "../utils";
+import { ProfilePicture } from "../components/profile";
+import { fetchAPI, showTimestamp, getInitials } from "../utils";
 
 function UserEntry(props) {
-  var [details, setDetails] = useState({ birthday: 0, gender: "" });
+  let userId = props.userId;
+  let username = props.username;
+  let [details, setDetails] = useState({ birthday: 0, gender: "" });
   useEffect(() => {
-    fetchAPI(`/users/${props.userId}`).then((data) => {
-      setDetails({
-        birthday: data.birthday,
-        gender: data.gender,
-      });
+    fetchAPI(`/users/${userId}`).then((data) => {
+      setDetails({ birthday: data.birthday, gender: data.gender });
     });
   }, []);
-
   return (
-    <tr className="user-entry">
-      <td>
-        <img src="https://bootdey.com/img/Content/user_1.jpg" alt="" />
-        <Link className="user-link" to={`/users/${props.userId}`}>
-          {props.username}
-        </Link>
-      </td>
-      <td>{props.userId}</td>
-      <td className="text-center">{showTimestamp(details.birthday)}</td>
-      <td className="text-center">{details.gender[0]}</td>
-    </tr>
+    <section class="dark-grey-text hoverable user-entry">
+      <div class="row align-items-center">
+        <div class="col-lg-5 col-xl-4">
+          <Link to={`/users/${userId}`}>
+            <div className="profile-picture-link">
+              <ProfilePicture username={username} />
+            </div>
+          </Link>
+        </div>
+        <div class="col-lg-7 col-xl-8 user-details-text">
+          <h4 class="font-weight-bold mb-3">
+            <strong>{username}</strong>
+          </h4>
+          <p class="">
+            <b>User ID: </b>
+            {userId} <br />
+            <b>Username: </b>
+            {username} <br />
+            <b>Birthday: </b>
+            {showTimestamp(details.birthday)} <br />
+            <b>Gender: </b>
+            {details.gender}
+          </p>
+          <Link to={`/users/${userId}`}>
+            <button
+              type="button"
+              class="btn aqua-gradient waves-effect show-snapshots-btn"
+            >
+              Show snapshots
+            </button>
+          </Link>
+        </div>
+      </div>
+
+      <hr class="my-5 white" />
+    </section>
   );
 }
 
@@ -39,42 +63,12 @@ function UsersPage() {
 
   let users = [];
   usersList.forEach((user) => {
-    console.log(user);
     users.push(<UserEntry userId={user.user_id} username={user.username} />);
   });
+
   return (
-    <div class="users-page">
-      <div className="container bootstrap snippet">
-        <div className="row">
-          <div className="col-lg-10">
-            <div className="main-box no-header clearfix">
-              <div className="main-box-body clearfix">
-                <div className="table-responsive">
-                  <table className="table user-list">
-                    <thead>
-                      <tr>
-                        <th>
-                          <span>User</span>
-                        </th>
-                        <th>
-                          <span>ID</span>
-                        </th>
-                        <th className="text-center">
-                          <span>Birthday</span>
-                        </th>
-                        <th className="text-center">
-                          <span>Gender</span>
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>{users}</tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="users-page">
+      <div class="container mt-5 users-list-container">{users}</div>
     </div>
   );
 }

@@ -6,7 +6,7 @@ logger = get_logger(__name__)
 
 
 def parse_color_image(data, context):
-    logger.debug(f'running color_image parser')
+    logger.info(f'running color_image parser')
     width, height, file_name = data['width'], data['height'], data['file_name']
     path = context.path(file_name)
     new_path = context.path('color_image.jpg')

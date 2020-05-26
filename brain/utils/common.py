@@ -13,7 +13,10 @@ logging.basicConfig(level=logging.INFO, filename=str(log_path), format=fmt, date
 
 
 def get_logger(name):
-    return logging.getLogger(name)
+    logger = logging.getLogger(name)
+    logger.addHandler(logging.StreamHandler())
+    logger.setLevel(logging.INFO)
+    return logger
 
 
 def normalize_path(path):
