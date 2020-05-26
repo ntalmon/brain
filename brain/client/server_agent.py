@@ -5,7 +5,10 @@ TODO: add module interface
 from furl import furl
 
 from brain.autogen import client_server_pb2
+from brain.utils.common import get_logger
 from brain.utils.http import post
+
+logger = get_logger(__name__)
 
 
 def copy_protobuf(item_a, item_b, attrs):
@@ -15,6 +18,7 @@ def copy_protobuf(item_a, item_b, attrs):
 
 class ServerAgent:
     def __init__(self, host, port):
+        logger.info(f'initializing ServerAgent, {host=}, {port=}')
         self.host = host
         self.port = port
         self.url = furl(scheme='http', host=host, port=port)
@@ -36,4 +40,5 @@ class ServerAgent:
         new_snapshot = self.construct_snapshot(user, snapshot)
         url = self.url / 'snapshot'
         snapshot_msg = new_snapshot.SerializeToString()
+        logger.debug(f'sending snapshot to {url}')
         post(url, snapshot_msg)

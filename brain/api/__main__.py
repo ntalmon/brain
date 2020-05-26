@@ -1,8 +1,10 @@
 import click
 
-from brain.utils.common import cli_suppress
+from brain.utils.common import cli_suppress, get_logger
 from brain.utils.consts import *
 from . import run_api_server
+
+logger = get_logger(__name__)
 
 
 @click.group()
@@ -16,6 +18,7 @@ def cli():
 @click.option('-d', '--database', type=click.STRING, default=MQ_URL)
 @cli_suppress
 def cli_run_server(host, port, database):
+    logger.info(f'running cli run-server: {host=}, {port=}, {database=}')
     run_api_server(host, port, database)
 
 

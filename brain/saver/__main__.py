@@ -1,8 +1,10 @@
 import click
 
-from brain.utils.common import cli_suppress
+from brain.utils.common import cli_suppress, get_logger
 from brain.utils.consts import *
 from . import run_saver, Saver
+
+logger = get_logger(__name__)
 
 
 @click.group()
@@ -16,6 +18,7 @@ def cli():
 @click.argument('path', type=click.STRING)
 @cli_suppress
 def cli_save(database, topic, path):
+    logger.info(f'running cli save: {database=}, {topic=}, {path=}')
     saver = Saver(database)
     with open(path, 'r') as file:  # TODO: handle errors
         data = file.read()
@@ -27,6 +30,7 @@ def cli_save(database, topic, path):
 @click.argument('mq', type=click.STRING)
 @cli_suppress
 def cli_run_saver(database, mq):
+    logger.info(f'running cli run-saver: {database=}, {mq=}')
     run_saver(database, mq)
 
 

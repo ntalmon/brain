@@ -2,8 +2,10 @@ import json
 
 import click
 
-from brain.utils.common import cli_suppress
+from brain.utils.common import cli_suppress, get_logger
 from . import run_parser, invoke_parser
+
+logger = get_logger(__name__)
 
 
 @click.group()
@@ -16,6 +18,7 @@ def cli():
 @click.argument('path', type=click.STRING)
 @cli_suppress
 def cli_parse(parser, path):
+    logger.info(f'running cli parse: {parser=}, {path=}')
     result = run_parser(parser, path, is_path=True)
     result = json.dumps(result)
     print(result)
@@ -26,6 +29,7 @@ def cli_parse(parser, path):
 @click.argument('mq', type=click.STRING)
 @cli_suppress
 def cli_run_parser(parser, mq):
+    logger.info(f'running cli run-parser: {parser=}, {mq=}')
     invoke_parser(parser, mq)
 
 

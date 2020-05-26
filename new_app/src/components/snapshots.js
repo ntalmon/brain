@@ -145,10 +145,10 @@ function Snapshot(props) {
     : "";
 
   let pose = "";
-  if (details.results.includes("pose"))
+  if (details.results.includes("pose") && moreDetails)
     pose = <ShowPose url={`${snapshotUrl}/pose`} />;
   let feelings = "";
-  if (details.results.includes("feelings"))
+  if (details.results.includes("feelings") && moreDetails)
     feelings = <ShowFeelings url={`${snapshotUrl}/feelings`} />;
   let resultsItems = [];
   let brs = [<br />, <br />, <br />, <br />];
@@ -156,6 +156,19 @@ function Snapshot(props) {
     resultsItems.push(<li>{item}</li>);
     brs.pop();
   });
+  let colorImageView = "";
+  let depthImageView = "";
+  if (moreDetails) {
+    colorImageView = (
+      <ShowImages colorImage={colorImage} depthImage={depthImage} />
+    );
+    depthImageView = (
+      <img
+        src={formatURL(`${snapshotUrl}/depth_image/data`)}
+        className="img-fluid"
+      />
+    );
+  }
 
   return (
     <div className="snapshot-container">
@@ -175,7 +188,7 @@ function Snapshot(props) {
             {brs}
             <div>
               <button
-                className="btn btn-success"
+                className="btn aqua-gradient"
                 type="button"
                 data-toggle="collapse"
                 data-target={`#collapse-${domId}`}
@@ -202,14 +215,11 @@ function Snapshot(props) {
             </div>
           </div>
           <div className="col-md-4 offset-md-1 mx-3 my-3">
-            <ShowImages colorImage={colorImage} depthImage={depthImage} />
             <div className="collapse" id={`collapse-${domId}`}>
+              {colorImageView}
               <div className="mt-3">
                 <div className="view overlay">
-                  <img
-                    src={formatURL(`${snapshotUrl}/depth_image/data`)}
-                    className="img-fluid"
-                  />
+                  {depthImageView}
                   <a>
                     <div className="mask rgba-white-slight"></div>
                   </a>

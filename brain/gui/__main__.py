@@ -1,8 +1,10 @@
 import click
 
-from brain.utils.common import cli_suppress
+from brain.utils.common import cli_suppress, get_logger
 from brain.utils.consts import *
 from . import run_server
+
+logger = get_logger(__name__)
 
 
 @click.group()
@@ -17,6 +19,7 @@ def cli():
 @click.option('-P', '--api-port', type=click.INT, default=API_PORT)
 @cli_suppress
 def cli_run_server(host, port, api_host, api_port):
+    logger.info(f'running cli run-server: {host=}, {port=}, {api_host=}, {api_port=}')
     run_server(host, port, api_host, api_port)
 
 

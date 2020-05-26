@@ -42,4 +42,4 @@ def test_cli(resources_path, mock_server):
     runner = CliRunner()
     result = runner.invoke(cli, ['upload-sample', str(sample_path)])
     assert result.exit_code == 0
-    assert 'All snapshots uploaded successfully' in result.output
+    assert f'snapshots successfully uploaded' in result.output

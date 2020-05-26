@@ -1,4 +1,7 @@
+from brain.utils.common import get_logger
 from brain.utils.mongodb import MongoDB
+
+logger = get_logger(__name__)
 
 
 class DBAgent(MongoDB):
@@ -25,6 +28,7 @@ class DBAgent(MongoDB):
         )
 
     def save_result(self, topic, user_id, user_data, snapshot_id, timestamp, result):
+        logger.debug(f'saving result to db: {topic=}, {user_id=}, {user_data=}, {snapshot_id=}, {timestamp=}')
         snapshot_entry = {'_id': snapshot_id, 'uuid': snapshot_id, 'datetime': timestamp, 'results': {topic: result}}
         user_entry = {'_id': user_id, 'user_id': user_id, **user_data, 'snapshots': [snapshot_entry]}
         if self._create_user_if_not_exist(user_id, user_entry):

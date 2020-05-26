@@ -2,7 +2,9 @@ import numpy as np
 
 from brain import data_path
 from brain.autogen import server_parsers_pb2
-from brain.utils.common import normalize_path
+from brain.utils.common import normalize_path, get_logger
+
+logger = get_logger(__name__)
 
 
 def copy_protobuf(item_a, item_b, attrs):
@@ -28,6 +30,7 @@ def handle_depth_image(snapshot, data):
 
 
 def construct_parsers_message(snapshot, snapshot_uuid):
+    logger.debug(f'constructing message for parsers')
     parsers_snapshot = server_parsers_pb2.Snapshot()
     parsers_snapshot.uuid = snapshot_uuid
     copy_protobuf(parsers_snapshot, snapshot, ['datetime'])

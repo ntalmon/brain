@@ -1,8 +1,10 @@
 import click
 
-from brain.utils.common import cli_suppress
+from brain.utils.common import cli_suppress, get_logger
 from brain.utils.consts import *
 from .api_agent import api_get
+
+logger = get_logger(__name__)
 
 
 @click.group()
@@ -21,6 +23,7 @@ def cli(ctx, host, port):
 @cli_suppress
 def get_users(ctx):
     host, port = ctx.obj['host'], ctx.obj['port']
+    logger.info(f'running cli get-users: {host=}, {port=}')
     result = api_get(host, port, 'users')
     print(result)
 
@@ -31,6 +34,7 @@ def get_users(ctx):
 @cli_suppress
 def cli_get_users(ctx, user_id):
     host, port = ctx.obj['host'], ctx.obj['port']
+    logger.info(f'running cli get-user: {host=}, {port=}, {user_id=}')
     result = api_get(host, port, f'users/{user_id}')
     print(result)
 
@@ -41,6 +45,7 @@ def cli_get_users(ctx, user_id):
 @cli_suppress
 def cli_get_snapshots(ctx, user_id):
     host, port = ctx.obj['host'], ctx.obj['port']
+    logger.info(f'running cli get-snapshots: {host=}, {port=}, {user_id=}')
     result = api_get(host, port, f'users/{user_id}/snapshots')
     print(result)
 
@@ -52,6 +57,7 @@ def cli_get_snapshots(ctx, user_id):
 @cli_suppress
 def cli_get_snapshot(ctx, user_id, snapshot_id):
     host, port = ctx.obj['host'], ctx.obj['port']
+    logger.info(f'running cli get-snapshot: {host=}, {port=}, {user_id=}, {snapshot_id=}')
     result = api_get(host, port, f'users/{user_id}/snapshots/{snapshot_id}')
     print(result)
 
@@ -64,6 +70,7 @@ def cli_get_snapshot(ctx, user_id, snapshot_id):
 @cli_suppress
 def cli_get_result(ctx, user_id, snapshot_id, result_name):
     host, port = ctx.obj['host'], ctx.obj['port']
+    logger.info(f'running cli get-result: {host=}, {port=}, {user_id=}, {snapshot_id=}, {result_name=}')
     result = api_get(host, port, f'users/{user_id}/snapshots/{snapshot_id}/{result_name}')
     print(result)
 

@@ -1,11 +1,15 @@
 import pymongo
 import pymongo.database
 
+from brain.utils.common import get_logger
 from brain.utils.consts import *
+
+logger = get_logger(__name__)
 
 
 class MongoDB:
     def __init__(self, url=''):
+        logger.info(f'initializing mongodb connection: {url=}')
         self.url = url
         self.client = None  # type: pymongo.MongoClient
         self.db = None  # type: pymongo.database.Database
@@ -16,8 +20,10 @@ class MongoDB:
 
     def connect(self, url):
         if self._is_connected:
+            logger.warning(f'cannot connect to database, already connected')
             raise Exception('Cannot connect to database, already connected')
 
+        logger.info(f'connecting mongodb: {url=}')
         self.url = url
         self.client = pymongo.MongoClient(self.url)
         self.db = self.client[DB_NAME]
@@ -26,6 +32,7 @@ class MongoDB:
 
     def _check_connection(self):
         if not self._is_connected:
+            logger.warning(f'database is not connected, cannot access')
             raise Exception('Database is not connected, cannot access')
 
     def find(self, *args, **kwargs):

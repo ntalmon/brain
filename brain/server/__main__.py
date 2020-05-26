@@ -1,8 +1,10 @@
 import click
 
-from brain.utils.common import cli_suppress
+from brain.utils.common import cli_suppress, get_logger
 from brain.utils.consts import *
 from . import run_server, construct_publish
+
+logger = get_logger(__name__)
 
 
 @click.group()
@@ -16,6 +18,7 @@ def cli():
 @click.argument('mq', type=click.STRING)
 @cli_suppress
 def cli_run_server(host, port, mq):
+    logger.info(f'running cli run-server: {host=}, {port=}, {mq=}')
     publish = construct_publish(mq)
     run_server(host, port, publish)
 
