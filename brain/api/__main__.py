@@ -1,3 +1,6 @@
+"""
+This module includes the commands for the API CLI.
+"""
 import click
 
 from brain.utils.common import cli_suppress, get_logger
@@ -18,6 +21,12 @@ def cli():
 @click.option('-d', '--database', type=click.STRING, default=MQ_URL)
 @cli_suppress
 def cli_run_server(host, port, database):
+    """
+    Run the api server.
+    :param host: hostname for the server to listen on
+    :param port: port number for the server to listen
+    :param database: address of the database that the api will get results from
+    """
     logger.info(f'running cli run-server: {host=}, {port=}, {database=}')
     run_api_server(host, port, database)
 
