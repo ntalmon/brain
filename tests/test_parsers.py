@@ -36,14 +36,12 @@ def verify_pose(result, snapshot):
 
 
 def verify_color_image(result, snapshot):
-    # TODO: read image from file and compare
     assert result['width'] == snapshot.color_image.width
     assert result['height'] == snapshot.color_image.height
     assert os.path.isfile(result['path'])
 
 
 def verify_depth_image(result, snapshot):
-    # TODO: read image from file and compare
     assert os.path.isfile(result['path'])
 
 
@@ -59,7 +57,6 @@ def test_pose(random_snapshot):
 
 
 def test_color_image(random_snapshot):
-    # TODO: read image from file and compare
     snapshot, data, _ = random_snapshot
     result = run_parser('color_image', data)
     verify_result_header(result, snapshot)
@@ -67,7 +64,6 @@ def test_color_image(random_snapshot):
 
 
 def test_depth_image(random_snapshot):
-    # TODO: read image from file and compare
     snapshot, data, _ = random_snapshot
     result = run_parser('depth_image', data)
     verify_result_header(result, snapshot)

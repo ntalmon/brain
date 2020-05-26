@@ -50,7 +50,6 @@ def test_server(client_message, mock_rabbitmq, mock_path):
     data, exchange, queue = MockRabbitMQ.publish_params
     assert exchange == 'snapshot'
     assert queue == ''
-    # TODO: add data validation
 
 
 class MockMQAgent:

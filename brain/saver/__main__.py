@@ -20,9 +20,13 @@ def cli():
 def cli_save(database, topic, path):
     logger.info(f'running cli save: {database=}, {topic=}, {path=}')
     saver = Saver(database)
-    with open(path, 'r') as file:  # TODO: handle errors
-        data = file.read()
-        saver.save(topic, data)
+    try:
+        with open(path, 'r') as file:
+            data = file.read()
+    except OSError as error:
+        logger.error(f'error while trying to read {path}: {error}')
+        raise
+    saver.save(topic, data)
 
 
 @cli.command('run-saver')

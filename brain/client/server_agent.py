@@ -1,6 +1,5 @@
 """
 Provides interface for the client to communicate with the server.
-TODO: add module interface
 """
 from furl import furl
 
