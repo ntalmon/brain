@@ -13,3 +13,8 @@ brain.client.reader
 ===================
 .. automodule:: brain.client.reader
 	:members:
+
+brain.client.server_agent
+=========================
+.. automodule:: brain.client.server_agent
+	:members:
