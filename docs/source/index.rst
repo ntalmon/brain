@@ -7,9 +7,6 @@ Welcome to Brain's documentation!
 =================================
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
-
    quickstart
    client
    server
@@ -18,6 +15,8 @@ Welcome to Brain's documentation!
    api
    cli
    gui
+   :maxdepth: 2
+   :caption: Contents:
 
 
 Indices and tables
