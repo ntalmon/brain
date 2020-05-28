@@ -45,7 +45,7 @@ export default function UserProfile(props) {
         <br />
         <h4>
           <b>Gender: </b>
-          {props.gender[0]}
+          {props.gender}
         </h4>
       </div>
     </div>
