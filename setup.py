@@ -1,3 +1,4 @@
+import os
 import subprocess
 
 from setuptools import setup, find_packages
@@ -12,16 +13,18 @@ def execute_command(command):
 
 class InstallCommand(install):
     def run(self):
+        os.system('pwd')
         code, out, err = execute_command(['python', '-m', './scripts/build.sh', 'protobuf'])
-        if code != 0:
-            raise Exception(f'Failed to build protobuf: out={out}, err={err}')
+        if code:
+            raise Exception(f'Failed to build protobuf: code={code} out={out}, err={err}')
         install.run(self)
 
 
 setup(
     name='Brain',
-    version='0.1.0',
+    version='1.0.0',
     author='Noam Talmon',
+    cmdclass={'install': InstallCommand},
     description='Advanced System Design - Final Project',
     packages=find_packages(),
     install_requires=['click'],
