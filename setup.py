@@ -22,7 +22,6 @@ setup(
     name='Brain',
     version='0.1.0',
     author='Noam Talmon',
-    cmdclass={'install': InstallCommand},
     description='Advanced System Design - Final Project',
     packages=find_packages(),
     install_requires=['click'],

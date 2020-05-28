@@ -9,5 +9,5 @@ brain-data/
 tmp_script/
 htmlcov/
 *.pyc
-*_pb2.py
+#*_pb2.py
 *.log
