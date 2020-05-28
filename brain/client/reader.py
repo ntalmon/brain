@@ -1,3 +1,8 @@
+"""
+The reader module is responsible for reading the sample file, parse it and return the parsed snapshots.
+All the required functionality is contained in the `Reader` class.
+"""
+
 import gzip
 import struct
 
@@ -9,7 +14,9 @@ logger = get_logger(__name__)
 
 class Reader:
     """
-    Reads snapshots from the sample file.
+    The reader class reads and parses snapshots from a sample file.
+
+    :param path: sample file path
     """
 
     def __init__(self, path: str):
@@ -31,7 +38,14 @@ class Reader:
             raise Exception(f'Invalid file format: expected to read {size} bytes, but read only {len(msg)}')
         return msg
 
-    def load(self):
+    def load(self) -> sample_pb2.User:
+        """
+        Loads the sample file and reads.
+
+        Must be called before iterating over the reader.
+
+        :return:
+        """
         logger.info(f'loading reader')
         if self._loaded:
             return self.user

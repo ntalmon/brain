@@ -52,6 +52,7 @@ def get_users():
 def get_user(user_id):
     """
     API entry point for getting a user by user id
+
     :return: the user id, username, birthday, and gender of the user.
     """
     logger.info(f'getting user: {user_id=}')
@@ -62,6 +63,7 @@ def get_user(user_id):
 def get_snapshots(user_id):
     """
     API entry point to get all snapshots of a user by user id.
+
     :return: a list of snapshots, each one contains snapshot uuid and datetime.
     """
     logger.info(f'getting user snapshots: {user_id=}')
@@ -72,6 +74,7 @@ def get_snapshots(user_id):
 def get_snapshot(user_id, snapshot_id):
     """
     API entry point for getting a snapshot of a user by user id and snapshot id.
+
     :return: the uuid, datetime, and list of available results names of the snapshot.
     """
     logger.info(f'getting user snapshot: {user_id=}, {snapshot_id=}')
@@ -82,6 +85,7 @@ def get_snapshot(user_id, snapshot_id):
 def get_snapshot_result(user_id, snapshot_id, result_name):
     """
     API entry point for getting a result of a snapshot, by user id, snapshot id, and result name.
+
     :return: the result, as returned from database.
     """
     logger.info(f'getting snapshot results: {user_id=}, {snapshot_id=}, {result_name=}')
@@ -92,6 +96,7 @@ def get_snapshot_result(user_id, snapshot_id, result_name):
 def get_snapshot_result_data(user_id, snapshot_id, result_name):
     """
     API entry for getting the data of result, when the result contains a path to some file.
+
     :return: the file data.
     """
     logger.info(f'getting result data: {user_id=}, {snapshot_id=}, {result_name=}')

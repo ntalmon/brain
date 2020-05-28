@@ -1,6 +1,3 @@
-"""
-The __main__ module includes the commands for the brain CLI.
-"""
 import click
 
 from brain.utils.common import cli_suppress, get_logger
@@ -11,8 +8,8 @@ logger = get_logger(__name__)
 
 
 @click.group()
-@click.option('-h', '--host', type=click.STRING, default=API_HOST)
-@click.option('-p', '--port', type=click.INT, default=API_PORT)
+@click.option('-h', '--host', type=click.STRING, default=API_HOST, help="API server hostname")
+@click.option('-p', '--port', type=click.INT, default=API_PORT, help="API server port number")
 @click.pass_context
 @cli_suppress
 def cli(ctx, host, port):
@@ -44,6 +41,8 @@ def cli_get_user(ctx, user_id):
     """
     Get a user by user id.
     Retrieve result form DB and print.
+
+    :param: user_id: user id of the desired user
     """
     host, port = ctx.obj['host'], ctx.obj['port']
     logger.info(f'running cli get-user: {host=}, {port=}, {user_id=}')

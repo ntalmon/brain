@@ -7,11 +7,13 @@ logger = get_logger(__name__)
 
 def upload_sample(host: str, port: int, path: str):
     """
-    Reads snapshots from file and streams them one by one to the server.
+    Read snapshots from sample file and stream them one by one to the server.
+
     :param host: hostname of the server
     :param port: port number of the server
     :param path: path of the sample file
     """
+
     logger.info(f'uploading samples to {host}:{port} from {path=}')
     reader = Reader(path)
     user = reader.load()
