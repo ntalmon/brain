@@ -3,7 +3,7 @@ var API_ROOT = isDebug ? "http://127.0.0.1:5000" : window.api_url;
 
 export const showTimestamp = (datetime) => {
   let date = new Date(parseInt(datetime));
-  return date.toLocaleString();
+  return date.toLocaleString().slice(0, -3);
 };
 
 export const formatURL = (relativePath) => {
@@ -20,3 +20,10 @@ export async function fetchAPI(relativePath) {
     });
   });
 }
+
+export const getInitials = (name) => {
+  let firstLastName = name.split(" ");
+  if (firstLastName.length < 2) return name[0];
+  let initials = firstLastName[0][0] + firstLastName[1][0];
+  return initials;
+};
