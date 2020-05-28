@@ -14,19 +14,19 @@ brain.utils.config
 brain.utils.consts
 ==================
 .. automodule:: brain.utils.consts
-	:members
+	:members:
 
 brain.utils.http
 ================
 .. automodule:: brain.utils.http
-	:members
+	:members:
 
 brain.utils.mongodb
 ===================
 .. automodule:: brain.utils.mongodb
-	:members
+	:members:
 
 brain.utils.rabbitmq
 ====================
 .. automodule:: brain.utils.rabbitmq
-	:members
+	:members:
