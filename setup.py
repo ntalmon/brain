@@ -13,8 +13,7 @@ def execute_command(command):
 
 class InstallCommand(install):
     def run(self):
-        os.system('pwd')
-        code, out, err = execute_command(['python', '-m', './scripts/build.sh', 'protobuf'])
+        code, out, err = execute_command('./scripts/build.sh protobuf')
         if code:
             raise Exception(f'Failed to build protobuf: code={code} out={out}, err={err}')
         install.run(self)
