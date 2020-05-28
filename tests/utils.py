@@ -118,6 +118,7 @@ def add_shutdown_to_app(app):
         if func is None:
             raise RuntimeError('Not running with the Werkzeug Server')
         func()
+        return ''
 
     app.has_shutdown = True
 

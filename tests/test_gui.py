@@ -18,9 +18,9 @@ def simple_get_index():
 
 
 def simple_get_resource():
-    res = requests.get(f'{GUI_URL}/brain.png')
+    res = requests.get(f'{GUI_URL}/background.jpg')
     assert res.status_code == 200
-    assert 'image/png' in res.headers['Content-Type']
+    assert 'image/jpeg' in res.headers['Content-Type']
 
 
 @pytest.fixture
