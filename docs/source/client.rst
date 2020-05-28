@@ -1,6 +1,5 @@
 brain.client
 ------------
-
 .. automodule:: brain.client
 	:members:
 

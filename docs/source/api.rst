@@ -1,6 +1,5 @@
 brain.api
 ---------
-.. automodule:: brain.api
 
 brain.api.api
 =============
