@@ -1,5 +1,6 @@
 brain.parsers
 -------------
+.. automodule:: brain.parsers
 
 brain.parsers.parsers
 =====================

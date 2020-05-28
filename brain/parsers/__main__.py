@@ -17,7 +17,11 @@ def cli():
 @click.argument('parser', type=click.STRING)
 @click.argument('path', type=click.STRING)
 @cli_suppress
-def cli_parse(parser, path):
+def cli_parse(parser: str, path: str):
+    """
+    Run the given parser with the data in the given path, and print the result.
+    """
+
     logger.info(f'running cli parse: {parser=}, {path=}')
     result = run_parser(parser, path, is_path=True)
     result = json.dumps(result)
@@ -28,7 +32,11 @@ def cli_parse(parser, path):
 @click.argument('parser', type=click.STRING)
 @click.argument('mq', type=click.STRING)
 @cli_suppress
-def cli_run_parser(parser, mq):
+def cli_run_parser(parser: str, mq: str):
+    """
+    Run the parser as a service, that consumes messages and publishes results using the given MQ.
+    """
+
     logger.info(f'running cli run-parser: {parser=}, {mq=}')
     invoke_parser(parser, mq)
 

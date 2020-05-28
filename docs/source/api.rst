@@ -1,5 +1,7 @@
 brain.api
 ---------
+.. automodule:: brain.api
+	:members:
 
 brain.api.api
 =============
@@ -10,6 +12,7 @@ brain.api.db_agent
 ==================
 .. automodule:: brain.api.db_agent
 	:members:
+	:show-inheritance:
 
 CLI
 ===

@@ -1,6 +1,5 @@
 """
-The reader module is responsible for reading the sample file, parse it and return the parsed snapshots.
-All the required functionality is contained in the `Reader` class.
+The reader module contains an interface for reading the sample file and get the parsed snapshots.
 """
 
 import gzip
@@ -14,7 +13,18 @@ logger = get_logger(__name__)
 
 class Reader:
     """
-    The reader class reads and parses snapshots from a sample file.
+    The Reader class reads and parses snapshots from a sample file.
+
+    After initialization, you should load the reader via `reader.load()`, which will also return the parsed header.
+    Then you can get the parsed snapshots by iterating over the reader object. Each iteration will read the next
+    snapshot from the file and return the parsed snapshot:
+
+    .. code-block:: python
+
+        reader = Reader('sample.mind.gz')
+        user = reader.load()
+        for snapshot in reader:
+            print(snapshot.uuid)
 
     :param path: sample file path
     """
@@ -40,11 +50,10 @@ class Reader:
 
     def load(self) -> sample_pb2.User:
         """
-        Loads the sample file and reads.
+        | Loads the sample file and reads.
+        | Must be called before iterating over the reader.
 
-        Must be called before iterating over the reader.
-
-        :return:
+        :return: the sample file header - the user.
         """
         logger.info(f'loading reader')
         if self._loaded:

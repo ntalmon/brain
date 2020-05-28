@@ -8,11 +8,15 @@ logger = get_logger(__name__)
 
 
 @click.group()
-@click.option('-h', '--host', type=click.STRING, default=API_HOST, help="API server hostname")
-@click.option('-p', '--port', type=click.INT, default=API_PORT, help="API server port number")
+@click.option('-h', '--host', type=click.STRING, default=API_HOST, help='API server hostname.')
+@click.option('-p', '--port', type=click.INT, default=API_PORT, help='API server port number.')
 @click.pass_context
 @cli_suppress
 def cli(ctx, host, port):
+    """
+    All the commands have the `-h/--host` and `-p/--port` flags which refer to the API address
+    """
+
     # pass host and port to all cli commands.
     ctx.ensure_object(dict)
     ctx.obj['host'] = host
@@ -24,9 +28,9 @@ def cli(ctx, host, port):
 @cli_suppress
 def cli_get_users(ctx):
     """
-    Get the list of all users.
-    Retrieve result form DB and print.
+    Get all supported users.
     """
+
     host, port = ctx.obj['host'], ctx.obj['port']
     logger.info(f'running cli get-users: {host=}, {port=}')
     result = api_get(host, port, 'users')
@@ -39,11 +43,9 @@ def cli_get_users(ctx):
 @cli_suppress
 def cli_get_user(ctx, user_id):
     """
-    Get a user by user id.
-    Retrieve result form DB and print.
-
-    :param: user_id: user id of the desired user
+    Get user details.
     """
+
     host, port = ctx.obj['host'], ctx.obj['port']
     logger.info(f'running cli get-user: {host=}, {port=}, {user_id=}')
     result = api_get(host, port, f'users/{user_id}')
@@ -56,9 +58,9 @@ def cli_get_user(ctx, user_id):
 @cli_suppress
 def cli_get_snapshots(ctx, user_id):
     """
-    Get a list of all snapshots related to a user, by user id.
-    Retrieve result form DB and print.
+    Get user snapshots.
     """
+
     host, port = ctx.obj['host'], ctx.obj['port']
     logger.info(f'running cli get-snapshots: {host=}, {port=}, {user_id=}')
     result = api_get(host, port, f'users/{user_id}/snapshots')
@@ -70,11 +72,11 @@ def cli_get_snapshots(ctx, user_id):
 @click.argument('snapshot_id', type=click.INT)
 @click.pass_context
 @cli_suppress
-def cli_get_snapshot(ctx, user_id, snapshot_id):
+def cli_get_snapshot(ctx, user_id: int, snapshot_id: int):
     """
-    Get a snapshot related to a user, by user id and snapshot id.
-    Retrieve result form DB and print.
+    Get snapshot details.
     """
+
     host, port = ctx.obj['host'], ctx.obj['port']
     logger.info(f'running cli get-snapshot: {host=}, {port=}, {user_id=}, {snapshot_id=}')
     result = api_get(host, port, f'users/{user_id}/snapshots/{snapshot_id}')
@@ -82,20 +84,26 @@ def cli_get_snapshot(ctx, user_id, snapshot_id):
 
 
 @cli.command('get-result')
+@click.option('-s', '--save', type=click.STRING, help="If given, save the result to the given path.")
 @click.argument('user_id', type=click.INT)
 @click.argument('snapshot_id', type=click.INT)
 @click.argument('result_name', type=click.STRING)
 @click.pass_context
 @cli_suppress
-def cli_get_result(ctx, user_id, snapshot_id, result_name):
+def cli_get_result(ctx, save, user_id, snapshot_id, result_name):
     """
-    Get parsing result of a snapshot related to a user, by user id, snapshot id, and result name.
-    Retrieve result form DB and print.
+    Get parsing result of a snapshot.
     """
+
     host, port = ctx.obj['host'], ctx.obj['port']
     logger.info(f'running cli get-result: {host=}, {port=}, {user_id=}, {snapshot_id=}, {result_name=}')
     result = api_get(host, port, f'users/{user_id}/snapshots/{snapshot_id}/{result_name}')
-    print(result)
+
+    if save:
+        with open(save, 'w') as file:
+            file.write(result)
+    else:
+        print(result)
 
 
 if __name__ == '__main__':

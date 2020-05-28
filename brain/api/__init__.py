@@ -1,5 +1,6 @@
 """
-The API for brain.
-It is RESTful API that reflects the data stored in the database in multiple entry points.
+| The API package provides a RESTful API that reflects the data stored in database.
+| It provides multiple entry points to fetch different kinds of data such as users, snapshots, and parsing results.
 """
+
 from .api import run_api_server

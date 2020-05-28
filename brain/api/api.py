@@ -1,5 +1,6 @@
 """
-This module contains all the API entry points, and invoking the API server.
+| The api module contains all the entry points and API server invocation.
+| All the entry, except api_get_snapshot_result_data, returns the result in JSON format.
 """
 
 import os
@@ -41,8 +42,7 @@ def common_api_wrapper(callback, to_json=True):
 @app.route('/users')
 def api_get_users():
     """
-    API entry point for getting all the users.
-    :return: list of users, each one contains user id and username.
+    Get the list of all supported users, including user id and username only.
     """
 
     logger.info('getting users')
@@ -50,11 +50,9 @@ def api_get_users():
 
 
 @app.route('/users/<int:user_id>')
-def api_get_user(user_id):
+def api_get_user(user_id: int):
     """
-    API entry point for getting a user by user id
-
-    :return: the user id, username, birthday, and gender of the user.
+    Get the specified user's details: user id, username, birthday and gender.
     """
 
     logger.info(f'getting user: {user_id=}')
@@ -62,11 +60,9 @@ def api_get_user(user_id):
 
 
 @app.route('/users/<int:user_id>/snapshots')
-def api_get_snapshots(user_id):
+def api_get_snapshots(user_id: int):
     """
-    API entry point to get all snapshots of a user by user id.
-
-    :return: a list of snapshots, each one contains snapshot uuid and datetime.
+    Get the list of the specified user's snapshots, including snapshot id and datetime only.
     """
 
     logger.info(f'getting user snapshots: {user_id=}')
@@ -74,11 +70,9 @@ def api_get_snapshots(user_id):
 
 
 @app.route('/users/<int:user_id>/snapshots/<int:snapshot_id>')
-def api_get_snapshot(user_id, snapshot_id):
+def api_get_snapshot(user_id: int, snapshot_id: int):
     """
-    API entry point for getting a snapshot of a user by user id and snapshot id.
-
-    :return: the uuid, datetime, and list of available results names of the snapshot.
+    Get the specified snapshot's details: snapshot id, datetime, and available results' names.
     """
 
     logger.info(f'getting user snapshot: {user_id=}, {snapshot_id=}')
@@ -86,11 +80,9 @@ def api_get_snapshot(user_id, snapshot_id):
 
 
 @app.route('/users/<int:user_id>/snapshots/<int:snapshot_id>/<result_name>')
-def api_get_snapshot_result(user_id, snapshot_id, result_name):
+def api_get_snapshot_result(user_id: int, snapshot_id: int, result_name: str):
     """
-    API entry point for getting a result of a snapshot, by user id, snapshot id, and result name.
-
-    :return: the result, as returned from database.
+    Get the specified snapshot's result in json format.
     """
 
     logger.info(f'getting snapshot results: {user_id=}, {snapshot_id=}, {result_name=}')
@@ -98,21 +90,19 @@ def api_get_snapshot_result(user_id, snapshot_id, result_name):
 
 
 @app.route('/users/<int:user_id>/snapshots/<int:snapshot_id>/<result_name>/data')
-def api_get_snapshot_result_data(user_id, snapshot_id, result_name):
+def api_get_snapshot_result_data(user_id: int, snapshot_id: int, result_name: str):
     """
-    API entry for getting the data of result, when the result contains a path to some file.
-
-    :return: the file data.
+    Get the data of specified result name, when the result is big and contains file path to the full results.
     """
 
+    # fetch the result itself, expect result to contain a file path, and return the file
     logger.info(f'getting result data: {user_id=}, {snapshot_id=}, {result_name=}')
-    # at first, get the textual result from database
     result = common_api_wrapper(lambda: db_agent.find_snapshot_result(user_id, snapshot_id, result_name), to_json=False)
-    # expecting result to include path, otherwise /data is invalid for this result
     if 'path' not in result:
         logger.info(f'result {result_name} does not contain path, aborting with code=404')
         flask.abort(404)
     path = result['path']
+
     if not os.path.isfile(path):
         logger.warning(f'file not found for result {result_name}, {path=}, aborting with code=404')
         flask.abort(404)
@@ -127,7 +117,12 @@ def init_db_agent(database_url):
 def run_api_server(host, port, database_url):
     """
     Run the API server on the given host:port using the database at database_url.
+
+    :param host: server hostname
+    :param port: server port number
+    :param database_url: address of the database to use
     """
+
     logger.info(f'running api server: {host=}, {port=}, {database_url=}')
     init_db_agent(database_url)
     logger.info('db is initialized, starting flask app')

@@ -1,9 +1,11 @@
 brain.gui
 ---------
+.. automodule:: brain.gui
 
 brain.gui.gui
 =============
 .. automodule:: brain.gui.gui
+	:members:
 
 CLI
 ===

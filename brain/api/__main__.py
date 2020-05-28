@@ -13,9 +13,9 @@ def cli():
 
 
 @cli.command('run-server')
-@click.option('-h', '--host', type=click.STRING, default=API_HOST, help='server hostname')
-@click.option('-p', '--port', type=click.INT, default=API_PORT, help='server port number')
-@click.option('-d', '--database', type=click.STRING, default=MQ_URL, help='database address to fetch results from')
+@click.option('-h', '--host', type=click.STRING, default=API_HOST, help='Server hostname.')
+@click.option('-p', '--port', type=click.INT, default=API_PORT, help='Server port number.')
+@click.option('-d', '--database', type=click.STRING, default=MQ_URL, help='Address of the database to use.')
 @cli_suppress
 def cli_run_server(host, port, database):
     """

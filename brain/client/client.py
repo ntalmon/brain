@@ -1,3 +1,7 @@
+"""
+The client module contains the main logic of the client via `upload_sample`.
+"""
+
 from .reader import Reader
 from .server_agent import ServerAgent
 from ..utils.common import get_logger
@@ -7,11 +11,11 @@ logger = get_logger(__name__)
 
 def upload_sample(host: str, port: int, path: str):
     """
-    Read snapshots from sample file and stream them one by one to the server.
+    Reads the sample file and streams the snapshots to the server.
 
-    :param host: hostname of the server
-    :param port: port number of the server
-    :param path: path of the sample file
+    :param host: server hostname.
+    :param port: server port number.
+    :param path: sample file path.
     """
 
     logger.info(f'uploading samples to {host}:{port} from {path=}')

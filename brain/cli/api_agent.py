@@ -11,11 +11,13 @@ logger = get_logger(__name__)
 def api_get(host, port, path):
     """
     Get data from the API using a specific path.
+
     :param host: hostname of the API server
     :param port: port number of the API server
     :param path: relative path in the API (e.g. "/users/1/snapshots")
     :return: the returned result from the API, in json format
     """
+
     url = f'http://{host}:{port}/{path}'
     logger.info(f'getting data from api: GET {url}')
     result = get(url)

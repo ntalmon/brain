@@ -47,10 +47,21 @@ def test_get_snapshot(mock_get):
 
 
 @pytest.mark.parametrize('result_name', ['pose', 'color_image', 'depth_image', 'feelings'])
-def test_get_result(mock_get, result_name):
+@pytest.mark.parametrize('with_save', [False, True])
+def test_get_result(tmp_path, mock_get, result_name, with_save):
     runner = CliRunner()
     user_id = '1'
     snapshot_id = '2'
-    result = runner.invoke(cli, ['get-result', user_id, snapshot_id, result_name])
+    path = tmp_path / 'result.txt'
+    save_args = [] if not with_save else ['-s', str(path)]
+    args = ['get-result', *save_args, user_id, snapshot_id, result_name]
+    result = runner.invoke(cli, args)
     assert result.exit_code == 0, result.exception
-    assert furl(result.stdout.rstrip('\n')) == API_FURL / 'users' / user_id / 'snapshots' / snapshot_id / result_name
+    if with_save:
+        assert path.exists(), f'result was not saved to {str(path)}'
+        with open(str(path), 'r') as file:
+            data = file.read()
+    else:
+        data = result.stdout.rstrip('\n')
+
+    assert furl(data) == API_FURL / 'users' / user_id / 'snapshots' / snapshot_id / result_name

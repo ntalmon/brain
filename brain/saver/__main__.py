@@ -13,11 +13,15 @@ def cli():
 
 
 @cli.command('save')
-@click.option('-d', '--database', type=click.STRING, default=DB_URL)
+@click.option('-d', '--database', type=click.STRING, default=DB_URL, help="Database address.")
 @click.argument('topic', type=click.STRING)
 @click.argument('path', type=click.STRING)
 @cli_suppress
-def cli_save(database, topic, path):
+def cli_save(database: str, topic: str, path: str):
+    """
+    Reads raw results from the given path, and saves them to the database under the given topic.
+    """
+
     logger.info(f'running cli save: {database=}, {topic=}, {path=}')
     saver = Saver(database)
     try:
@@ -33,7 +37,11 @@ def cli_save(database, topic, path):
 @click.argument('database', type=click.STRING)
 @click.argument('mq', type=click.STRING)
 @cli_suppress
-def cli_run_saver(database, mq):
+def cli_run_saver(database: str, mq: str):
+    """
+    Run the save as a service, saving results to the given `database` and consuming from the given `mq`.
+    """
+
     logger.info(f'running cli run-saver: {database=}, {mq=}')
     run_saver(database, mq)
 
