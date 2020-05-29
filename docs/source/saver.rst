@@ -1,5 +1,6 @@
 brain.saver
 -----------
+.. automodule:: brain.saver
 
 brain.saver.saver
 =================
@@ -10,6 +11,7 @@ brain.saver.db_agent
 ====================
 .. automodule:: brain.saver.db_agent
 	:members:
+	:show-inheritance:
 
 brain.saver.mq_agent
 ====================

@@ -1,3 +1,7 @@
+"""
+The saver module contains the main logic of the saver, which is, to save results and run the saver as a service.
+"""
+
 import json
 
 from brain.parsers import get_parsers
@@ -10,11 +14,24 @@ topics = get_parsers()
 
 
 class Saver:
-    def __init__(self, url):
+    """
+    The Saver class provides the saving functionality.
+
+    :param url: the database address.
+    """
+
+    def __init__(self, url: str):
         logger.info(f'initializing saver: {url=}')
         self.agent = DBAgent(url)
 
-    def save(self, topic, data):
+    def save(self, topic: str, data: str):
+        """
+        Save results to a dedicated topic in the database.
+
+        :param topic: the topic of the provided data.
+        :param data: data to save, in JSON format.
+        """
+
         logger.debug(f'saving data for {topic=}')
         data = json.loads(data)
         snapshot_id, timestamp, user_data, result = data['uuid'], data['datetime'], data['user'], data['result']
@@ -23,6 +40,13 @@ class Saver:
 
 
 def run_saver(db_url, mq_url):
+    """
+    Run the saver as a service.
+
+    :param db_url: address of the database.
+    :param mq_url: address of the MQ to consume results from.
+    """
+
     logger.info(f'running saver: {db_url=}, {mq_url=}')
     saver = Saver(db_url)
     mq_agent = MQAgent(mq_url)

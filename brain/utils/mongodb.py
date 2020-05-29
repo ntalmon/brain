@@ -1,3 +1,7 @@
+"""
+The mongodb module provides a common interface for a mongodb connection and operations.
+"""
+
 import pymongo
 import pymongo.database
 
@@ -8,6 +12,12 @@ logger = get_logger(__name__)
 
 
 class MongoDB:
+    """
+    The mongodb class first connect to the data, and provides multiple database operations.
+
+    :param url: database address.
+    """
+
     def __init__(self, url: str):
         logger.info(f'connecting mongodb: {url=}')
         self.url = url
@@ -16,10 +26,23 @@ class MongoDB:
         self.collection = self.db[COLLECTION_NAME]
 
     def find(self, *args, **kwargs):
+        """
+        Find in database. Args, kwargs and return value are like pymongo.database.Collection.find
+        """
+
         return self.collection.find(*args, **kwargs)
 
     def find_one(self, *args, **kwargs):
+        """
+        Find a single entry in database. Args, kwargs and return value are like pymongo.database.Collection.find_one.
+        """
+
         return self.collection.find_one(*args, **kwargs)
 
     def update_one(self, *args, **kwargs):
+        """
+        Updates a single entry in database. Args, kwargs and return value are like
+        pymongo.database.Collection.update_one.
+        """
+
         return self.collection.update_one(*args, **kwargs)

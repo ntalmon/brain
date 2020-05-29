@@ -13,11 +13,15 @@ def cli():
 
 
 @cli.command('run-server')
-@click.option('-h', '--host', type=click.STRING, default=SERVER_HOST)
-@click.option('-p', '--port', type=click.INT, default=SERVER_PORT)
+@click.option('-h', '--host', type=click.STRING, default=SERVER_HOST, help='Server hostname.')
+@click.option('-p', '--port', type=click.INT, default=SERVER_PORT, help='Server port number.')
 @click.argument('mq', type=click.STRING)
 @cli_suppress
-def cli_run_server(host, port, mq):
+def cli_run_server(host: str, port: int, mq: str):
+    """
+    Run the server.
+    """
+
     logger.info(f'running cli run-server: {host=}, {port=}, {mq=}')
     publish = construct_publish(mq)
     run_server(host, port, publish)

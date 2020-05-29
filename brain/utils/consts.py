@@ -1,3 +1,7 @@
+"""
+The consts module provides some constants used by the brain package and by some tests.
+"""
+
 from furl import furl
 
 LOCALHOST = API_HOST = DB_HOST = GUI_HOST = MQ_HOST = SERVER_HOST = '127.0.0.1'

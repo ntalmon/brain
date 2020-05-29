@@ -1,7 +1,11 @@
+"""
+The parsers agent provides an interface for the server to construct messages to can be sent to the parsers over the MQ.
+"""
+
 import numpy as np
 
 from brain import data_path
-from brain.autogen import server_parsers_pb2
+from brain.autogen import server_parsers_pb2, client_server_pb2
 from brain.utils.common import normalize_path, get_logger
 
 logger = get_logger(__name__)
@@ -29,7 +33,15 @@ def handle_depth_image(snapshot, data):
     snapshot.depth_image.file_name = image_file + '.npy'
 
 
-def construct_parsers_message(snapshot, snapshot_uuid):
+def construct_parsers_message(snapshot: client_server_pb2.Snapshot, snapshot_uuid: int) -> bytes:
+    """
+    Construct a message to the parsers.
+
+    :param snapshot: snapshot in client_server_pb2.Snapshot format.
+    :param snapshot_uuid: uuid of the snapshot.
+    :return: the constructed message in serialized server_parsers_pb2.Snapshot format.
+    """
+
     logger.debug(f'constructing message for parsers')
     parsers_snapshot = server_parsers_pb2.Snapshot()
     parsers_snapshot.uuid = snapshot_uuid
