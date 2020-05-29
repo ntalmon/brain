@@ -40,13 +40,25 @@ class Reader:
         size_raw = self.file_reader.read(4)
         if not size_raw:
             return b''
+        if len(size_raw) != 4:
+            self.file_reader.close()
+            raise Exception(f'Invalid file format: failed to read message size')
         size, = struct.unpack('I', size_raw)
         msg = self.file_reader.read(size)
         if len(msg) != size:
-            self.file_reader.close()
             logger.error(f'invalid file format: expected to reader {size} bytes, but read only {len(msg)}')
+            self.file_reader.close()
             raise Exception(f'Invalid file format: expected to read {size} bytes, but read only {len(msg)}')
         return msg
+
+    def _parse_protobuf(self, pb_obj, msg):
+        try:
+            pb_obj.ParseFromString(msg)
+            return pb_obj
+        except Exception as error:
+            logger.error(f'invalid file format: failed to parse protobuf: {str(error)}')
+            self.file_reader.close()
+            raise Exception(f'Invalid file format: failed to parse protobuf: {str(error)}')
 
     def load(self) -> sample_pb2.User:
         """
@@ -55,6 +67,7 @@ class Reader:
 
         :return: the sample file header - the user.
         """
+
         logger.info(f'loading reader')
         if self._loaded:
             return self.user
@@ -66,14 +79,10 @@ class Reader:
         msg_user = self._read_message()
         if not msg_user:
             logger.error(f'invalid file format, missing header')
+            self.file_reader.close()
             raise Exception('Invalid file format, missing header')
-        try:
-            user = sample_pb2.User()
-            user.ParseFromString(msg_user)
-        except Exception:
-            logger.error(f'invalid file format, failed to parser protobuf')
-            print(f'Invalid file format: failed to parse protobuf')
-            raise
+        user = self._parse_protobuf(sample_pb2.User(), msg_user)
+
         self._loaded = True
         self.user = user
         return user
@@ -91,7 +100,5 @@ class Reader:
             logger.info('reached end of snapshots file')
             self.file_reader.close()
             raise StopIteration
-
-        snapshot = sample_pb2.Snapshot()
-        snapshot.ParseFromString(msg_snapshot)
+        snapshot = self._parse_protobuf(sample_pb2.Snapshot(), msg_snapshot)
         return snapshot

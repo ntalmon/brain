@@ -6,11 +6,6 @@ brain.utils.common
 .. automodule:: brain.utils.common
 	:members:
 
-brain.utils.config
-==================
-.. automodule:: brain.utils.config
-	:members:
-
 brain.utils.consts
 ==================
 .. automodule:: brain.utils.consts
