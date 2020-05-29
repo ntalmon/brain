@@ -1,6 +1,6 @@
 FROM python:3.8
 ADD brain /brain
-ADD config /config
+ADD config.yml /config.yml
 ADD requirements.txt /requirements.txt
 ADD scripts/build.sh /
 ADD scripts/wait-for-it.sh /
