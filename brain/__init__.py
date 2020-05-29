@@ -5,10 +5,10 @@ The real client and hardware will be replace by a sample file contains cognition
 
 Basic flow - upload snapshots
 =============================
-The client reads the sample file and streams the snapshots one by one to the server.
-The server the receives snapshots, and sends them to different parsers using a message queue.
-The parsers are parsing the snapshots and send the results to the saver using the message queue.
-The saver receives parsed snapshots (snapshots + parsing results) and saves them to the database.
+1. The client reads the sample file and streams the snapshots one by one to the server.
+2. The server the receives snapshots, and sends them to different parsers using a message queue.
+3. The parsers are parsing the snapshots and send the results to the saver using the message queue.
+4. The saver receives parsed snapshots (snapshots + parsing results) and saves them to the database.
 
 Read the uploaded data
 ======================
@@ -29,5 +29,7 @@ app_path = project_path / 'app'
 brain_path = project_path / 'brain'
 config_path = project_path / 'config.yml'
 data_path = project_path / 'brain-data'
+if not data_path.exists():
+    data_path.mkdir()
 log_path = project_path / 'brain.log'
 tests_path = project_path / 'tests'

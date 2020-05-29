@@ -205,11 +205,9 @@ def gen_data_for_saver(path, num_users, num_snapshots):
     all_results = []
     for i in range(num_users):
         user = gen_user()
-        # TODO: do not str()!!
         user['user_id'] = str(user['user_id'])
         snapshots = []
         for j in range(num_snapshots):
-            # TODO: do not str()!!
             snapshot = {'datetime': str(gen_datetime()), 'uuid': str(gen_snapshot_id()), 'user': user, 'pose': gen_pose,
                         'feelings': gen_feelings()}
             snapshot_path = get_snapshot_path(snapshot, path, is_dict=True)
@@ -232,12 +230,12 @@ def gen_db_data(path, num_users, num_snapshots, database=None):
     db_data = []
     for user_id, entry in users_snapshots.items():
         db_entry = entry['user']
-        db_entry['_id'] = db_entry['user_id'] = str(db_entry['user_id'])  # TODO: remove this workaround
+        db_entry['_id'] = db_entry['user_id'] = str(db_entry['user_id'])
         db_entry['snapshots'] = []
         for snapshot in entry['snapshots']:
             snapshot.pop('user')
-            snapshot['_id'] = snapshot['uuid'] = str(snapshot['uuid'])  # TODO: remove this workaround
-            snapshot['datetime'] = str(snapshot['datetime'])  # TODO: remove this workaround
+            snapshot['_id'] = snapshot['uuid'] = str(snapshot['uuid'])
+            snapshot['datetime'] = str(snapshot['datetime'])
             snapshot['results'] = {}
             for result in ['pose', 'color_image', 'depth_image', 'feelings']:
                 if result in snapshot:

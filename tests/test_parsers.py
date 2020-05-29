@@ -26,7 +26,7 @@ def random_snapshot(tmp_path):
 
 
 def verify_result_header(result, snapshot):
-    assert result['uuid'] == str(snapshot.uuid)  # TODO: this is workaround, solve the problem
+    assert result['uuid'] == str(snapshot.uuid)
     assert result['datetime'] == str(snapshot.datetime)
     assert result['user'] == protobuf2dict(snapshot.user)
 

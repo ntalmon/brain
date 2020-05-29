@@ -1,6 +1,7 @@
 """
 The MQ agent module provides an interface for the server to communicate with the MQ.
 """
+import threading
 
 from brain.utils.common import get_logger
 from brain.utils.rabbitmq import RabbitMQ
@@ -15,6 +16,7 @@ class MQAgent:
 
     def __init__(self, url: str):
         logger.info(f'initializing mq agent: {url=}')
+        self.mq_lock = threading.Lock()
         self.utils = RabbitMQ(url)
 
     def publish_snapshot(self, snapshot: bytes):
@@ -24,4 +26,5 @@ class MQAgent:
         :param snapshot: serialized snapshot.
         """
 
-        self.utils.publish(snapshot, exchange='snapshot')
+        with self.mq_lock:
+            self.utils.publish(snapshot, exchange='snapshot')

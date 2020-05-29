@@ -1,6 +1,7 @@
 """
 The DB agent module provides an interface for the saver to save results to database.
 """
+
 from typing import Any
 
 from brain.utils.common import get_logger
@@ -30,7 +31,6 @@ class DBAgent(MongoDB):
         return bool(res.matched_count)
 
     def _add_result_to_snapshot(self, topic, user_id, snapshot_id, result_entry):
-        # TODO: handle update_one return value
         self.update_one(
             {'_id': user_id, 'snapshots._id': snapshot_id},
             {'$set': {f'snapshots.$.results.{topic}': result_entry}}
@@ -47,7 +47,8 @@ class DBAgent(MongoDB):
         :param timestamp: timestamp of the snapshot.
         :param result: result to save.
         """
-        
+
+        user_id = str(user_id)
         logger.debug(f'saving result to db: {topic=}, {user_id=}, {user_data=}, {snapshot_id=}, {timestamp=}')
         snapshot_entry = {'_id': snapshot_id, 'uuid': snapshot_id, 'datetime': timestamp, 'results': {topic: result}}
         user_entry = {'_id': user_id, 'user_id': user_id, **user_data, 'snapshots': [snapshot_entry]}

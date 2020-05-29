@@ -33,7 +33,7 @@ class DBAgent(MongoDB):
         """
 
         logger.debug(f'fetching all users from database')
-        user_id = str(user_id)  # TODO: temporary workaround!!! should solve it
+        user_id = str(user_id)
         # exclude _id snapshots list
         user = self.find_one({'_id': user_id}, {'_id': 0, 'snapshots': 0})
         return user
@@ -46,7 +46,7 @@ class DBAgent(MongoDB):
         """
 
         logger.debug(f'fetching snapshot from database, {user_id=}')
-        user_id = str(user_id)  # TODO: temporary workaround!!! should solve it
+        user_id = str(user_id)
         # take only uuid and datetime from snapshots
         snapshots = self.find_one({'_id': user_id},
                                   {'_id': 0, 'snapshots.uuid': 1, 'snapshots.datetime': 1})
@@ -63,8 +63,8 @@ class DBAgent(MongoDB):
         """
 
         logger.debug(f'fetching snapshot from database, {user_id=}, {snapshot_id=}')
-        user_id = str(user_id)  # TODO: temporary workaround!!! should solve it
-        snapshot_id = str(snapshot_id)  # TODO: temporary workaround!!! should solve it
+        user_id = str(user_id)
+        snapshot_id = str(snapshot_id)
         projection = {'snapshots': {'$elemMatch': {'_id': snapshot_id}}, '_id': 0,
                       'snapshots.uuid': 1, 'snapshots.datetime': 1, 'snapshots.results': 1}
         if include_path:
@@ -87,8 +87,8 @@ class DBAgent(MongoDB):
         """
 
         logger.debug(f'fetching snapshot result from database, {user_id=}, {snapshot_id=}, {result_name=}')
-        user_id = str(user_id)  # TODO: temporary workaround!!! should solve it
-        snapshot_id = str(snapshot_id)  # TODO: temporary workaround!!! should solve it
+        user_id = str(user_id)
+        snapshot_id = str(snapshot_id)
         # take result from snapshot results
         entry = self.find_one({'_id': user_id}, {'snapshots': {'$elemMatch': {'_id': snapshot_id}}, '_id': 0,
                                                  f'snapshots.results.{result_name}': 1})
