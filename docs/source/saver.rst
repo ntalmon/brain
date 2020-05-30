@@ -6,6 +6,7 @@ brain.saver.saver
 =================
 .. automodule:: brain.saver.saver
 	:members:
+	:show-inheritance:
 
 brain.saver.db_agent
 ====================
@@ -17,6 +18,7 @@ brain.saver.mq_agent
 ====================
 .. automodule:: brain.saver.mq_agent
 	:members:
+	:show-inheritance:
 
 CLI
 ===

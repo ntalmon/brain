@@ -33,10 +33,12 @@ class Reader:
 
     def __init__(self, path: str, file_fmt: FileFormat, msg_fmt: MessageFormat):
         file_stream_type = get_file_stream_type(file_fmt)
+        # initialize file stream
         self.file_stream = file_stream_type(path, 'rb')
         reader_type = get_reader_type(msg_fmt)
         self._reader = reader_type(self.file_stream)
         try:
+            # read header (user)
             self.user = self._reader.read_user()
         except Exception:
             self.file_stream.close()
@@ -47,11 +49,13 @@ class Reader:
 
     def __next__(self):
         try:
+            # read next snapshot
             snapshot = self._reader.read_snapshot()
         except Exception:
             self.file_stream.close()
             raise
 
         if not snapshot:
+            # reached end of file
             raise StopIteration
         return snapshot

@@ -17,7 +17,7 @@ def cli():
 @click.argument('parser', type=click.STRING)
 @click.argument('path', type=click.STRING)
 @cli_suppress
-def cli_parse(parser: str, path: str):
+def cli_parse(parser, path):
     """
     Run the given parser with the data in the given path, and print the result.
     """
@@ -32,7 +32,7 @@ def cli_parse(parser: str, path: str):
 @click.argument('parser', type=click.STRING)
 @click.argument('mq', type=click.STRING)
 @cli_suppress
-def cli_run_parser(parser: str, mq: str):
+def cli_run_parser(parser, mq):
     """
     Run the parser as a service, that consumes messages and publishes results using the given MQ.
     """

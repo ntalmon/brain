@@ -6,6 +6,7 @@ import struct
 
 from brain.autogen import mind_pb2
 from brain.client.reader.base_reader import BaseReader
+from brain.utils.common import parse_protobuf
 
 
 class MindReader(BaseReader):
@@ -14,6 +15,7 @@ class MindReader(BaseReader):
     """
 
     def _read_msg(self):
+        # read 4 bytes of message size
         size = self.file_stream.read(4)
         if not size:
             return b''
@@ -23,6 +25,7 @@ class MindReader(BaseReader):
             raise ValueError(f'Invalid file format: expected to read 4 bytes header, but only {ln} were read')
         size, = struct.unpack('I', size)
 
+        # read <size> bytes of the message
         msg = self.file_stream.read(size)
         ln = len(msg)
         if ln < size:
@@ -41,8 +44,8 @@ class MindReader(BaseReader):
         msg = self._read_msg()
         if not msg:
             raise ValueError(f'Invalid file format: reached EOF before reading the user')
-        user = mind_pb2.User()
-        user.ParseFromString(msg)
+
+        user = parse_protobuf(mind_pb2.User(), msg)
         return user
 
     def read_snapshot(self) -> mind_pb2.Snapshot:
@@ -56,6 +59,4 @@ class MindReader(BaseReader):
         if not msg:
             return None
 
-        snapshot = mind_pb2.Snapshot()
-        snapshot.ParseFromString(msg)
-        return snapshot
+        return parse_protobuf(mind_pb2.Snapshot(), msg)

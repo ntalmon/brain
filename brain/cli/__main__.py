@@ -72,7 +72,7 @@ def cli_get_snapshots(ctx, user_id):
 @click.argument('snapshot_id', type=click.INT)
 @click.pass_context
 @cli_suppress
-def cli_get_snapshot(ctx, user_id: int, snapshot_id: int):
+def cli_get_snapshot(ctx, user_id, snapshot_id):
     """
     Get snapshot details.
     """

@@ -32,5 +32,5 @@ class BaseReader(abc.ABC):
 
         :return: the parsed snapshot as python object
         """
-        
+
         pass

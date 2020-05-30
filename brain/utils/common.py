@@ -9,6 +9,8 @@ import pathlib
 import sys
 from typing import Union
 
+from google.protobuf import json_format
+
 from brain import log_path
 from brain.utils.consts import FileFormat, config
 
@@ -81,3 +83,17 @@ def get_file_stream_type(file_format):
     if file_format == FileFormat.GZIP.value:
         return gzip.open
     raise NotImplementedError(f'Unsupported file format: {file_format}')
+
+
+def parse_protobuf(pb_object, data):
+    pb_object.ParseFromString(data)
+    return pb_object
+
+
+def serialize_protobuf(pb_object):
+    return pb_object.SerializeToString()
+
+
+def protobuf2dict(pb_object):
+    return json_format.MessageToDict(pb_object, including_default_value_fields=True,
+                                     preserving_proto_field_name=True)

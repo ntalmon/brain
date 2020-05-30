@@ -1,5 +1,5 @@
 """
-The mongodb agent provides an interface for the API to communicate with the database, with mongodb implementation.
+The MongoDB agent provides a DB agent with MongoDB implementation.
 """
 
 from brain.api.db_agent.base_db_agent import BaseDBAgent
@@ -11,7 +11,7 @@ logger = get_logger(__name__)
 
 class DBAgent(MongoDB, BaseDBAgent):
     """
-    Mongodb-based implementation of DB agent.
+    MongoDB-based implementation of DB agent.
 
     This implementation has single collection that contains an entry per user.
     Each user entry contains its details, and list of snapshots.
@@ -42,14 +42,12 @@ class DBAgent(MongoDB, BaseDBAgent):
             return snapshots
         return snapshots['snapshots']
 
-    def find_snapshot(self, user_id: int, snapshot_id: int, include_path: bool = False) -> dict:
+    def find_snapshot(self, user_id: int, snapshot_id: int) -> dict:
         logger.debug(f'fetching snapshot from database, {user_id=}, {snapshot_id=}')
         user_id = str(user_id)
         snapshot_id = str(snapshot_id)
         projection = {'snapshots': {'$elemMatch': {'_id': snapshot_id}}, '_id': 0,
                       'snapshots.uuid': 1, 'snapshots.datetime': 1, 'snapshots.results': 1}
-        if include_path:
-            projection['snapshots.path'] = 1
         snapshot = self.find_one({'_id': user_id}, projection)
         if not snapshot:
             logger.info(f'could not find entry with {user_id=}, {snapshot_id=}')

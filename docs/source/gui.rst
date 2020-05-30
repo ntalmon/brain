@@ -6,6 +6,7 @@ brain.gui.gui
 =============
 .. automodule:: brain.gui.gui
 	:members:
+	:show-inheritance:
 
 CLI
 ===

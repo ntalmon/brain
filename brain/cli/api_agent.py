@@ -8,7 +8,7 @@ from brain.utils.http import get
 logger = get_logger(__name__)
 
 
-def api_get(host, port, path):
+def api_get(host: str, port: int, path: str) -> str:
     """
     Get data from the API using a specific path.
 

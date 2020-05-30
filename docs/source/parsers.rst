@@ -2,38 +2,19 @@ brain.parsers
 -------------
 .. automodule:: brain.parsers
 
-brain.parsers.parsers
-=====================
-.. automodule:: brain.parsers.parsers
-	:members:
+.. toctree::
+   parsers.mq_agent
+   parsers.parsers
+   :maxdepth: 2
 
-brain.parsers.mq_agent
-======================
-.. automodule:: brain.parsers.mq_agent
-	:members:
-
-brain.parsers.pose
-==================
-.. automodule:: brain.parsers.pose
-	:members:
-
-brain.parsers.color_image
-=========================
-.. automodule:: brain.parsers.color_image
-	:members:
-
-brain.parsers.depth_image
-=========================
-.. automodule:: brain.parsers.depth_image
-	:members:
-
-brain.parsers.feelings
-======================
-.. automodule:: brain.parsers.feelings
-	:members:
+brain.parsers.framework
+=======================
+.. automodule:: brain.parsers.framework
+    :members:
+    :show-inheritance:
 
 CLI
 ===
 .. click:: brain.parsers.__main__:cli
-	:prog: python -m brain.parsers
-	:show-nested:
+    :prog: python -m brain.parsers
+    :show-nested:

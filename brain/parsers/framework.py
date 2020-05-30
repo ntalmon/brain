@@ -1,31 +1,29 @@
 """
-The parser module contains the parsers framework and parser invocation.
+The framework module contains the parsers framework, which including parsers detection, running and invocation.
 """
 
 import importlib
 import inspect
-import json
 import os
 import pathlib
 import sys
 from typing import Union
 
-from google.protobuf import json_format
-
 from brain import brain_path
 from brain.autogen import server_parsers_pb2
-from brain.utils.common import normalize_path, get_logger
-from .mq_agent import MQAgent
+from brain.utils.common import normalize_path, get_logger, protobuf2dict, parse_protobuf
+from .mq_agent import load_mq_agent
+from ..utils.consts import config
 
 logger = get_logger(__name__)
 parsers = {}
-parsers_path = brain_path / 'parsers'
+parsers_path = brain_path / 'parsers' / 'parsers'
 
 
 def load_parsers():
     """
-    | Loads all the parsers in the parsers package.
-    | Looks for all files in the package and identifies a parser in one of the following ways:
+    Loads all the parsers in the parsers subpackage.
+    Looks for all files in the package and identifies a parser in one of the following ways:
 
     - Function starts with `parse_` (e.g. `parse_pose`) that has `field` attribute.
     - Class end with `Parser` (e.g. `FeelingsParser`) that has `field` member and parse method.
@@ -34,20 +32,18 @@ def load_parsers():
     logger.info(f'loading parsers')
     sys.path.insert(0, str(parsers_path.parent))
     for path in parsers_path.iterdir():
-        if path.name.startswith('_') or path.suffix != '.py' or path.name == 'parsers.py':
+        if path.name.startswith('_') or path.suffix != '.py' or path.name == 'framework.py':
             continue
         module = importlib.import_module(f'{parsers_path.name}.{path.stem}')
         for name, obj in module.__dict__.items():
             if callable(obj) and name.startswith('parse_') and hasattr(obj, 'field'):
                 logger.info(f'found function parser {name} in {module.__name__}')
-                obj.parser_type = 'function'
                 parsers[obj.field] = obj
             elif inspect.isclass(obj) and name.lower().endswith('parser') and hasattr(obj, 'parse') and \
                     hasattr(obj, 'field'):
                 logger.info(f'found class parser {name} in {module.__name__}')
                 instance = obj()
-                instance.parser_type = 'class'
-                parsers[obj.field] = instance
+                parsers[obj.field] = instance.parse
 
 
 load_parsers()
@@ -61,6 +57,14 @@ def get_parsers() -> list:
     """
 
     return list(parsers.keys())
+
+
+def get_parser_by_name(parser):
+    try:
+        return parsers[parser]
+    except KeyError:
+        logger.error(f'unsupported parser: {parser}')
+        raise NotImplementedError(f'Unsupported parser: {parser}')
 
 
 class Context:
@@ -118,46 +122,33 @@ class Context:
         os.remove(self.path(file))
 
 
-def parser_wrapper(parse_fn: callable, data: bytes) -> dict:
-    snapshot = server_parsers_pb2.Snapshot()
-    snapshot.ParseFromString(data)
-    json_snapshot = json_format.MessageToDict(
-        snapshot, including_default_value_fields=True, preserving_proto_field_name=True)
-    field = parse_fn.field
-    if parse_fn.parser_type == 'class':
-        parse_fn = parse_fn.parse
-    parser_data = json_snapshot[field]
-    path = normalize_path(snapshot.path)
-    ctx = Context(path)
-
-    parse_res = parse_fn(parser_data, ctx)
-    res = {
-        'uuid': json_snapshot['uuid'],
-        'datetime': json_snapshot['datetime'],
-        'user': json_snapshot['user'],
-        'result': parse_res
-    }
-    return res
-
-
 def run_parser(parser_name: str, data: Union[str, bytes], is_path: bool = False) -> dict:
     """
-    The parser with the given data.
+    Run the parser with the given data.
 
     :param parser_name: parser to run.
     :param data: data for the parser or path to the file containing the data.
     :param is_path: is the `data` parameter contains the raw data or path?
     :return: the parser result.
     """
-
-    if parser_name not in parsers:
-        raise Exception(f'Could not find given parser name \'{parser_name}\'')
-    logger.info(f'running parser {parser_name}')
     if is_path:
         with open(data, 'rb') as file:
             data = file.read()
-    parse_fn = parsers[parser_name]
-    return parser_wrapper(parse_fn, data)
+
+    logger.info(f'running parser {parser_name}')
+    parse_fn = get_parser_by_name(parser_name)
+    snapshot = parse_protobuf(server_parsers_pb2.Snapshot(), data)
+    dict_snapshot = protobuf2dict(snapshot)
+    parser_data = dict_snapshot[parser_name]
+    path = normalize_path(snapshot.path)
+    ctx = Context(path)
+    parse_res = parse_fn(parser_data, ctx)
+    return {
+        'uuid': dict_snapshot['uuid'],
+        'datetime': dict_snapshot['datetime'],
+        'user': dict_snapshot['user'],
+        'result': parse_res
+    }
 
 
 def invoke_parser(parser: str, mq_url: str):
@@ -168,20 +159,15 @@ def invoke_parser(parser: str, mq_url: str):
     :param mq_url: address of the MQ to consume and publish.
     """
 
-    if parser not in parsers:
-        logger.error(f'parser {parser} was not found in parsers')
-        raise Exception(f'Parser not found: {parser}')
-    _parser = parsers[parser]
-    mq_agent = MQAgent(mq_url)
-
     def callback(body):
-        snapshot = server_parsers_pb2.Snapshot()
-        snapshot.ParseFromString(body)
         logger.debug(f'calling parser {parser}')
-        res = parser_wrapper(_parser, body)
-        parse_res_msg = json.dumps(res)
+        res = run_parser(parser, body)  # run the parser
         logger.debug(f'publish result to message queue')
-        mq_agent.publish_result(parse_res_msg, parser)
+        mq_agent.publish_result(res, parser)  # publish result to MQ
 
+    get_parser_by_name(parser)  # sanity check
+    mq = config['mq']
+    mq_agent_module = load_mq_agent(mq)
+    mq_agent = mq_agent_module.MQAgent(mq_url)
     logger.info(f'starting to consume mq: {parser=}')
-    mq_agent.consume_snapshots(callback, parser)
+    mq_agent.consume_snapshots(callback, parser)  # start consuming the MQ

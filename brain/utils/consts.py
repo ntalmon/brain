@@ -9,8 +9,8 @@ from furl import furl
 
 from brain import config_path
 
-with open(str(config_path), 'r') as file:
-    config = yaml.load(file, Loader=yaml.Loader)
+with open(str(config_path), 'r') as _conf_reader:
+    config = yaml.load(_conf_reader, Loader=yaml.Loader)
 
 API_HOST, DB_HOST, GUI_HOST, MQ_HOST, SERVER_HOST = [config['hosts'][_i] for _i in ['api', 'db', 'gui', 'mq', 'server']]
 

@@ -5,7 +5,7 @@ The http server agent provides an agent server of http protocol.
 from furl import furl
 
 from brain.autogen import client_server_pb2, mind_pb2
-from brain.utils.common import get_logger
+from brain.utils.common import get_logger, serialize_protobuf
 from brain.utils.http import post
 
 logger = get_logger(__name__)
@@ -33,7 +33,7 @@ class ServerAgent:
     @classmethod
     def construct_snapshot(cls, user: mind_pb2.User, snapshot: mind_pb2.Snapshot) -> client_server_pb2.Snapshot:
         """
-        Construct a message to the server in client_server format
+        Construct a message to the server in client_server format.
 
         :param user: user in sample_pb2.User format.
         :param snapshot: snapshot in sample_pb2.Snapshot format.
@@ -59,6 +59,6 @@ class ServerAgent:
         """
 
         url = self.url / 'snapshot'
-        snapshot_msg = snapshot.SerializeToString()
+        snapshot_msg = serialize_protobuf(snapshot)
         logger.debug(f'sending snapshot to {url}')
         post(url, snapshot_msg)

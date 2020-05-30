@@ -2,6 +2,7 @@ brain.api
 ---------
 .. automodule:: brain.api
     :members:
+    :show-inheritance:
 
 .. toctree::
    api.db_agent

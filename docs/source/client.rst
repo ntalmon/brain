@@ -2,6 +2,7 @@ brain.client
 ------------
 .. automodule:: brain.client
     :members:
+    :show-inheritance:
 
 .. toctree::
    client.reader

@@ -5,11 +5,11 @@ import pytest
 from click.testing import CliRunner
 
 import brain.parsers
-import brain.parsers.mq_agent
+import brain.parsers.mq_agent.rabbitmq_agent
 from brain.parsers import run_parser, invoke_parser
 from brain.parsers.__main__ import cli
-from brain.parsers.mq_agent import MQAgent
-from brain.parsers.parsers import Context
+from brain.parsers.framework import Context
+from brain.parsers.mq_agent import load_mq_agent
 from brain.utils.consts import *
 from .data_generators import gen_snapshot_for_parsers
 from .utils import protobuf2dict
@@ -97,7 +97,7 @@ class MockMQAgent:
 
 @pytest.fixture
 def mock_mq_agent(monkeypatch):
-    yield monkeypatch.setattr(brain.parsers.parsers, 'MQAgent', MockMQAgent)
+    yield monkeypatch.setattr(brain.parsers.mq_agent.rabbitmq_agent, 'MQAgent', MockMQAgent)
     MockMQAgent.clear()
 
 
@@ -107,7 +107,6 @@ def test_invoke_parser(parser, mock_mq_agent, random_snapshot):
     MockMQAgent.snapshot = data
     invoke_parser(parser, MQ_URL)
     result = MockMQAgent.result
-    result = json.loads(result)
     verify_result_header(result, snapshot)
     result = result['result']
     if parser == 'pose':
@@ -125,7 +124,7 @@ def mock_rabbitmq(monkeypatch):
     def expected_callback(data):
         pass
 
-    expected_data = 'Expected data'
+    expected_data = {'abc': 'def'}
 
     class MockRabbitMQ:
         def __init__(self, url):
@@ -137,11 +136,11 @@ def mock_rabbitmq(monkeypatch):
             assert queues == ['pose']
 
         def publish(self, data, exchange='', queue=''):
-            assert data == expected_data
+            assert json.loads(data) == expected_data
             assert exchange == 'saver'
             assert queue == 'saver_pose'
 
-    monkeypatch.setattr(brain.parsers.mq_agent, 'RabbitMQ', MockRabbitMQ)
+    monkeypatch.setattr(brain.parsers.mq_agent.rabbitmq_agent, 'RabbitMQ', MockRabbitMQ)
     yield expected_callback, expected_data
 
 
@@ -161,7 +160,8 @@ def test_context(tmp_path):
 
 def test_mq_agent(mock_rabbitmq):
     expected_callback, expected_data = mock_rabbitmq
-    mq_agent = MQAgent(MQ_URL)
+    mq_agent_module = load_mq_agent('rabbitmq')
+    mq_agent = mq_agent_module.MQAgent(MQ_URL)
     mq_agent.consume_snapshots(expected_callback, 'pose')
     mq_agent.publish_result(expected_data, 'pose')
 
