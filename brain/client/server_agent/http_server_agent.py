@@ -1,5 +1,5 @@
 """
-The http server agent provides an agent server of http protocol.
+The http server agent module provides a server agent of http protocol.
 """
 
 from furl import furl

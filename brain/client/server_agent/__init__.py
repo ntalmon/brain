@@ -22,4 +22,4 @@ def load_server_agent(protocol: ProtocolType) -> types.ModuleType('server_agent'
     if protocol == ProtocolType.HTTP.value:
         from . import http_server_agent
         return http_server_agent
-    raise NotImplementedError(f'Invalid protocol: {protocol}, could not import server agent')
+    raise NotImplementedError(f'Unsupported protocol: {protocol}, could not import server agent')

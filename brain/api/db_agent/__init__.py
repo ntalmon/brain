@@ -22,4 +22,4 @@ def load_db_agent(db_type: DBType) -> types.ModuleType('db_agent'):
     if db_type == DBType.MONGODB.value:
         from . import mongodb_agent
         return mongodb_agent
-    raise NotImplementedError(f'Invalid database: {db_type}, could not import DB agent')
+    raise NotImplementedError(f'Unsupported DB type: {db_type}, could not import DB agent')

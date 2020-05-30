@@ -22,4 +22,4 @@ def load_mq_agent(mq_type: MQType) -> types.ModuleType('mq_agent'):
     if mq_type == MQType.RABBITMQ.value:
         from . import rabbitmq_agent
         return rabbitmq_agent
-    raise NotImplementedError(f'Invalid MQ: {mq_type}, could not import MQ agent')
+    raise NotImplementedError(f'Unsupported MQ type: {mq_type}, could not import MQ agent')
