@@ -1,5 +1,5 @@
 """
-The MongoDB agent provides a DB agent with MongoDB implementation.
+The MongoDB agent module provides a DB agent with MongoDB implementation.
 """
 
 from brain.api.db_agent.base_db_agent import BaseDBAgent
@@ -12,10 +12,6 @@ logger = get_logger(__name__)
 class DBAgent(MongoDB, BaseDBAgent):
     """
     MongoDB-based implementation of DB agent.
-
-    This implementation has single collection that contains an entry per user.
-    Each user entry contains its details, and list of snapshots.
-    Each snapshot entry in the list contains its details and available results.
     """
 
     def find_users(self) -> list:

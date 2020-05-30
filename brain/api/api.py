@@ -8,10 +8,9 @@ import os
 import flask
 import flask_cors
 
-from brain.utils.common import get_logger
+from brain.utils.common import get_logger, get_url_scheme
 from .db_agent import load_db_agent
 from .db_agent.base_db_agent import BaseDBAgent
-from ..utils.consts import config
 
 logger = get_logger(__name__)
 app = flask.Flask(__name__)
@@ -114,8 +113,8 @@ def api_get_snapshot_result_data(user_id: int, snapshot_id: int, result_name: st
 
 def init_db_agent(database_url):
     global db_agent
-    database = config['db']
-    db_agent_module = load_db_agent(database)
+    db_type = get_url_scheme(database_url)
+    db_agent_module = load_db_agent(db_type)
     db_agent = db_agent_module.DBAgent(database_url)
 
 

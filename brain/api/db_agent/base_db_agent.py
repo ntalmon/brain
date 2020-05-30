@@ -9,7 +9,7 @@ class BaseDBAgent(abc.ABC):
     """
     The base DB agent abstract class should be inherited and implemented by DB agents.
 
-    :param url: address of the database.
+    :param url: DB address.
     """
 
     def __init__(self, url: str):

@@ -9,6 +9,7 @@ import pathlib
 import sys
 from typing import Union
 
+from furl import furl
 from google.protobuf import json_format
 
 from brain import log_path
@@ -83,6 +84,11 @@ def get_file_stream_type(file_format):
     if file_format == FileFormat.GZIP.value:
         return gzip.open
     raise NotImplementedError(f'Unsupported file format: {file_format}')
+
+
+def get_url_scheme(url):
+    url = furl(str(url))
+    return url.scheme
 
 
 def parse_protobuf(pb_object, data):

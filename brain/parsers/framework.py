@@ -11,9 +11,10 @@ from typing import Union
 
 from brain import brain_path
 from brain.autogen import server_parsers_pb2
-from brain.utils.common import normalize_path, get_logger, protobuf2dict, parse_protobuf
+from brain.utils.common import normalize_path, get_logger, protobuf2dict, parse_protobuf, get_url_scheme
 from .mq_agent import load_mq_agent
-from ..utils.consts import config
+
+# from ..utils.consts import
 
 logger = get_logger(__name__)
 parsers = {}
@@ -166,8 +167,8 @@ def invoke_parser(parser: str, mq_url: str):
         mq_agent.publish_result(res, parser)  # publish result to MQ
 
     get_parser_by_name(parser)  # sanity check
-    mq = config['mq']
-    mq_agent_module = load_mq_agent(mq)
+    mq_type = get_url_scheme(mq_url)
+    mq_agent_module = load_mq_agent(mq_type)
     mq_agent = mq_agent_module.MQAgent(mq_url)
     logger.info(f'starting to consume mq: {parser=}')
     mq_agent.consume_snapshots(callback, parser)  # start consuming the MQ

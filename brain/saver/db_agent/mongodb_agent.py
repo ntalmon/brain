@@ -1,18 +1,24 @@
 """
-The DB agent module provides an interface for the saver to save results to database.
+The MongoDB agent module provides a DB agent with MongoDB implementation.
 """
 
 from typing import Any
 
+from brain.saver.db_agent.base_db_agent import BaseDBAgent
 from brain.utils.common import get_logger
 from brain.utils.mongodb import MongoDB
 
 logger = get_logger(__name__)
 
 
-class DBAgent(MongoDB):
+class DBAgent(MongoDB, BaseDBAgent):
     """
-    The DB agent class connects to the database and allows saving results to it.
+    MongoDB-based implementation of DB agent.
+
+    This implementation has single collection that contains an entry per user.
+    Each user entry contains its details, and list of snapshots.
+    Each snapshot entry in the list contains its details and available results.
+    All database update operations are atomic, so there shouldn't be any race conditions.
     """
 
     def _create_user_if_not_exist(self, user_id, user_entry):
@@ -37,17 +43,6 @@ class DBAgent(MongoDB):
         )
 
     def save_result(self, topic: str, user_id: int, user_data: dict, snapshot_id: int, timestamp: int, result: Any):
-        """
-        Save single result to the database.
-
-        :param topic: the result's topic.
-        :param user_id: user id of the result.
-        :param user_data: dictionary contains user details.
-        :param snapshot_id: id of the snapshot.
-        :param timestamp: timestamp of the snapshot.
-        :param result: result to save.
-        """
-
         user_id = str(user_id)
         logger.debug(f'saving result to db: {topic=}, {user_id=}, {user_data=}, {snapshot_id=}, {timestamp=}')
         snapshot_entry = {'_id': snapshot_id, 'uuid': snapshot_id, 'datetime': timestamp, 'results': {topic: result}}

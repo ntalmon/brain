@@ -7,9 +7,9 @@ import abc
 
 class BaseMQAgent(abc.ABC):
     """
-    The MQ agent abstract class contains should be inherited and implemented by MQ agents.
+    The base MQ agent abstract class contains should be inherited and implemented by MQ agents.
 
-    :param url: address of the MQ.
+    :param url: MQ address.
     """
 
     def __init__(self, url: str):

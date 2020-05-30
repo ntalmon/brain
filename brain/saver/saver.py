@@ -5,9 +5,9 @@ The saver module contains the main logic of the saver, which is, to save results
 import json
 
 from brain.parsers import get_parsers
-from .db_agent import DBAgent
-from .mq_agent import MQAgent
-from ..utils.common import get_logger
+from brain.utils.common import get_logger, get_url_scheme
+from .db_agent import load_db_agent
+from .mq_agent import load_mq_agent
 
 logger = get_logger(__name__)
 topics = get_parsers()
@@ -22,7 +22,9 @@ class Saver:
 
     def __init__(self, url: str):
         logger.info(f'initializing saver: {url=}')
-        self.agent = DBAgent(url)
+        db_type = get_url_scheme(url)
+        db_agent_module = load_db_agent(db_type)
+        self.agent = db_agent_module.DBAgent(url)
 
     def save(self, topic: str, data: str):
         """
@@ -49,6 +51,8 @@ def run_saver(db_url, mq_url):
 
     logger.info(f'running saver: {db_url=}, {mq_url=}')
     saver = Saver(db_url)
-    mq_agent = MQAgent(mq_url)
+    mq_type = get_url_scheme(mq_url)
+    mq_agent_module = load_mq_agent(mq_type)
+    mq_agent = mq_agent_module.MQAgent(mq_url)
     logger.info(f'starting to consume data from mq')
     mq_agent.consume_results(saver.save, topics)

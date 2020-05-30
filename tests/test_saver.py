@@ -3,7 +3,7 @@ import json
 import pytest
 from click.testing import CliRunner
 
-import brain.saver.mq_agent
+import brain.saver.mq_agent.rabbitmq_agent
 import brain.saver.saver
 from brain.saver import Saver, run_saver
 from brain.saver.__main__ import cli
@@ -76,7 +76,7 @@ class MockRabbitMQ:
 
 @pytest.fixture
 def mock_rabbitmq(monkeypatch):
-    yield monkeypatch.setattr(brain.saver.mq_agent, 'RabbitMQ', MockRabbitMQ)
+    yield monkeypatch.setattr(brain.saver.mq_agent.rabbitmq_agent, 'RabbitMQ', MockRabbitMQ)
     MockRabbitMQ.clear()
 
 

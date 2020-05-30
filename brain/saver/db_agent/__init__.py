@@ -1,5 +1,5 @@
 """
-The DB agent provides an interface for the API to communicate with the database.
+The DB agent provides an interface for the saver to communicate with the database.
 
 While the interface with the DB agent remains the same, its implementation might change depending on the database
 we're using. Therefore, it uses dynamic importing in order to import from the right DB agent module.

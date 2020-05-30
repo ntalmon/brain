@@ -1,5 +1,5 @@
 """
-The MQ agent provides an interface for the saver to consume results from the MQ.
+The RabbitMQ agent module provides a MQ agent with RabbitMQ implementation.
 """
 
 from brain.utils.common import get_logger
@@ -10,9 +10,7 @@ logger = get_logger(__name__)
 
 class MQAgent:
     """
-    The MQ agent class connects to the MQ and allows to consume results on multiple topic.
-
-    :param url: the MQ address.
+    RabbitMQ-based implementation of MQ agent.
     """
 
     def __init__(self, url: str):
@@ -20,13 +18,6 @@ class MQAgent:
         self.utils = RabbitMQ(url)
 
     def consume_results(self, callback: callable, topics: list):
-        """
-        Consume results from multiple topics.
-
-        :param callback: will be called when a new message has arrived, with the message and the topic name.
-        :param topics: topics to consume.
-        """
-
         def callback_wrapper(queue, data):
             topic = queue[len('saver_'):]
             logger.debug(f'consumed new results: {topic=}')
