@@ -1,5 +1,5 @@
 """
-The base MQ agent provides an abstract class for MQ agent implementations.
+The base MQ agent module provides an abstract class for MQ agent implementations.
 """
 
 import abc

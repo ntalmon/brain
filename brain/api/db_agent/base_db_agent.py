@@ -1,5 +1,5 @@
 """
-The base DB agent provides an abstract class for DB agent implementations.
+The base DB agent module provides an abstract class for DB agent implementations.
 """
 
 import abc

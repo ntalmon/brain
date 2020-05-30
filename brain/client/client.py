@@ -35,9 +35,7 @@ def upload_sample(host: str, port: int, path: str) -> int:
     count = 0
     for snapshot in reader:
         logger.debug(f'uploading snapshot #{count} to server')
-        # construct snapshot and send
-        server_snapshot = server_agent.construct_snapshot(user, snapshot)
-        server_agent.send_snapshot(server_snapshot)
+        server_agent.send_snapshot(user, snapshot)  # send snapshot
         count += 1
 
     logger.info(f'all {count} snapshots were successfully uploaded')
