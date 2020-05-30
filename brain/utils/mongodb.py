@@ -1,5 +1,5 @@
 """
-The mongodb module provides a common interface for a mongodb connection and operations.
+The MongoDB module provides a common interface for a MongoDB connection and operations.
 """
 
 import pymongo
@@ -13,13 +13,13 @@ logger = get_logger(__name__)
 
 class MongoDB:
     """
-    The mongodb class first connect to the data, and provides multiple database operations.
+    The Mongodb class first connect to the data, and provides multiple database operations.
 
     :param url: database address.
     """
 
     def __init__(self, url: str):
-        logger.info(f'connecting mongodb: {url=}')
+        logger.info(f'connecting MongoDB: {url=}')
         self.url = url
         self.client = pymongo.MongoClient(self.url)
         self.db = self.client[DB_NAME]

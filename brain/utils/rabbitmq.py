@@ -1,5 +1,5 @@
 """
-The rabbitmq module provides an interface for rabbitmq.
+The RabbitMQ module provides an interface for RabbitMQ.
 """
 
 import time
@@ -14,13 +14,13 @@ logger = get_logger(__name__)
 
 class RabbitMQ:
     """
-    The rabbitmq class connects to the MQ, and allows consuming and publishing to the MQ.
+    The RabbitMQ class connects to the MQ, and allows consuming and publishing to the MQ.
 
     :param url: address of the MQ.
     """
 
     def __init__(self, url: str):
-        logger.info(f'initializing rabbitmq connection: {url=}')
+        logger.info(f'initializing RabbitMQ connection: {url=}')
         self.url = url
         _url = furl(url)
         host, port = _url.host, _url.port
@@ -39,7 +39,7 @@ class RabbitMQ:
         :return: the connection object.
         """
 
-        logger.info(f'trying to connect rabbitmq: {host=}, {port=}, {max_retries=}, {sleep=}')
+        logger.info(f'trying to connect RabbitMQ: {host=}, {port=}, {max_retries=}, {sleep=}')
         last_error = None  # type: Exception
         for i in range(max_retries):
             try:
@@ -50,7 +50,7 @@ class RabbitMQ:
                 logger.info(f'exception while trying to connect: {error}, waiting {sleep} seconds before retrying')
                 print(f'Exception while trying to connect: {error}, waiting {sleep} seconds before retrying')
                 time.sleep(sleep)
-        logger.error('failed to connect rabbitmq, reached max retries')
+        logger.error('failed to connect RabbitMQ, reached max retries')
         raise last_error
 
     def close(self):

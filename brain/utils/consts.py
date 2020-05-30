@@ -1,5 +1,5 @@
 """
-The consts module provides some constants used by the brain package and by some tests.
+The consts module provides constants, enums, and configurations, used by the brain package and by some tests.
 """
 
 from enum import Enum

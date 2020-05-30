@@ -11,6 +11,7 @@ from typing import Union
 
 from furl import furl
 from google.protobuf import json_format
+from google.protobuf.message import Message
 
 from brain import log_path
 from brain.utils.consts import FileFormat, config
@@ -86,20 +87,49 @@ def get_file_stream_type(file_format):
     raise NotImplementedError(f'Unsupported file format: {file_format}')
 
 
-def get_url_scheme(url):
+def get_url_scheme(url: str) -> str:
+    """
+    Get the scheme of URL. For example scheme of `http://localhost:8000` is `http`.
+
+    :param url: get scheme of this URL.
+    :return: the URL scheme.
+    """
+
     url = furl(str(url))
     return url.scheme
 
 
-def parse_protobuf(pb_object, data):
+def parse_protobuf(pb_object: Message, data: bytes) -> object:
+    """
+    Given protobuf object, parse it from the given data.
+
+    :param pb_object: the object to load data to.
+    :param data: data to load to the object.
+    :return: the protobuf object itself.
+    """
+
     pb_object.ParseFromString(data)
     return pb_object
 
 
-def serialize_protobuf(pb_object):
+def serialize_protobuf(pb_object: Message) -> bytes:
+    """
+    Serialize protobuf object to bytes.
+
+    :param pb_object: object to serialize.
+    :return: the serialized bytes.
+    """
+
     return pb_object.SerializeToString()
 
 
-def protobuf2dict(pb_object):
+def protobuf2dict(pb_object: Message) -> dict:
+    """
+    Convert protobuf object to a dictionary.
+
+    :param pb_object: object to convert.
+    :return: the object dictionary.
+    """
+    
     return json_format.MessageToDict(pb_object, including_default_value_fields=True,
                                      preserving_proto_field_name=True)
