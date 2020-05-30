@@ -1,7 +1,6 @@
 """
 The server agent provides an interface for the client to communicate with the server.
 
-
 While the interface with the server agent remains the same, its implementation might change
 depending on client-server protocol. Therefore, it uses dynamic importing in order to import
 from the right server agent module.

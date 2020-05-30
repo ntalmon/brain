@@ -43,3 +43,11 @@ class MessageFormat(Enum):
 
 class ProtocolType(Enum):
     HTTP = config['protocols']['http']
+
+
+class DBType(Enum):
+    MONGODB = config['db_types']['mongodb']
+
+
+class MQType(Enum):
+    RABBITMQ = config['mq_types']['rabbitmq']

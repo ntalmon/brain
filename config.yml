@@ -1,4 +1,4 @@
-debug: true
+# consts definitions.
 hosts:
   api: '127.0.0.1'
   db: '127.0.0.1'
@@ -17,7 +17,15 @@ formats:
   mind: mind
 protocols:
   http: http
+db_types:
+  mongodb: mongodb
+mq_types:
+  rabbitmq: rabbitmq
+
+# configurations
 sample_format:
   file_format: gzip
   message_format: mind
 client_server_protocol: http
+db: mongodb
+mq: rabbitmq

@@ -1,37 +1,30 @@
 """
-The database agent provides an interface for the API to communicate with the database.
+The mongodb agent provides an interface for the API to communicate with the database, with mongodb implementation.
 """
 
+from brain.api.db_agent.base_db_agent import BaseDBAgent
 from brain.utils.common import get_logger
 from brain.utils.mongodb import MongoDB
 
 logger = get_logger(__name__)
 
 
-class DBAgent(MongoDB):
+class DBAgent(MongoDB, BaseDBAgent):
     """
-    The DBAgent agent class provides multiple entry points to fetch data from the database.
+    Mongodb-based implementation of DB agent.
+
+    This implementation has single collection that contains an entry per user.
+    Each user entry contains its details, and list of snapshots.
+    Each snapshot entry in the list contains its details and available results.
     """
 
     def find_users(self) -> list:
-        """
-        Find all users in database.
-
-        :return: list of user_id and username per user.
-        """
-
         # _id is used for "db uniqueness" only, fetch user_id and username
         users_list = self.find({}, {'_id': 0, 'user_id': 1, 'username': 1})
         users_list = list(users_list)
         return users_list
 
     def find_user(self, user_id: int) -> dict:
-        """
-        Find user in database by user id.
-
-        :return: user_id, username, birthday, and gender of the user.
-        """
-
         logger.debug(f'fetching all users from database')
         user_id = str(user_id)
         # exclude _id snapshots list
@@ -39,12 +32,6 @@ class DBAgent(MongoDB):
         return user
 
     def find_snapshots(self, user_id: int) -> list:
-        """
-        Find all snapshots of a user by user id.
-
-        :return: list of uuid and datetime per snapshot.
-        """
-
         logger.debug(f'fetching snapshot from database, {user_id=}')
         user_id = str(user_id)
         # take only uuid and datetime from snapshots
@@ -56,12 +43,6 @@ class DBAgent(MongoDB):
         return snapshots['snapshots']
 
     def find_snapshot(self, user_id: int, snapshot_id: int, include_path: bool = False) -> dict:
-        """
-        Find a snapshot by user id and snapshot id.
-
-        :return: uuid, datetime, and available results names of the snapshot.
-        """
-
         logger.debug(f'fetching snapshot from database, {user_id=}, {snapshot_id=}')
         user_id = str(user_id)
         snapshot_id = str(snapshot_id)
@@ -79,13 +60,7 @@ class DBAgent(MongoDB):
         snapshot['results'] = list(snapshot['results'].keys())
         return snapshot
 
-    def find_snapshot_result(self, user_id: int, snapshot_id: int, result_name: str) -> dict:
-        """
-        Find result of a snapshot by user id, snapshot id, and result name.
-
-        :return: the result as dictionary.
-        """
-
+    def find_result(self, user_id: int, snapshot_id: int, result_name: str) -> dict:
         logger.debug(f'fetching snapshot result from database, {user_id=}, {snapshot_id=}, {result_name=}')
         user_id = str(user_id)
         snapshot_id = str(snapshot_id)

@@ -1,6 +1,6 @@
 """
-| The api module contains all the entry points and API server invocation.
-| All the entry, except api_get_snapshot_result_data, returns the result in JSON format.
+The api module contains all the entry points and API server invocation.
+All the entry, except api_get_snapshot_result_data, returns the result in JSON format.
 """
 
 import os
@@ -9,13 +9,15 @@ import flask
 import flask_cors
 
 from brain.utils.common import get_logger
-from .db_agent import DBAgent
+from .db_agent import load_db_agent
+from .db_agent.base_db_agent import BaseDBAgent
+from ..utils.consts import config
 
 logger = get_logger(__name__)
 app = flask.Flask(__name__)
 flask_cors.CORS(app)
 
-db_agent = None  # type: DBAgent
+db_agent = None  # type: BaseDBAgent
 
 
 def common_api_wrapper(callback, to_json=True):
@@ -86,7 +88,7 @@ def api_get_snapshot_result(user_id: int, snapshot_id: int, result_name: str):
     """
 
     logger.info(f'getting snapshot results: {user_id=}, {snapshot_id=}, {result_name=}')
-    return common_api_wrapper(lambda: db_agent.find_snapshot_result(user_id, snapshot_id, result_name))
+    return common_api_wrapper(lambda: db_agent.find_result(user_id, snapshot_id, result_name))
 
 
 @app.route('/users/<int:user_id>/snapshots/<int:snapshot_id>/<result_name>/data')
@@ -97,7 +99,7 @@ def api_get_snapshot_result_data(user_id: int, snapshot_id: int, result_name: st
 
     # fetch the result itself, expect result to contain a file path, and return the file
     logger.info(f'getting result data: {user_id=}, {snapshot_id=}, {result_name=}')
-    result = common_api_wrapper(lambda: db_agent.find_snapshot_result(user_id, snapshot_id, result_name), to_json=False)
+    result = common_api_wrapper(lambda: db_agent.find_result(user_id, snapshot_id, result_name), to_json=False)
     if 'path' not in result:
         logger.info(f'result {result_name} does not contain path, aborting with code=404')
         flask.abort(404)
@@ -112,7 +114,9 @@ def api_get_snapshot_result_data(user_id: int, snapshot_id: int, result_name: st
 
 def init_db_agent(database_url):
     global db_agent
-    db_agent = DBAgent(database_url)
+    database = config['db']
+    db_agent_module = load_db_agent(database)
+    db_agent = db_agent_module.DBAgent(database_url)
 
 
 def run_api_server(host, port, database_url):

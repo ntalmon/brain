@@ -7,7 +7,7 @@ import abc
 
 class BaseReader(abc.ABC):
     """
-    The base reader class should be inherited and implemented by reader drivers.
+    The base reader abstract class should be inherited and implemented by reader drivers.
 
     :param file_stream: file stream of the sample file.
     """
