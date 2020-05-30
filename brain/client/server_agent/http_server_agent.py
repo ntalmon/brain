@@ -1,5 +1,5 @@
 """
-The http server agent module provides a server agent of http protocol.
+The HTTP server agent module provides a server agent of http protocol.
 """
 
 from furl import furl
@@ -29,6 +29,7 @@ class ServerAgent(BaseServerAgent):
 
     @classmethod
     def _construct_snapshot(cls, user: mind_pb2.User, snapshot: mind_pb2.Snapshot) -> client_server_pb2.Snapshot:
+        # copy both user and snapshot to a new protobuf in client_server_pb2.Snapshot format
         new_snapshot = client_server_pb2.Snapshot()
         copy_protobuf(new_snapshot, snapshot, ['datetime'])
         copy_protobuf(new_snapshot.user, user, ['user_id', 'username', 'birthday', 'gender'])
@@ -42,7 +43,9 @@ class ServerAgent(BaseServerAgent):
 
     def send_snapshot(self, user: mind_pb2.User, snapshot: mind_pb2.Snapshot):
         url = self.url / 'snapshot'
+        # construct snapshot to send
         server_snapshot = self._construct_snapshot(user, snapshot)
         snapshot_msg = serialize_protobuf(server_snapshot)
         logger.debug(f'sending snapshot to {url}')
+        # send serialized snapshot to server
         post(url, snapshot_msg)

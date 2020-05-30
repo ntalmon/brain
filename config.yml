@@ -23,6 +23,7 @@ mq_types:
   rabbitmq: rabbitmq
 
 # configurations
+debug: false
 sample_format:
   file_format: gzip
   message_format: mind

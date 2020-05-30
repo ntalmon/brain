@@ -2,12 +2,12 @@ import pytest
 from click.testing import CliRunner
 
 import brain.server.__main__
-import brain.server.mq_agent
+import brain.server.mq_agent.rabbitmq_agent
 import brain.server.parsers_agent
 import brain.server.server
 from brain.server.__main__ import cli
-from brain.server.client_agent import app
-from brain.server.server import init_publish, construct_publish
+from brain.server.client_agent import load_client_agent
+from brain.server.server import construct_publish, handle_snapshot
 from brain.utils.consts import *
 from .data_generators import gen_snapshot_for_server
 
@@ -30,7 +30,7 @@ class MockRabbitMQ:
 
 @pytest.fixture
 def mock_rabbitmq(monkeypatch):
-    monkeypatch.setattr(brain.server.mq_agent, 'RabbitMQ', MockRabbitMQ)
+    monkeypatch.setattr(brain.server.mq_agent.rabbitmq_agent, 'RabbitMQ', MockRabbitMQ)
 
 
 @pytest.fixture
@@ -41,9 +41,11 @@ def mock_path(monkeypatch, tmp_path):
 def test_server(client_message, mock_rabbitmq, mock_path):
     snapshot, msg = client_message
     publish = construct_publish(MQ_URL)
-    init_publish(publish)
+    client_agent_module = load_client_agent('http')
+    client_agent = client_agent_module.ClientAgent(publish)
+    client_agent.register_snapshot_handler(handle_snapshot)
 
-    with app.test_client() as client:
+    with client_agent.app.test_client() as client:
         res = client.post('/snapshot', data=msg)
         assert res.status_code == 200
 
@@ -70,7 +72,7 @@ def fake_run_server(host, port, publish):
 
 @pytest.fixture
 def mock_run_server(monkeypatch):
-    monkeypatch.setattr(brain.server.server, 'MQAgent', MockMQAgent)
+    monkeypatch.setattr(brain.server.mq_agent.rabbitmq_agent, 'MQAgent', MockMQAgent)
     monkeypatch.setattr(brain.server.__main__, 'run_server', fake_run_server)
 
 

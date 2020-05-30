@@ -1,5 +1,6 @@
 """
 The parsers agent provides an interface for the server to construct messages to can be sent to the parsers over the MQ.
+It should provide only `construct_parsers_message` as its interface.
 """
 
 import numpy as np
@@ -33,13 +34,13 @@ def handle_depth_image(snapshot, data):
     snapshot.depth_image.file_name = image_file + '.npy'
 
 
-def construct_parsers_message(snapshot: client_server_pb2.Snapshot, snapshot_uuid: int) -> bytes:
+def construct_parsers_message(snapshot: client_server_pb2.Snapshot, snapshot_uuid: int) -> server_parsers_pb2.Snapshot:
     """
     Construct a message to the parsers.
 
     :param snapshot: snapshot in client_server_pb2.Snapshot format.
     :param snapshot_uuid: uuid of the snapshot.
-    :return: the constructed message in serialized server_parsers_pb2.Snapshot format.
+    :return: the constructed message in server_parsers_pb2.Snapshot format.
     """
 
     logger.debug(f'constructing message for parsers')
@@ -66,4 +67,4 @@ def construct_parsers_message(snapshot: client_server_pb2.Snapshot, snapshot_uui
         handle_color_image(parsers_snapshot, snapshot.color_image.data)
     if parsers_snapshot.depth_image:
         handle_depth_image(parsers_snapshot, snapshot.depth_image.data)
-    return parsers_snapshot.SerializeToString()
+    return parsers_snapshot
