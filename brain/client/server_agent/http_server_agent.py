@@ -1,9 +1,10 @@
 """
-The server agent module provides an interface for the client to communicate with the server.
+The http server agent provides an agent server of http protocol.
 """
+
 from furl import furl
 
-from brain.autogen import client_server_pb2, sample_pb2
+from brain.autogen import client_server_pb2, mind_pb2
 from brain.utils.common import get_logger
 from brain.utils.http import post
 
@@ -17,7 +18,7 @@ def copy_protobuf(item_a, item_b, attrs):
 
 class ServerAgent:
     """
-    Streams snapshot to the server.
+    Streams snapshot to the server over http.
 
     :param host: server hostname.
     :param port: server port number.
@@ -30,7 +31,7 @@ class ServerAgent:
         self.url = furl(scheme='http', host=host, port=port)
 
     @classmethod
-    def construct_snapshot(cls, user: sample_pb2.User, snapshot: sample_pb2.Snapshot) -> client_server_pb2.Snapshot:
+    def construct_snapshot(cls, user: mind_pb2.User, snapshot: mind_pb2.Snapshot) -> client_server_pb2.Snapshot:
         """
         Construct a message to the server in client_server format
 
@@ -50,16 +51,14 @@ class ServerAgent:
         copy_protobuf(new_snapshot.feelings, snapshot.feelings, ['hunger', 'thirst', 'exhaustion', 'happiness'])
         return new_snapshot
 
-    def send_snapshot(self, user: sample_pb2.User, snapshot: sample_pb2.Snapshot):
+    def send_snapshot(self, snapshot: client_server_pb2.Snapshot):
         """
-        Sends a snapshot to the server.
+        Sends a snapshot message to the server.
 
-        :param user: user in sample_pb2.User format.
-        :param snapshot: snapshot in sample_pb2.Snapshot format.
+        :param snapshot: snapshot as constructed in `construct_snapshot`.
         """
 
-        new_snapshot = self.construct_snapshot(user, snapshot)
         url = self.url / 'snapshot'
-        snapshot_msg = new_snapshot.SerializeToString()
+        snapshot_msg = snapshot.SerializeToString()
         logger.debug(f'sending snapshot to {url}')
         post(url, snapshot_msg)

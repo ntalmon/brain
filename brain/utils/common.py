@@ -3,17 +3,14 @@ Provides some common utilities.
 """
 
 import functools
+import gzip
 import logging
 import pathlib
 import sys
 from typing import Union
 
-import yaml
-
-from brain import log_path, config_path
-
-with open(str(config_path), 'r') as file:
-    client_config = yaml.load(file, Loader=yaml.Loader)
+from brain import log_path
+from brain.utils.consts import FileFormat, config
 
 fmt = '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
 datefmt = '%Y-%m-%d %H:%M:%S'
@@ -62,9 +59,25 @@ def cli_suppress(f: callable, logger: logging.Logger = None) -> callable:
             f(*args, **kwargs)
         except Exception as error:
             logger and logger.error(f'error while running command: {error}')
-            if client_config['debug']:
+            if config['debug']:
                 raise
             logger and logger.info(f'exiting program: code=1')
             sys.exit(1)
 
     return wrapper
+
+
+def get_file_stream_type(file_format):
+    """
+    Get file stream type according to a given file format.
+
+    :param file_format: file format.
+    :return: the file stream type, for example `open` or `gzip.open`
+    :raises: NotImplementedError is file format is unsupported.
+    """
+
+    if file_format == FileFormat.NATIVE.value:
+        return open
+    if file_format == FileFormat.GZIP.value:
+        return gzip.open
+    raise NotImplementedError(f'Unsupported file format: {file_format}')

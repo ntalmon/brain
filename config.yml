@@ -1,1 +1,23 @@
 debug: true
+hosts:
+  api: '127.0.0.1'
+  db: '127.0.0.1'
+  gui: '127.0.0.1'
+  mq: '127.0.0.1'
+  server: '127.0.0.1'
+ports:
+  api: 5000
+  db: 27017
+  gui: 8080
+  mq: 5672
+  server: 8000
+formats:
+  native: native
+  gzip: gzip
+  mind: mind
+protocols:
+  http: http
+sample_format:
+  file_format: gzip
+  message_format: mind
+client_server_protocol: http

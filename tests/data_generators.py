@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 
-from brain.autogen import sample_pb2, client_server_pb2, server_parsers_pb2
+from brain.autogen import mind_pb2, client_server_pb2, server_parsers_pb2
 from brain.utils.consts import *
 from .utils import normalize_path, align_protobuf, dict_projection
 
@@ -21,7 +21,7 @@ def gen_user(user=None):
     user_id = user_id_count
     username = f'{random.choice(first_names)} {random.choice(last_names)}'
     birthday = random.getrandbits(32)
-    gender = random.choice(sample_pb2.User.Gender.values())
+    gender = random.choice(mind_pb2.User.Gender.values())
     if user:
         user.user_id, user.username, user.birthday, user.gender = user_id, username, birthday, gender
         return user
@@ -162,7 +162,7 @@ def get_snapshot_path(snapshot, path, is_dict=False):
 
 
 def gen_snapshot_for_client(snapshot=None):
-    snapshot = snapshot or sample_pb2.Snapshot()
+    snapshot = snapshot or mind_pb2.Snapshot()
     gen_datetime(snapshot)
     gen_pose(snapshot.pose)
     gen_color_image_data(snapshot.color_image)

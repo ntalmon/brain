@@ -23,7 +23,8 @@ def cli_upload_sample(host, port, path):
     """
 
     logger.info(f'running cli upload-sample: {host=}, {port=}, {path=}')
-    upload_sample(host, port, path)
+    count = upload_sample(host, port, path)
+    print(f'Successfully uploaded {count} snapshots')
 
 
 if __name__ == '__main__':

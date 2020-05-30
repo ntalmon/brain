@@ -104,6 +104,7 @@ def api_get_snapshot_result_data(user_id: int, snapshot_id: int, result_name: st
     path = result['path']
 
     if not os.path.isfile(path):
+        # file not found
         logger.warning(f'file not found for result {result_name}, {path=}, aborting with code=404')
         flask.abort(404)
     return flask.send_file(path, mimetype='image/jpeg', attachment_filename=f'{result_name}.jpg')

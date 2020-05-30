@@ -8,7 +8,7 @@ import pymongo
 import pytest
 
 from brain import tests_path as _tests_path
-from brain.autogen import sample_pb2
+from brain.autogen import mind_pb2
 from brain.utils.consts import *
 from .data_generators import gen_user, gen_snapshot_for_client
 from .utils import wait_for_address
@@ -42,7 +42,7 @@ def write_sample(user, snapshots, path):
 
 @pytest.fixture
 def random_sample(tmp_path):
-    user = gen_user(sample_pb2.User())
+    user = gen_user(mind_pb2.User())
     snapshots = [gen_snapshot_for_client() for _ in range(5)]
     file_path = write_sample(user, snapshots, tmp_path)
     return user, snapshots, file_path

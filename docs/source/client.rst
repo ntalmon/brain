@@ -1,27 +1,21 @@
 brain.client
 ------------
 .. automodule:: brain.client
-	:members:
+    :members:
+
+.. toctree::
+   client.reader
+   client.server_agent
+   :maxdepth: 2
 
 brain.client.client
 ===================
 .. automodule:: brain.client.client
-	:members:
-	:show-inheritance:
-
-brain.client.reader
-===================
-.. automodule:: brain.client.reader
-	:members:
-	:undoc-members:
-
-brain.client.server_agent
-=========================
-.. automodule:: brain.client.server_agent
-	:members:
+    :members:
+    :show-inheritance:
 
 CLI
 ===
 .. click:: brain.client.__main__:cli
-	:prog: python -m brain.client
-	:show-nested:
+    :prog: python -m brain.client
+    :show-nested:
