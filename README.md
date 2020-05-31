@@ -36,14 +36,23 @@ There are several ways to get the uploaded data:
     ```
 3. Run the build script to build everything required before running the tests:
     ```bash
-    [brain] $ ./scripts/build.sh tests
+    [brain] $ ./scripts/build.sh protobuf app
     ```
+   It will compile the protobuf and the react application.
+   The protobuf build is mandatory for all components,
+   and the app build is mandatory if you're running any GUI tests,
+   or running the GUI server locally.
+   As npm might require sudo, if you're having any problem with the `build app` stage,
+   please try again with sudo:
+   ```bash
+    [brain] $ sudo ./scripts/build.sh app
+   ``` 
 4. To check that everything is working as expected, run the tests:
     ```bash
     [brain] $ pytest tests/
     ...
     ```
-   Make sure that when you run the tests there are no docker containers \
+   Make sure that when you run the tests there are no docker containers 
    of the project/mongodb/rabbitmq running in the background.
 ## Deployment
 Each one of the services can also run from a container.
