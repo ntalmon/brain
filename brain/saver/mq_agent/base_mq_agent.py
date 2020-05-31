@@ -15,6 +15,7 @@ class BaseMQAgent(abc.ABC):
     def __init__(self, url: str):
         self.url = url
 
+    @abc.abstractmethod
     def consume_results(self, callback: callable, topics: list):
         """
         Consume results from multiple topics.

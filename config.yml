@@ -28,5 +28,6 @@ sample_format:
   file_format: gzip
   message_format: mind
 client_server_protocol: http
-db: mongodb
-mq: rabbitmq
+logger:
+  level: INFO
+  handlers: [stream]
