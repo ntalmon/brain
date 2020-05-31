@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-# TODO: find how to get rid of --network host
-# TODO: handle path running script from
 
 set -e
 ./scripts/build.sh docker

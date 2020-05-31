@@ -1,19 +1,20 @@
 """
 The RabbitMQ agent module provides a MQ agent with RabbitMQ implementation.
 """
-
+from brain.saver.mq_agent.base_mq_agent import BaseMQAgent
 from brain.utils.common import get_logger
 from brain.utils.rabbitmq import RabbitMQ
 
 logger = get_logger(__name__)
 
 
-class MQAgent:
+class MQAgent(BaseMQAgent):
     """
     RabbitMQ-based implementation of MQ agent.
     """
 
     def __init__(self, url: str):
+        BaseMQAgent.__init__(self, url)
         logger.info(f'initializing mq agent: {url=}')
         self.utils = RabbitMQ(url)
 

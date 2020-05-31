@@ -17,9 +17,6 @@ There are several ways to get the uploaded data:
 * The API - RESTful API for getting data from the database (users, snapshots, results, etc.).
 * The CLI - command line interface for the API.
 * The GUI - reflects the API and presents the uploaded data.
-
-TODO: make sure there are comments.
-TODO: make sure there are type annotations.
 """
 
 import pathlib

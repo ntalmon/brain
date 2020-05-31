@@ -1,8 +1,8 @@
 Welcome to Brain's documentation!
 =================================
+For overview, installation, usage, etc., see the `Readme <https://github.com/noamtau1/brain/blob/master/README.md#advanced-system-design---final-project>`_
 
 .. toctree::
-   quickstart
    api
    autogen
    cli

@@ -2,33 +2,6 @@ import React, { useState, useEffect } from "react";
 import "../css/user-page.css";
 import { fetchAPI, showTimestamp, formatURL } from "../utils";
 
-class ShowImages extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { clickState: false };
-    this.handleClick = this.handleClick.bind(this);
-  }
-  render() {
-    let src = this.state.clickState
-      ? this.props.depthImage
-      : this.props.colorImage;
-    return (
-      <div className="view overlay">
-        <img src={src} className="img-fluid" />
-        <a>
-          <div
-            className="mask rgba-white-slight"
-            onClick={this.handleClick}
-          ></div>
-        </a>
-      </div>
-    );
-  }
-  handleClick() {
-    this.setState({ clickState: !this.state.clickState });
-  }
-}
-
 function ShowPose(props) {
   let url = props.url;
   let [pose, setPose] = useState({
@@ -140,19 +113,9 @@ function Snapshot(props) {
   let colorImage = details.results.includes("color_image")
     ? formatURL(`${snapshotUrl}/color_image/data`)
     : "";
-  let acolorImageView = colorImage ? (
-    <img src={colorImage} className="img-fluid" />
-  ) : (
-    ""
-  );
   let depthImage = details.results.includes("depth_image")
     ? formatURL(`${snapshotUrl}/depth_image/data`)
     : "";
-  let adepthImageView = depthImage ? (
-    <img src={depthImage} className="img-fluid" />
-  ) : (
-    ""
-  );
 
   let pose = "";
   if (details.results.includes("pose") && moreDetails)

@@ -43,6 +43,8 @@ There are several ways to get the uploaded data:
     [brain] $ pytest tests/
     ...
     ```
+   Make sure that when you run the tests there are no docker containers \
+   of the project/mongodb/rabbitmq running in the background.
 ## Deployment
 Each one of the services can also run from a container.
 In order to build and start all the containers, you should run:
