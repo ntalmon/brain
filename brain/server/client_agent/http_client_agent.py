@@ -18,16 +18,17 @@ class ClientAgent(BaseClientAgent):
 
     def __init__(self, publish: callable = None):
         BaseClientAgent.__init__(self, publish=publish)
-        self.app = flask.Flask(__name__)
+        self.app = flask.Flask(__name__)  # use flask for the server
         self.snapshot_handlers = []
 
         @self.app.route('/snapshot', methods=['POST'])
         def handle_snapshot():
+            # pass to instance method.
             return self.handle_snapshot()
 
     def register_snapshot_handler(self, handler: callable):
         logger.info(f'detected new snapshot handler: {handler=}')
-        self.snapshot_handlers.append(handler)
+        self.snapshot_handlers.append(handler)  # add snapshot handler
 
     def handle_snapshot(self):
         logger.debug(f'received new snapshot message')
@@ -48,4 +49,4 @@ class ClientAgent(BaseClientAgent):
 
     def run(self, host: str, port: int):
         logger.info(f'starting to run flask app: {host=}, {port=}')
-        self.app.run(host=host, port=port)
+        self.app.run(host=host, port=port)  # simply run the flask app

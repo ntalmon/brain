@@ -63,9 +63,11 @@ def cli_suppress(f: callable, logger: logging.Logger = None) -> callable:
             f(*args, **kwargs)
         except Exception as error:
             logger and logger.error(f'error while running command: {error}')
+            # check for config
             if config['debug']:
                 raise
             logger and logger.info(f'exiting program: code=1')
+            print(str(error))
             sys.exit(1)
 
     return wrapper
@@ -99,7 +101,7 @@ def get_url_scheme(url: str) -> str:
     return url.scheme
 
 
-def parse_protobuf(pb_object: Message, data: bytes) -> object:
+def parse_protobuf(pb_object: Message, data: bytes) -> Message:
     """
     Given protobuf object, parse it from the given data.
 
@@ -130,6 +132,6 @@ def protobuf2dict(pb_object: Message) -> dict:
     :param pb_object: object to convert.
     :return: the object dictionary.
     """
-    
+
     return json_format.MessageToDict(pb_object, including_default_value_fields=True,
                                      preserving_proto_field_name=True)

@@ -25,6 +25,6 @@ class MQAgent(BaseMQAgent):
         self.utils.consume(callback, 'snapshot', [topic])
 
     def publish_result(self, result: dict, topic: str):
-        # convert result to json format and publish to MQ
+        # convert result to JSON format and publish to MQ
         result = json.dumps(result)
         self.utils.publish(result, exchange='saver', queue=f'saver_{topic}')

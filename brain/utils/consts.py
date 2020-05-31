@@ -9,6 +9,7 @@ from furl import furl
 
 from brain import config_path
 
+# load configuration
 with open(str(config_path), 'r') as _conf_reader:
     config = yaml.load(_conf_reader, Loader=yaml.Loader)
 
@@ -28,8 +29,6 @@ MQ_FURL = furl(MQ_URL)
 
 DB_NAME = 'brain'
 COLLECTION_NAME = 'users_and_snapshots'
-
-PARSERS = ['pose', 'color_image', 'depth_image', 'feelings']
 
 
 class FileFormat(Enum):

@@ -29,17 +29,18 @@ def construct_publish(mq_url: str) -> callable:
     mq_agent = mq_agent_module.MQAgent(mq_url)
 
     def _publish(snapshot):
-        mq_agent.publish_snapshot(snapshot)
+        mq_agent.publish_snapshot(snapshot)  # publish to MQ
 
     return _publish
 
 
+# server is multithreaded, access this common resource only with lock
 snapshot_lock = threading.Lock()
 snapshot_counter = 0
 
 
 def generate_snapshot_uuid():
-    # take a lock and increase the number of snapshots
+    # take a lock and increase the number of snapshots by one
     global snapshot_counter
     with snapshot_lock:
         uuid = snapshot_counter
@@ -57,6 +58,7 @@ def handle_snapshot(snapshot: client_server_pb2.Snapshot, publish: callable):
 
     snapshot_uuid = generate_snapshot_uuid()
     logger.info(f'handling new snapshot, user_id={snapshot.user.user_id}, {snapshot_uuid=}')
+    # construct message to send to the parsers
     parsers_msg = construct_parsers_message(snapshot, snapshot_uuid)
     logger.debug(f'publishing snapshot to rabbitmq')
     publish(parsers_msg)  # publish the message with the given publish function

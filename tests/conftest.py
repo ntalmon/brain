@@ -29,6 +29,7 @@ def resources_path():
 
 
 def write_sample(user, snapshots, path):
+    # given a user and snapshot, write it to sample file in mind.gz format
     file_path = str(path / 'sample.mind.gz')
     user_raw = user.SerializeToString()
     snapshots_raw = [snapshot.SerializeToString() for snapshot in snapshots]
@@ -42,6 +43,7 @@ def write_sample(user, snapshots, path):
 
 @pytest.fixture
 def random_sample(tmp_path):
+    # generate random sample and write it to file
     user = gen_user(mind_pb2.User())
     snapshots = [gen_snapshot_for_client() for _ in range(5)]
     file_path = write_sample(user, snapshots, tmp_path)
@@ -50,6 +52,7 @@ def random_sample(tmp_path):
 
 @pytest.fixture(scope='session', autouse=True)
 def run_containers():
+    # run required docker containers (mongodb, rabbitmq) before all tests
     client = docker.from_env()
     mongo_container = client.containers.run('mongo:latest', detach=True, ports={f'{DB_PORT}/tcp': DB_PORT},
                                             network='host')
@@ -64,6 +67,7 @@ def run_containers():
 
 @pytest.fixture(scope='session', autouse=True)
 def database(run_containers):
+    # database connection
     conn = pymongo.MongoClient(DB_URL)
     conn.drop_database(DB_NAME)
     db = conn.brain

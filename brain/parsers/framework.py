@@ -14,8 +14,6 @@ from brain.autogen import server_parsers_pb2
 from brain.utils.common import normalize_path, get_logger, protobuf2dict, parse_protobuf, get_url_scheme
 from .mq_agent import load_mq_agent
 
-# from ..utils.consts import
-
 logger = get_logger(__name__)
 parsers = {}
 parsers_path = brain_path / 'parsers' / 'parsers'
@@ -32,14 +30,16 @@ def load_parsers():
 
     logger.info(f'loading parsers')
     sys.path.insert(0, str(parsers_path.parent))
-    for path in parsers_path.iterdir():
+    for path in parsers_path.iterdir():  # iterate over files
         if path.name.startswith('_') or path.suffix != '.py' or path.name == 'framework.py':
             continue
-        module = importlib.import_module(f'{parsers_path.name}.{path.stem}')
+        module = importlib.import_module(f'{parsers_path.name}.{path.stem}')  # import module
         for name, obj in module.__dict__.items():
+            # look for parser function
             if callable(obj) and name.startswith('parse_') and hasattr(obj, 'field'):
                 logger.info(f'found function parser {name} in {module.__name__}')
                 parsers[obj.field] = obj
+            # look for parser class
             elif inspect.isclass(obj) and name.lower().endswith('parser') and hasattr(obj, 'parse') and \
                     hasattr(obj, 'field'):
                 logger.info(f'found class parser {name} in {module.__name__}')
@@ -93,6 +93,7 @@ class Context:
         if not self.base_path:
             logger.error(f'trying to access context.save but path is not initializing')
             raise Exception('Cannot access context.path when save is not initialized')
+        # 'w' for str, 'wb' for bytes
         mode = 'w' + 'b' * isinstance(data, bytes)
         with open(self.path(file), mode) as writer:
             writer.write(data)
@@ -127,10 +128,14 @@ def run_parser(parser_name: str, data: Union[str, bytes], is_path: bool = False)
     """
     Run the parser with the given data.
 
+    The returned result is a dictionary that can be sent to the saver over the MQ in JSON format.
+    The parsers-saver protocol is stateless, i.e. each published result contains its snapshot and user details,
+    and does not assume anything about what's stored in the database.
+
     :param parser_name: parser to run.
     :param data: data for the parser or path to the file containing the data.
     :param is_path: is the `data` parameter contains the raw data or path?
-    :return: the parser result.
+    :return: the parser result, contains the snapshot and user details.
     """
     if is_path:
         with open(data, 'rb') as file:
@@ -144,6 +149,7 @@ def run_parser(parser_name: str, data: Union[str, bytes], is_path: bool = False)
     path = normalize_path(snapshot.path)
     ctx = Context(path)
     parse_res = parse_fn(parser_data, ctx)
+    # construct and return result that contains also snapshot and user details
     return {
         'uuid': dict_snapshot['uuid'],
         'datetime': dict_snapshot['datetime'],

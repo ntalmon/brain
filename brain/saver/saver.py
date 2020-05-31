@@ -35,7 +35,7 @@ class Saver:
         """
 
         logger.debug(f'saving data for {topic=}')
-        data = json.loads(data)
+        data = json.loads(data)  # load data from JSON format
         snapshot_id, timestamp, user_data, result = data['uuid'], data['datetime'], data['user'], data['result']
         user_id = user_data.pop('user_id')
         self.agent.save_result(topic, user_id, user_data, snapshot_id, timestamp, result)

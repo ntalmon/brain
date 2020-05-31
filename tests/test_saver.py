@@ -8,7 +8,7 @@ import brain.saver.saver
 from brain.saver import Saver, run_saver
 from brain.saver.__main__ import cli
 from brain.utils.consts import *
-from .data_generators import gen_data_for_saver
+from .data_generators import gen_data_for_saver, PARSERS
 
 
 @pytest.fixture

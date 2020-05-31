@@ -25,6 +25,6 @@ class MQAgent(BaseMQAgent):
 
     def publish_snapshot(self, snapshot: server_parsers_pb2.Snapshot):
         snapshot_msg = serialize_protobuf(snapshot)
-        # take a lock and send snapshot
+        # take a lock (server is multithreaded) and send snapshot
         with self.mq_lock:
             self.utils.publish(snapshot_msg, exchange='snapshot')

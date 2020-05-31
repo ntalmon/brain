@@ -43,6 +43,7 @@ class RabbitMQ:
         last_error = None  # type: Exception
         for i in range(max_retries):
             try:
+                # try to connect
                 conn = pika.BlockingConnection(pika.ConnectionParameters(host=host, port=port))
                 return conn
             except pika.connection.exceptions.AMQPError as error:
@@ -51,6 +52,7 @@ class RabbitMQ:
                 print(f'Exception while trying to connect: {error}, waiting {sleep} seconds before retrying')
                 time.sleep(sleep)
         logger.error('failed to connect RabbitMQ, reached max retries')
+        # all retires failed
         raise last_error
 
     def close(self):
@@ -83,8 +85,10 @@ class RabbitMQ:
         def wrapper(channel, method, properties, body):
             try:
                 if exchange and exchange_type == 'direct':
+                    # for direct exchange, pass the queue name as well
                     res = callback(method.routing_key, body)
                 else:
+                    # for any other type, pass only the body.
                     res = callback(body)
                 channel.basic_ack(delivery_tag=method.delivery_tag)
             except Exception as error:

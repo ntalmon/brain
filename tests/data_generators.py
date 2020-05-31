@@ -1,3 +1,7 @@
+"""
+Data generators - generate random inputs for different components.
+"""
+
 import os
 import random
 
@@ -9,13 +13,14 @@ from brain.autogen import mind_pb2, client_server_pb2, server_parsers_pb2
 from brain.utils.consts import *
 from .utils import normalize_path, align_protobuf, dict_projection
 
+PARSERS = ['pose', 'color_image', 'depth_image', 'feelings']  # default supported parsers
 first_names = ('John', 'Andy', 'Joe')
 last_names = ('Johnson', 'Smith', 'Williams')
-
 user_id_count = 0
 
 
 def gen_user(user=None):
+    # generate random user
     global user_id_count
     user_id_count += 1
     user_id = user_id_count
@@ -29,6 +34,7 @@ def gen_user(user=None):
 
 
 def gen_pose(pose=None):
+    # generate random pose
     t_x, t_y, t_z = [random.uniform(-100, 100) for _ in range(3)]
     r_x, r_y, r_z, r_w = [random.uniform(-100, 100) for _ in range(4)]
     if pose:
@@ -40,6 +46,7 @@ def gen_pose(pose=None):
 
 
 def gen_color_image_base():
+    # generate random width, height, and data for color image
     width = random.randint(5, 10)
     height = random.randint(5, 10)
     data = os.urandom(width * height * 3)
@@ -47,6 +54,7 @@ def gen_color_image_base():
 
 
 def gen_color_image_data(color_image=None):
+    # generate random color image data
     width, height, data = gen_color_image_base()
     if color_image:
         color_image.width, color_image.height, color_image.data = width, height, data
@@ -55,6 +63,7 @@ def gen_color_image_data(color_image=None):
 
 
 def gen_color_image_raw(path, color_image=None):
+    # generate random color image and save data as raw file
     width, height, data = gen_color_image_base()
     path = normalize_path(path)
     file_name = 'color_image.raw'
@@ -68,6 +77,7 @@ def gen_color_image_raw(path, color_image=None):
 
 
 def gen_color_image_parsed(path, color_image=None):
+    # generate random color image and save data as JPEG
     width, height, data = gen_color_image_base()
     path = normalize_path(path)
     file_name = 'color_image.jpg'
@@ -80,6 +90,7 @@ def gen_color_image_parsed(path, color_image=None):
 
 
 def gen_depth_image_base():
+    # generate random width, height, and data for depth image
     width = random.randint(5, 10)
     height = random.randint(5, 10)
     data = [float(random.uniform(-100, 100)) for i in range(width * height)]
@@ -87,6 +98,7 @@ def gen_depth_image_base():
 
 
 def gen_depth_image_data(depth_image=None):
+    # generate random depth image data
     width, height, data = gen_depth_image_base()
     if depth_image:
         depth_image.width, depth_image.height, depth_image.data[:] = width, height, data
@@ -95,6 +107,7 @@ def gen_depth_image_data(depth_image=None):
 
 
 def gen_depth_image_raw(path, depth_image=None):
+    # generate random depth image data and save as raw file
     width, height, data = gen_depth_image_base()
     path = normalize_path(path)
     array = np.array(data).astype(np.float)
@@ -107,6 +120,7 @@ def gen_depth_image_raw(path, depth_image=None):
 
 
 def gen_depth_image_parsed(path, depth_image=None):
+    # generate random depth image data and save as JPEG
     width, height, data = gen_depth_image_base()
     path = normalize_path(path)
     array = np.array(data).reshape((height, width))
@@ -120,6 +134,7 @@ def gen_depth_image_parsed(path, depth_image=None):
 
 
 def gen_feelings(feelings=None):
+    # random generate feelings
     hunger, thirst, exhaustion, happiness = [random.uniform(-1, 1) for _ in range(4)]
     if feelings:
         feelings.hunger, feelings.thirst, feelings.exhaustion, feelings.happiness = hunger, thirst, exhaustion, \
@@ -129,6 +144,7 @@ def gen_feelings(feelings=None):
 
 
 def gen_datetime(snapshot=None):
+    # generate random datetime
     dt = random.getrandbits(64)
     if snapshot:
         snapshot.datetime = dt
@@ -140,6 +156,7 @@ uuid_counter = 0
 
 
 def gen_snapshot_id(snapshot=None):
+    # generate snapshot id
     global uuid_counter
     uuid_counter += 1
     if snapshot:
@@ -149,6 +166,7 @@ def gen_snapshot_id(snapshot=None):
 
 
 def get_snapshot_path(snapshot, path, is_dict=False):
+    # generate snapshot path (for saving files)
     path = normalize_path(path)
     user_id = snapshot['user']['user_id'] if is_dict else snapshot.user.user_id
     user_dir = path / str(user_id)
@@ -162,6 +180,7 @@ def get_snapshot_path(snapshot, path, is_dict=False):
 
 
 def gen_snapshot_for_client(snapshot=None):
+    # generate random snapshot object for client (mind_pb2.Snapshot)
     snapshot = snapshot or mind_pb2.Snapshot()
     gen_datetime(snapshot)
     gen_pose(snapshot.pose)
@@ -172,6 +191,7 @@ def gen_snapshot_for_client(snapshot=None):
 
 
 def gen_snapshot_for_server(snapshot=None, should_gen_user=False):
+    # generate random snapshot object for server (client_server_pb2.Snapshot)
     snapshot = snapshot or client_server_pb2.Snapshot()
     gen_datetime(snapshot)
     if should_gen_user:
@@ -185,6 +205,7 @@ def gen_snapshot_for_server(snapshot=None, should_gen_user=False):
 
 
 def gen_snapshot_for_parsers(path, snapshot=None, should_gen_user=False):
+    # generate random snapshot object for parsers (server_parsers_pb2.Snapshot)
     snapshot = snapshot or server_parsers_pb2.Snapshot()
     snapshot.datetime = gen_datetime()
     snapshot.uuid = gen_snapshot_id()
@@ -200,6 +221,7 @@ def gen_snapshot_for_parsers(path, snapshot=None, should_gen_user=False):
 
 
 def gen_data_for_saver(path, num_users, num_snapshots):
+    # generate random data for saver
     path = normalize_path(path)
     users_snapshots = {}
     all_results = []
@@ -225,6 +247,7 @@ def gen_data_for_saver(path, num_users, num_snapshots):
 
 
 def gen_db_data(path, num_users, num_snapshots, database=None):
+    # generate random entries to be saved to the database
     path = normalize_path(path)
     _, users_snapshots = gen_data_for_saver(path, num_users, num_snapshots)
     db_data = []

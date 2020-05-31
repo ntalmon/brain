@@ -11,7 +11,7 @@ from brain.parsers.__main__ import cli
 from brain.parsers.framework import Context
 from brain.parsers.mq_agent import load_mq_agent
 from brain.utils.consts import *
-from .data_generators import gen_snapshot_for_parsers
+from .data_generators import gen_snapshot_for_parsers, PARSERS
 from .utils import protobuf2dict
 
 

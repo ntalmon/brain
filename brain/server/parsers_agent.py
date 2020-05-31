@@ -18,6 +18,7 @@ def copy_protobuf(item_a, item_b, attrs):
 
 
 def handle_color_image(snapshot, data):
+    # save color image blob as raw file to disk
     path = normalize_path(snapshot.path)
     image_file = str(path / 'color_image.raw')
     with open(image_file, 'wb') as writer:
@@ -26,6 +27,7 @@ def handle_color_image(snapshot, data):
 
 
 def handle_depth_image(snapshot, data):
+    # save depth image blob as raw file to disk
     path = normalize_path(snapshot.path)
     image_file = 'depth_image.raw'
     image_file_path = str(path / image_file)
@@ -37,6 +39,9 @@ def handle_depth_image(snapshot, data):
 def construct_parsers_message(snapshot: client_server_pb2.Snapshot, snapshot_uuid: int) -> server_parsers_pb2.Snapshot:
     """
     Construct a message to the parsers.
+
+    The main change being done at this point, is to save blobs such as color and depth image to the disk,
+    and provide a path to the file on disk instead of the actual data being stored as part of the message so far.
 
     :param snapshot: snapshot in client_server_pb2.Snapshot format.
     :param snapshot_uuid: uuid of the snapshot.
@@ -54,6 +59,8 @@ def construct_parsers_message(snapshot: client_server_pb2.Snapshot, snapshot_uui
     copy_protobuf(parsers_snapshot.depth_image, snapshot.depth_image, ['width', 'height'])
     copy_protobuf(parsers_snapshot.feelings, snapshot.feelings, ['hunger', 'thirst', 'exhaustion', 'happiness'])
 
+    # before saving blobs to the disk, we must find a directory to saves file to.
+    # we will use the <data-path>/<user-id>/<snapshot-id>/ directory (and create it if not exists).
     base_path = data_path
     user_id = parsers_snapshot.user.user_id
     user_dir = base_path / str(user_id)
@@ -62,7 +69,10 @@ def construct_parsers_message(snapshot: client_server_pb2.Snapshot, snapshot_uui
     snapshot_dir = user_dir / str(parsers_snapshot.uuid)
     if not snapshot_dir.exists():
         snapshot_dir.mkdir()
+
+    # provide base path as part of the message, and certain results will contains file name.
     parsers_snapshot.path = str(snapshot_dir)
+
     if parsers_snapshot.color_image:
         handle_color_image(parsers_snapshot, snapshot.color_image.data)
     if parsers_snapshot.depth_image:
