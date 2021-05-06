@@ -14,7 +14,7 @@ docutils==0.16
 entrypoints==0.3
 flake8==3.7.9
 Flask==1.1.2
-Flask-Cors==3.0.8
+Flask-Cors==3.0.9
 furl==2.1.0
 grpcio==1.28.1
 grpcio-tools==1.28.1
